@@ -1,0 +1,201 @@
+testConfig.js
+
+Running unit tests for VtruConfig.js...
+"NON_EXISTENT_KEY" not found in .env file.
+✅ testGet passed.
+Wallets not found in .env file.
+Wallets not found in .env file.
+✅ testGetWallets passed.
+Vault address not found in .env file.
+Vault address not found in .env file.
+✅ testGetVaultAddress passed.
+✅ testGetAbi passed.
+✅ testGetContractAddress passed.
+⚠️ Skipping setWallets test to prevent modifying .env file.
+⚠️ Skipping setVaultAddress test to prevent modifying .env file.
+🎉 All VtruConfig tests passed successfully!
+===========================================================
+
+testContract.js
+
+Running unit tests for VtruContract.js...
+The specified contract address for 'NonExistentContract' does not exist.
+The specified contract address for 'NonExistentContract' does not exist.
+✅ testGetAddress passed.
+✅ testGetContract passed.
+The specified contract address for 'TestContract' does not exist.
+Failed to create contract instance due to missing ABI or address.
+✅ testGetContractFailure passed.
+🎉 All VtruContract tests passed successfully!
+===========================================================
+
+testResultAggregator.js
+
+Running unit tests for VtruResultAggregator.js...
+1	Test1
+2	Test2
+✅ testAdd passed.
+✅ testSort passed.
+3	Test3
+✅ testSortMissingLabel passed.
+✅ testGet passed.
+✅ testSortEmpty passed.
+🎉 All VtruResultAggregator tests passed successfully!
+===========================================================
+
+testSimpleTracker.js
+
+Running unit tests for VtruSimpleTracker.js...
+Tracking transactions for: 0xTestAddress
+✅ testTrackSuccess passed.
+Tracking transactions for: 0xTestAddress
+No transactions found or an error occurred: { status: '1', result: [] }
+✅ testTrackNoTransactions passed.
+Tracking transactions for: 0xTestAddress
+Error fetching transactions: API request failed
+✅ testTrackApiFailure passed.
+✅ testGetEmpty passed.
+🎉 All VtruSimpleTracker tests passed successfully!
+===========================================================
+
+testStakedContract.js
+
+✅ testGetStakedBalance passed.
+✅ testGetStakedBalances passed.
+✅ testGetStakedDetail passed.
+✅ testGetStakedDetails passed.
+🎉 All VtruStakedContract tests passed successfully!
+===========================================================
+
+testSystem.js
+
+Running unit tests for vtruSystem.js...
+✅ testSleepShort passed.
+✅ testSleepLong passed.
+🎉 All vtruSystem tests passed successfully!
+===========================================================
+
+testTracker.js
+
+Running unit tests for VtruTracker.js...
+✅ testTrackSuccess passed.
+✅ testTrackNoTransactions passed.
+Error tracking address 0xTestAddress: API request failed
+✅ testTrackApiFailure passed.
+✅ testGetEmpty passed.
+Starting walk at level 1...
+✅ testWalk passed.
+✅ testTrackMultiple passed.
+🎉 All VtruTracker tests passed successfully!
+===========================================================
+
+testTransaction.js
+
+Running unit tests for VtruTransaction.js...
+✅ testGetTransactionsSuccess passed.
+No transactions found or an error occurred: { status: '1', result: [] }
+✅ testGetTransactionsEmpty passed.
+Error fetching transactions for address 0xTestAddress: API request failed
+✅ testGetTransactionsApiFailure passed.
+No transactions found or an error occurred: { status: '1' }
+✅ testGetTransactionsInvalidResponse passed.
+🎉 All VtruTransaction tests passed successfully!
+===========================================================
+
+testUtils.js
+
+Running unit tests for vtruUtils.js...
+✅ testScaleUp passed.
+✅ testScaleDown passed.
+✅ testFormatNumber passed.
+✅ testFormatNumbers passed.
+✅ testFormatRawNumber passed.
+✅ testFormatRawNumbers passed.
+✅ testGetDateSuffix passed.
+✅ testGetFileName passed.
+🎉 All vtruUtils tests passed successfully!
+===========================================================
+
+testVault.js
+
+Running unit tests for VtruVault.js...
+✅ testIsBlocked passed.
+✅ testVaultBalance passed.
+✅ testGetVaultWallets passed.
+✅ testHasStakes passed.
+✅ testGetName passed.
+✅ testGetAddress passed.
+🎉 All VtruVault tests passed successfully!
+===========================================================
+
+testVaultDetails.js
+
+Running unit tests for VtruVaultDetails.js...
+✅ testGetVaultAboveMinBalance passed.
+✅ testGetVaultBelowMinBalance passed.
+✅ testGetSummary passed.
+🎉 All VtruVaultDetails tests passed successfully!
+===========================================================
+
+testVaultFactory.js
+
+Running unit tests for VtruVaultFactory.js...
+✅ testGetVaultCount passed.
+✅ testGetVaultBatch passed.
+✅ testProcessVaults passed.
+✅ testProcessVaultsLimit passed.
+🎉 All VtruVaultFactory tests passed successfully!
+===========================================================
+
+testVerseContract.js
+
+Running unit tests for VtruVerseContract.js...
+✅ testGetVerseBalanceValid passed.
+✅ testGetVerseBalanceFailure passed.
+✅ testGetVerseBalances passed.
+✅ testGetVerseBalancesFailures passed.
+🎉 All VtruVerseContract tests passed successfully!
+===========================================================
+
+testVibeContract.js
+
+Running unit tests for VtruVibeContract.js...
+✅ testGetVibeBalanceValid passed.
+✅ testGetVibeBalanceEmpty passed.
+Error fetching VIBE balance for wallet 0xWallet3: Contract call failed
+✅ testGetVibeBalanceFailure passed.
+✅ testGetVibeBalances passed.
+Error fetching VIBE balance for wallet 0xWallet1: Contract call failed
+Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
+✅ testGetVibeBalancesFailures passed.
+🎉 All VtruVibeContract tests passed successfully!
+===========================================================
+
+testWalletDetails.js
+
+Running unit tests for VtruWalletDetails.js...
+✅ testGetWalletsBasic passed.
+✅ testGetWalletsFull passed.
+Error fetching wallet details: Blockchain error
+✅ testGetWalletsFailures passed.
+🎉 All VtruWalletDetails tests passed successfully!
+===========================================================
+
+testWeb3.js
+
+Running unit tests for VtruWeb3.js...
+✅ testGetRPC passed.
+✅ testGetProvider passed.
+✅ testCheckConnectionSuccess passed.
+✅ testCheckConnectionFailure passed (handled gracefully).
+🛠 Running testGetWalletRawBalance...
+🛠 Received balance: 1000000000000000000
+✅ testGetWalletRawBalance passed.
+Error fetching balance for wallet 0xInvalidWallet: Invalid address
+✅ testGetWalletRawBalanceFailure passed.
+✅ testGetWalletRawBalances passed.
+Error fetching balance for wallet 0xWallet2: RPC error
+✅ testGetWalletRawBalancesPartialFailure passed.
+🎉 All VtruWeb3 tests passed successfully!
+===========================================================
+

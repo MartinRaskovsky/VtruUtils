@@ -16,6 +16,7 @@ const { formatRawNumbers, formatNumbers, scaleUp } = require("../lib/vtruUtils")
 // ✅ Create mock instances
 const mockConfig = {};
 const mockWeb3 = {
+    getProvider: sinon.stub().returns({}),
     getWalletRawBalances: sinon.stub(),
 };
 
@@ -86,12 +87,12 @@ async function testGetWalletsFull() {
     // ✅ Use `formatNumbers()` for verses and vibes (regular numbers)
     assert.deepStrictEqual(
         result.walletVerses,
-        formatNumbers([50n, 30n]), 
+        formatNumbers([50, 30], 0), 
         `❌ testGetWalletsFull failed: Expected walletVerses but got ${JSON.stringify(result.walletVerses)}`
     );
     assert.deepStrictEqual(
         result.walletVibes,
-        formatNumbers([10n, 5n]), 
+        formatNumbers([10n, 5n], 0), 
         `❌ testGetWalletsFull failed: Expected walletVibes but got ${JSON.stringify(result.walletVibes)}`
     );
 

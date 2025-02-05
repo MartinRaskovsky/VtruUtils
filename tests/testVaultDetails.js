@@ -16,7 +16,10 @@ const { scaleUp, formatRawNumber } = require("../lib/vtruUtils");
 
 // Create mock instances
 const mockConfig = {};
-const mockWeb3 = {};
+
+const mockWeb3 = {
+    getProvider: sinon.stub().returns({}), // Providing a stubbed provider
+};
 
 // ✅ Create a mock vault contract
 const mockVault = {
@@ -57,8 +60,8 @@ async function testGetVaultAboveMinBalance() {
     assert.strictEqual(result.address, mockVault.address, `❌ testGetVaultAboveMinBalance failed: Address mismatch`);
     assert.strictEqual(result.balance, formatRawNumber(5000000000000000000n), `❌ testGetVaultAboveMinBalance failed: Balance mismatch`);
     assert.strictEqual(result.hasStakes, true, `❌ testGetVaultAboveMinBalance failed: Expected hasStakes=true`);
-    assert.strictEqual(result.held, formatRawNumber(mockWalletDetails.held + 5000000000000000000n, 0), `❌ testGetVaultAboveMinBalance failed: Held balance mismatch`);
-    assert.strictEqual(result.staked, formatRawNumber(mockWalletDetails.staked, 0), `❌ testGetVaultAboveMinBalance failed: Staked balance mismatch`);
+    assert.strictEqual(result.held, formatRawNumber(mockWalletDetails.held + 5000000000000000000n, 2), `❌ testGetVaultAboveMinBalance failed: Held balance mismatch`);
+    assert.strictEqual(result.staked, formatRawNumber(mockWalletDetails.staked, 2), `❌ testGetVaultAboveMinBalance failed: Staked balance mismatch`);
 
     console.log("✅ testGetVaultAboveMinBalance passed.");
 }

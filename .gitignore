@@ -50,7 +50,6 @@ src/data/bak
 
 # Node.js config
 npm-shrinkwrap.json
-package-lock.json
 
 # Linting cache
 .eslintcache
