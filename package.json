@@ -1,0 +1,39 @@
+{
+  "name": "vtruutils",
+  "version": "1.0.0",
+  "description": "This project for Vitruveo blockchain-related operations, providing reusable classes, environment-based configuration management, and program scripts for execution. It is designed for developers looking to simplify tasks like Vault and Wallet content listing.",
+  "keywords": [
+    "vitruveo",
+    "utils"
+  ],
+  "author": "Dr. Martín Raskovsky",
+  "license": "MIT",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2",
+    "fs-extra": "^11.3.0"
+  },
+  "main": "index.js",
+  "bin": {
+    "vtruutils": "bin/getVaultDetails.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://MartinRaskovsky/VtruUtils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MartinRaskovsky/VtruUtils/issues"
+  },
+  "homepage": "https://github.com/MartinRaskovsky/VtruUtils#readme"
+}
