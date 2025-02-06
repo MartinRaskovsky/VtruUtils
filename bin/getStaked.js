@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Author: Dr Martín Raskovsky
+ * Author: Dr. Martín Raskovsky
  * Date: February 2025
+ * Description: Retrieves and formats staking details for given wallet addresses.
  */
 
 const VtruConfig = require('../lib/vtruConfig');
@@ -10,6 +11,17 @@ const VtruWeb3 = require('../lib/vtruWeb3');
 const VtruVault = require('../lib/vtruVault');
 const VtruStakedContract = require('../lib/vtruStakedContract');
 const { formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+
+function showUsage() {
+    console.log(`\nUsage: getStaked.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
+    console.log(`Options:`);
+    console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
+    console.log(`  -b                  Use balance instead of staking details.`);
+    console.log(`  -f                  Format output as an aligned table.`);
+    console.log(`  -g                  Enable grouping mode (implementation pending).`);
+    console.log(`  -h                  Show this usage information.`);
+    process.exit(0);
+}
 
 function alignNumbers(rows) {
     const keys = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
@@ -33,7 +45,7 @@ function alignNumbers(rows) {
     return [headers, separator, ...formattedData].join('\n');
 }
 
-async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput) {
+async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupMode) {
     try {
         const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
         const web3 = new VtruWeb3(config);
@@ -105,8 +117,7 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
         formattedData.push(totalsRow);
 
         if (formatOutput) {
-            console.log("");
-            console.log(alignNumbers(formattedData));
+            console.log("\n" + alignNumbers(formattedData));
         } else {
             console.log(JSON.stringify(formattedData, null, 2));
         }
@@ -121,6 +132,7 @@ function main() {
     let walletAddresses = [];
     let useBalance = false;
     let formatOutput = false;
+    let groupMode = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -130,13 +142,15 @@ function main() {
             case '-f':
                 formatOutput = true;
                 break;
+            case '-g':
+                groupMode = true;
+                break;
             case '-v':
                 vaultAddress = args[i + 1];
                 i++;
                 break;
             case '-h':
-                console.log("Usage: getStaked.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>");
-                process.exit(0);
+                showUsage();
             default:
                 walletAddresses.push(args[i]);
                 break;
@@ -145,10 +159,10 @@ function main() {
 
     if (!vaultAddress && walletAddresses.length === 0) {
         console.error('❌ Error: Missing wallet address(es).');
-        process.exit(1);
+        showUsage();
     }
 
-    runStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput).catch(error => {
+    runStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput, groupMode).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }

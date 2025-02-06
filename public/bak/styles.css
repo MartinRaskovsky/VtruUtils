@@ -1,0 +1,316 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #4B0082; /* Purple background */
+    color: white;
+    max-width: 800px;
+    margin: auto;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.table-container {
+    display: flex;
+    justify-content: center;
+}
+
+table {
+    width: auto; /* Dynamic width */
+    max-width: 90%; /* Limit maximum width */
+    margin: auto; /* Center the table */
+    border-collapse: collapse;
+    background: white;
+    color: black;
+    font-size: 12px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px 6px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #6a0dad;
+    color: white;
+    padding: 4px;
+}
+
+/* Wallet column - Limit width to reduce white space */
+.wallet-cell {
+    font-family: "Courier New", monospace;
+    text-align: left;
+    max-width: 300px; /* Constrain width */
+    overflow-wrap: break-word; /* Wrap long addresses */
+}
+
+/* Balance column - Tight alignment */
+.balance-cell {
+    text-align: right;
+    padding-right: 4px;
+    min-width: 80px; /* Ensure consistent width */
+}
+
+/* Section headers and totals styling */
+.section-header {
+    background-color: #ddd;
+    font-weight: bold;
+    text-align: center;
+    padding: 2px;
+}
+
+.total-row {
+    background-color: #bbb;
+    font-weight: bold;
+    padding: 2px;
+}
+
+/* Ensure the blank row fully blends with the background */
+.spacer-row td {
+    background-color: #4B0082; /* Match background */
+    height: 10px; /* Adds space without visible row */
+    border: none !important; /* Remove any table gridlines */
+}
+
+/* Ensure the table does not force a border around blank rows */
+table {
+    border-collapse: separate !important; /* Allow selective border removal */
+    border-spacing: 0px; /* Ensure no extra gaps */
+}
+
+/* Improved form layout */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: auto;
+    padding: 10px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+input, textarea {
+    width: 100%;  /* Ensures both fields take the full available width */
+    max-width: 350px; /* Adjust this value to match your layout */
+    font-family: monospace; /* Ensures clear readability of addresses */
+    padding: 8px;
+}
+
+textarea {
+    resize: vertical; /* Allows vertical resizing */
+    overflow-y: auto; /* Enables scrolling */
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+pre {
+    background: #1e1e1e; /* Dark background */
+    color: #dcdcdc;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap; /* Preserve formatting */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    text-align: left; /* Ensure left-aligned JSON */
+    font-family: monospace; /* Standard JSON font */
+    max-width: 90%;
+    margin: auto; /* Prevent unwanted centering */
+}
+
+/* JSON Syntax Coloring */
+.key {
+    color: #9cdcfe; /* Light blue for keys */
+}
+
+.string {
+    color: #ce9178; /* Light orange for string values */
+}
+
+.number {
+    color: #b5cea8; /* Green for numbers */
+}
+
+.boolean {
+    color: #569cd6; /* Blue for booleans */
+}
+
+.null {
+    color: #c586c0; /* Purple for null */
+}
+
+/* Diff values styling */
+.diff-value {
+    font-weight: bold;
+    padding-right: 5px;
+    text-align: right;
+}
+
+/* Balance column styling */
+.balance-cell {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Aligns decimal values properly */
+.decimal-align {
+    text-align: right;
+    padding-right: 8px;
+}
+
+/* Change column alignment */
+.diff-cell {
+    text-align: right;
+    font-weight: bold;
+}
+
+.diff-value.increase, .balance-cell.increase, .diff-cell.increase {
+    color: green;
+}
+
+.diff-value.decrease, .balance-cell.decrease, .diff-cell.decrease {
+    color: red;
+}
+
+
+/* Summary Row Fixes */
+.total-row {
+    background-color: #bbb;
+    font-weight: bold;
+    padding: 2px;
+}
+
+/* Ensure decimal values are aligned properly */
+.decimal-align {
+    text-align: right;
+    padding-right: 8px;
+}
+
+/* Improved button spacing */
+button {
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Consistent form layout */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: auto;
+    padding: 10px;
+}
+
+/* Wallet column - Ensures readability */
+.wallet-cell {
+    font-family: "Courier New", monospace;
+    text-align: left;
+    max-width: 300px;
+    overflow-wrap: break-word;
+}
+
+.stake-btn {
+    background-color: #6a0dad;
+    color: white;
+    font-size: 14px;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.stake-btn:hover {
+    background-color: #5a0ca3;
+}
+
+/* ✅ Ensure ▼ button does NOT increase row height */
+.stake-toggle-btn {
+    font-size: 10px; /* ✅ Small button */
+    padding: 0; /* ✅ Remove extra spacing */
+    height: auto; /* ✅ Allow natural height */
+    width: 10px; /* ✅ Small button width */
+    line-height: 1; /* ✅ Avoid extra spacing */
+    text-align: center;
+    vertical-align: baseline; /* ✅ Align with text */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex; /* ✅ Prevent block stretching */
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px; /* ✅ Space from text */
+    position: relative;
+    top: -1px; /* ✅ Small tweak for better text alignment */
+}
+
+.stake-toggle-btn:hover {
+    color: #f0f0f0;
+}
+
+/* MODAL STYLING */
+/* Ensure modal stays within viewport */
+.modal {
+    display: none;
+    position: fixed; /* ✅ Keeps modal in viewport regardless of scrolling */
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow-y: auto; /* Enable scrolling */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #2a1f3a; /* ✅ Slightly darker background */
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* ✅ Adds subtle depth */
+    border: 1px solid white; /* ✅ Thin white border */
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: black;
+}
+
+/* ✅ Improve visibility of the close (X) button */
+.modal-content .close {
+    color: white; /* ✅ Make "X" visible on dark background */
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2); /* ✅ Subtle background for contrast */
+    padding: 5px 8px;
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+}
+
+/* ✅ Make it stand out when hovered */
+.modal-content .close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}

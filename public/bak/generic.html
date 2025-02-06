@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Runner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Run Scripts</h1>
+
+    <label for="scriptName">Script Name (include .js or .sh):</label>
+    <input type="text" id="scriptName" placeholder="Enter script name (e.g., getWalletDetails.js or myscript.sh)">
+
+    <label for="argsInput">Command-line Arguments:</label>
+    <input type="text" id="argsInput" placeholder="Enter space-separated arguments">
+
+    <button onclick="runScript()">Run Script</button>
+
+    <h2>Output:</h2>
+    <pre id="output"></pre>
+
+    <script src="generic.js"></script>
+</body>
+</html>
+
