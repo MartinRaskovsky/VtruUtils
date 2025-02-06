@@ -24,6 +24,7 @@ dist/
 build/
 
 # Test artifacts
+src/tests/testAll.txt
 coverage/
 *.test.js.snap
 
@@ -44,12 +45,22 @@ src/lib/bak/
 src/bin/bak/
 src/tests/bak/
 src/data/bak
+src/public/bak
+src/server/bak
+
+# Local web server and client
+src/server
+src/public
+
+# data used by local web client
+src/public/data
 
 # Ignore system files
 .AppleDouble
 
 # Node.js config
 npm-shrinkwrap.json
+package-lock.json
 
 # Linting cache
 .eslintcache
