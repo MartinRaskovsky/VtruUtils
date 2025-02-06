@@ -18,7 +18,7 @@ function showUsage() {
     console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
     console.log(`  -b                  Use balance instead of staking details.`);
     console.log(`  -f                  Format output as an aligned table.`);
-    console.log(`  -g                  Enable grouping mode (implementation pending).`);
+    console.log(`  -g [day|month|year] Group results by maturity day, month, or year.`);
     console.log(`  -h                  Show this usage information.`);
     process.exit(0);
 }
@@ -29,7 +29,7 @@ function alignNumbers(rows) {
 
     keys.forEach(key => {
         columnWidths[key] = rows.reduce((max, row) => {
-            const value = row[key] || "";
+            const value = row[key] ? String(row[key]) : "";
             return Math.max(max, value.length);
         }, key.length);
     });
@@ -39,13 +39,20 @@ function alignNumbers(rows) {
     const formattedRows = rows.filter(row => Object.values(row).some(value => value !== ""));
 
     const formattedData = formattedRows.map(row => {
-        return keys.map(key => (row[key] || "").padStart(columnWidths[key], ' ')).join(' | ');
+        return keys.map(key => String(row[key] || "").padStart(columnWidths[key], ' ')).join(' | ');
     });
 
     return [headers, separator, ...formattedData].join('\n');
 }
 
-async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupMode) {
+function getGroupKey(date, groupBy) {
+    if (groupBy === "year") return date.getFullYear().toString().slice(-2);
+    if (groupBy === "month") return `${("0" + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().toString().slice(-2)}`;
+    return `${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().toString().slice(-2)}`;
+}
+
+
+async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
         const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
         const web3 = new VtruWeb3(config);
@@ -69,7 +76,7 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
         result.sort((a, b) => a.maturityDays - b.maturityDays);
 
         let totals = {
-            wallet: '',
+            wallet: 'Total',
             amount: 0n,
             reward: 0n,
             totalStaked: 0n,
@@ -77,15 +84,45 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
             estimatedMaturity: ""
         };
 
-        const formattedData = result.map((row) => {
-            const isMatured = row.maturityDays <= 0;
-            let availableToUnstake = 0n;
-            let totalStaked = row.unstakeAmount;
+        let groupedData = {};
+        if (groupBy) {
+            result.forEach(row => {
+                const maturityDate = new Date(Date.now() + row.maturityDays * 86400000);
+                const groupKey = getGroupKey(maturityDate, groupBy);
 
-            if (isMatured) {
-                availableToUnstake = totalStaked;
-                totalStaked = 0n;
-            }
+                if (!groupedData[groupKey]) {
+                    groupedData[groupKey] = {
+                        wallet: `Group: ${groupKey}`,
+                        amount: 0n,
+                        reward: 0n,
+                        totalStaked: 0n,
+                        availableToUnstake: 0n,
+                        estimatedMaturity: groupKey
+                    };
+                }
+                
+                groupedData[groupKey].amount += row.amount;
+                groupedData[groupKey].reward += row.lockedAmount;
+                groupedData[groupKey].totalStaked += row.unstakeAmount;
+                if (row.maturityDays <= 0) {
+                    groupedData[groupKey].availableToUnstake += row.unstakeAmount;
+                    groupedData[groupKey].totalStaked -= row.unstakeAmount;
+                }
+            });
+        }
+
+        let formattedData = groupBy ? Object.values(groupedData).map(group => {
+            return {
+                ...group,
+                amount: formatRawNumber(group.amount),
+                reward: formatRawNumber(group.reward),
+                totalStaked: formatRawNumber(group.totalStaked),
+                availableToUnstake: group.availableToUnstake > 0n ? formatRawNumber(group.availableToUnstake) : ""
+            };
+        }) : result.map(row => {
+            const isMatured = row.maturityDays <= 0;
+            let availableToUnstake = isMatured ? row.unstakeAmount : 0n;
+            let totalStaked = isMatured ? 0n : row.unstakeAmount;
 
             totals.amount += row.amount;
             totals.reward += row.lockedAmount;
@@ -98,23 +135,32 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
                 reward: formatRawNumber(row.lockedAmount),
                 totalStaked: totalStaked > 0n ? formatRawNumber(totalStaked) : "",
                 availableToUnstake: availableToUnstake > 0n ? formatRawNumber(availableToUnstake) : "",
-                estimatedMaturity: isMatured
-                    ? "Matured"
-                    : new Date(Date.now() + row.maturityDays * 86400000)                  
-                        .toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" })
+                estimatedMaturity: isMatured ? "Matured" : getGroupKey(new Date(Date.now() + row.maturityDays * 86400000), groupBy || "day")
             };
         });
 
-        const totalsRow = {
-            wallet: '',
-            amount: formatRawNumber(totals.amount),
-            reward: formatRawNumber(totals.reward),
-            totalStaked: totals.totalStaked > 0n ? formatRawNumber(totals.totalStaked) : "",
-            availableToUnstake: totals.availableToUnstake > 0n ? formatRawNumber(totals.availableToUnstake) : "",
-            estimatedMaturity: ""
-        };
-
-        formattedData.push(totalsRow);
+        if (groupBy) {
+            let groupTotals = {
+                wallet: 'Grouped Total',
+                amount: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.amount, 0n)),
+                reward: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.reward, 0n)),
+                totalStaked: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.totalStaked, 0n)),
+                availableToUnstake: Object.values(groupedData).reduce((sum, g) => sum + g.availableToUnstake, 0n) > 0n 
+                    ? formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.availableToUnstake, 0n)) 
+                    : "",
+                estimatedMaturity: ""
+            };
+            formattedData.push(groupTotals);
+        } else {
+            formattedData.push({
+                wallet: 'Total',
+                amount: formatRawNumber(totals.amount),
+                reward: formatRawNumber(totals.reward),
+                totalStaked: totals.totalStaked > 0n ? formatRawNumber(totals.totalStaked) : "",
+                availableToUnstake: totals.availableToUnstake > 0n ? formatRawNumber(totals.availableToUnstake) : "",
+                estimatedMaturity: ""
+            });
+        }
 
         if (formatOutput) {
             console.log("\n" + alignNumbers(formattedData));
@@ -132,7 +178,7 @@ function main() {
     let walletAddresses = [];
     let useBalance = false;
     let formatOutput = false;
-    let groupMode = false;
+    let groupBy = null;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -143,7 +189,9 @@ function main() {
                 formatOutput = true;
                 break;
             case '-g':
-                groupMode = true;
+                groupBy = ['day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
+                if (!groupBy) showUsage();
+                i++;
                 break;
             case '-v':
                 vaultAddress = args[i + 1];
@@ -157,12 +205,7 @@ function main() {
         }
     }
 
-    if (!vaultAddress && walletAddresses.length === 0) {
-        console.error('❌ Error: Missing wallet address(es).');
-        showUsage();
-    }
-
-    runStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput, groupMode).catch(error => {
+    runStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput, groupBy).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }
