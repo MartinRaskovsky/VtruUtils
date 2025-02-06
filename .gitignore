@@ -8,8 +8,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment variables
-src/data/.env
-*.env.*
+data/.env
 
 # Dependency directories
 .DS_Store
@@ -35,15 +34,11 @@ coverage/
 details-*-*.csv
 details-*-*.json
 
-# Do not ignore specific important files
-!src/data/*.json
-!src/data/*.csv
-
 # Backup directories
-src/lib/bak/
-src/bin/bak/
-src/tests/bak/
-src/data/bak
+lib/bak/
+bin/bak/
+tests/bak/
+data/bak
 
 # Ignore system files
 .AppleDouble
@@ -54,3 +49,9 @@ npm-shrinkwrap.json
 # Linting cache
 .eslintcache
 
+# Local web server and client
+server
+public
+
+# data used by local web client
+public/data
