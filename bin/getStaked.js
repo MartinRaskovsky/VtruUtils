@@ -10,7 +10,7 @@ const VtruConfig = require('../lib/vtruConfig');
 const VtruWeb3 = require('../lib/vtruWeb3');
 const VtruVault = require('../lib/vtruVault');
 const VtruStakedContract = require('../lib/vtruStakedContract');
-const { formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
     console.log(`\nUsage: getStaked.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
@@ -46,9 +46,9 @@ function alignNumbers(rows) {
 }
 
 function getGroupKey(date, groupBy) {
-    if (groupBy === "year") return date.getFullYear().toString().slice(-2);
-    if (groupBy === "month") return `${("0" + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().toString().slice(-2)}`;
-    return `${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().toString().slice(-2)}`;
+    if (groupBy === "year") return date.getFullYear().toString();
+    if (groupBy === "month") return `${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString()}`;
+    return `${("0" + date.getDate()).slice(-2)}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString().slice(-2)}`;
 }
 
 
@@ -92,7 +92,7 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
 
                 if (!groupedData[groupKey]) {
                     groupedData[groupKey] = {
-                        wallet: `Group: ${groupKey}`,
+                        wallet: 0,//`Group: ${groupKey}`,
                         amount: 0n,
                         reward: 0n,
                         totalStaked: 0n,
@@ -101,6 +101,7 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
                     };
                 }
                 
+                groupedData[groupKey].wallet++;
                 groupedData[groupKey].amount += row.amount;
                 groupedData[groupKey].reward += row.lockedAmount;
                 groupedData[groupKey].totalStaked += row.unstakeAmount;
@@ -141,7 +142,7 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
 
         if (groupBy) {
             let groupTotals = {
-                wallet: 'Grouped Total',
+                wallet: formatNumber(Object.values(groupedData).reduce((sum, g) => sum + g.wallet, 0), 0),
                 amount: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.amount, 0n)),
                 reward: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.reward, 0n)),
                 totalStaked: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.totalStaked, 0n)),
@@ -189,8 +190,9 @@ function main() {
                 formatOutput = true;
                 break;
             case '-g':
-                groupBy = ['day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
+                groupBy = ['none', 'day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
                 if (!groupBy) showUsage();
+                if (groupBy === 'none') groupBy = null;
                 i++;
                 break;
             case '-v':
