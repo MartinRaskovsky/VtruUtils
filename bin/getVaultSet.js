@@ -15,15 +15,27 @@ const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
 const { mergeUnique } = require("../lib/vtruUtils");
 
+function abort(message) {
+    console.error(message);
+    process.exit(1);
+}
 async function getVaultSet(vaultAddress, wallets, summaryMode) {
     try {
         const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
         const web3 = new VtruWeb3(config);
+
+        if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
+            vaultAddress = config.get('VAULT_ADDRESS');
+        }
+        if (!vaultAddress || vaultAddress.length === 0) {
+            abort('Vault address not provided and not found in .env');
+        }
+        vaultAddress = vaultAddress.toLowerCase();
+    
         const vault = new VtruVault(vaultAddress, config, web3);
 
         if (await vault.isBlocked()) {
-            console.error(`Vault is blocked: ${vaultAddress}`);
-            return;
+            abort(`Vault is blocked: ${vaultAddress}`);
         }
 
         if (!wallets || wallets.length === 0) {
@@ -54,10 +66,10 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
                 null, 2
             ));
         } else {
-            console.error('Error: No vault data found.');
+            abort('Error: No vault data found.');
         }
     } catch (error) {
-        console.error('Error:', error.message);
+        abort(error.message);
     }
 }
 
@@ -65,8 +77,9 @@ function displayUsage() {
     console.log(`Usage: getVaultSet.js [options] <vaultAddress> [wallet1] [wallet2] ...
 
 Options:
-  -s              Display a summary (name, held, staked, verses, vibes)
-  -h              Display this usage information
+  -s                 Display a summary (name, held, staked, verses, vibes)
+  -v <vaultAddress>  Specify a vault address to retrieve associated wallets.
+  -h                 Display this usage information
 
 Arguments:
   <vaultAddress>  Address of the vault to process (required)
@@ -84,26 +97,21 @@ function main() {
             case '-s':
                 summaryMode = true;
                 break;
+            case '-v':
+                vaultAddress = args[i + 1];
+                i++;
+                break;
             case '-h':
                 displayUsage();
                 process.exit(0);
             default:
-                if (!vaultAddress) {
-                    vaultAddress = args[i];
-                } else {
-                    wallets.push(args[i]);
-                }
+                wallets.push(args[i]);
                 break;
         }
     }
 
-    if (!vaultAddress) {
-        displayUsage();
-        process.exit(1);
-    }
-
     getVaultSet(vaultAddress, wallets, summaryMode).catch(error => {
-        console.error('Error:', error.message);
+        abort(error.message);
     });
 }
 
