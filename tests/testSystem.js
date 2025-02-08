@@ -4,14 +4,14 @@
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  *
- * Unit tests for the vtruSystem utility module.
+ * Unit tests for the libSystem utility module.
  * These tests ensure correct behavior of sleep().
  */
 
 const assert = require("assert");
-const { sleep } = require("../lib/vtruSystem");
+const { sleep } = require("../lib/libSystem");
 
-console.log("Running unit tests for vtruSystem.js...");
+console.log("Running unit tests for libSystem.js...");
 
 /**
  * Test sleep function with a short delay.
@@ -53,6 +53,6 @@ async function testSleepLong() {
 (async () => {
     await testSleepShort();
     await testSleepLong();
-    console.log("🎉 All vtruSystem tests passed successfully!");
+    console.log("🎉 All libSystem tests passed successfully!");
 })();
 
