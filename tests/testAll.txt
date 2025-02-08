@@ -118,6 +118,7 @@ Running unit tests for vtruUtils.js...
 
 testVault.js
 
+[Warning] Invalid Fragment "mocked ABI": unsupported frgament object (argument="obj", value={  }, code=INVALID_ARGUMENT, version=6.13.5)
 Running unit tests for VtruVault.js...
 ✅ testIsBlocked passed.
 ✅ testVaultBalance passed.
@@ -183,19 +184,23 @@ Error fetching wallet details: Blockchain error
 
 testWeb3.js
 
-Running unit tests for VtruWeb3.js...
-✅ testGetRPC passed.
+🛠 DEBUG1: web3.provider after override = {
+  getBlockNumber: [Function: functionStub],
+  getBalance: [Function: functionStub]
+}
+Running unit tests for Web3.js...
+✅ testGetNetwork passed.
+✅ testGetJsonPath passed.
 ✅ testGetProvider passed.
+🛠 DEBUG3: Latest block number = 123456
 ✅ testCheckConnectionSuccess passed.
-✅ testCheckConnectionFailure passed (handled gracefully).
-🛠 Running testGetWalletRawBalance...
-🛠 Received balance: 1000000000000000000
+🛠 DEBUG: Running testGetWalletRawBalance...
 ✅ testGetWalletRawBalance passed.
+🛠 DEBUG: Running testGetWalletRawBalanceFailure...
 Error fetching balance for wallet 0xInvalidWallet: Invalid address
 ✅ testGetWalletRawBalanceFailure passed.
+🛠 DEBUG: Running testGetWalletRawBalances...
 ✅ testGetWalletRawBalances passed.
-Error fetching balance for wallet 0xWallet2: RPC error
-✅ testGetWalletRawBalancesPartialFailure passed.
-🎉 All VtruWeb3 tests passed successfully!
+🎉 All Web3 tests passed successfully!
 ===========================================================
 

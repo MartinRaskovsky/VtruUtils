@@ -10,15 +10,14 @@
 
 const { formatRawNumber, formatRawNumbers } = require('../lib/vtruUtils');
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 
 async function main() {
   try {
-    const config  = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-    const web3    = new VtruWeb3(config);
-    const address = config.get('VAULT_ADDRESS');
-    const vault   = new VtruVault(address, config, web3);
+    const web3 = await Web3.create(Web3.VTRU);
+    const address = web3.getConfig().get('VAULT_ADDRESS');
+    const vault   = new VtruVault(address, web3);
 
     const wallets = await vault.getVaultWallets();
     const balance = await vault.vaultBalance();

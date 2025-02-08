@@ -14,7 +14,6 @@ const VtruWalletDetails = require("../lib/vtruWalletDetails");
 const { formatRawNumbers, formatNumbers, scaleUp } = require("../lib/vtruUtils"); // ✅ Use correct function
 
 // ✅ Create mock instances
-const mockConfig = {};
 const mockWeb3 = {
     getProvider: sinon.stub().returns({}),
     getWalletRawBalances: sinon.stub(),
@@ -31,7 +30,7 @@ sinon.stub(require("../lib/vtruVerseContract").prototype, "getVerseBalances").ca
 sinon.stub(require("../lib/vtruVibeContract").prototype, "getVibeBalances").callsFake(mockVibeContract.getVibeBalances);
 
 // ✅ Create the `VtruWalletDetails` instance with mocks
-const walletDetails = new VtruWalletDetails(mockConfig, mockWeb3);
+const walletDetails = new VtruWalletDetails(mockWeb3);
 
 console.log("Running unit tests for VtruWalletDetails.js...");
 

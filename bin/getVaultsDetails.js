@@ -11,7 +11,7 @@
 
 const { getFileName } = require('../lib/vtruUtils');
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVaultFactory = require('../lib/vtruVaultFactory');
 const VtruResultAggregator = require('../lib/vtruResultAggregator');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
@@ -19,11 +19,10 @@ const fse = require('fs-extra');
 
 async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", verbose = 1) {
     try {
-        const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3 = new VtruWeb3(config);
-        const vaultFactory = new VtruVaultFactory(config, web3, contractName);
+        const web3 = await Web3.create(Web3.VTRU);
+        const vaultFactory = new VtruVaultFactory(web3, contractName);
         const aggregator = new VtruResultAggregator();
-        const vaultDetails = new VtruVaultDetails(config, web3, minBalance);
+        const vaultDetails = new VtruVaultDetails(web3, minBalance);
 
         await vaultFactory.processVaults(limit, async (vault, index) => {
             if (!(await vault.isBlocked())) {

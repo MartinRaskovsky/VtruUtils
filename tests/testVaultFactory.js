@@ -14,7 +14,7 @@ const VtruVaultFactory = require("../lib/vtruVaultFactory");
 const VtruVault = require("../lib/vtruVault");
 const { sleep } = require("../lib/vtruSystem");
 
-// ✅ Create a mock config object with getAbi()
+// ✅ Create a mock conf object with getAbi()
 const mockConfig = { getAbi: sinon.stub().returns([]) };
 const mockWeb3 = { getProvider: sinon.stub().returns({}) };
 
@@ -33,9 +33,8 @@ sinon.stub(VtruVaultFactory.prototype, "getContract").returns(mockContract);
 
 // ✅ Fully mock `VtruVault`
 class MockVault {
-    constructor(address, config, web3) {
+    constructor(address, web3) {
         this.address = address;
-        this.config = config;
         this.web3 = web3;
     }
     getAddress() { return this.address; }
@@ -50,7 +49,7 @@ sinon.stub(VtruVaultFactory.prototype, "processVaults").callsFake(async function
     const vaultAddresses = await this.getVaultBatch(0, 3);
     for (let i = 0; i < vaultAddresses.length; i++) {
         if (i >= limit) break;
-        const vault = new MockVault(vaultAddresses[i], this.config, this.web3);
+        const vault = new MockVault(vaultAddresses[i], this.web3);
         await callback(vault, i);
     }
 });

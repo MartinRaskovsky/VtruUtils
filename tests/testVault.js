@@ -15,8 +15,12 @@ const VtruVault = require("../lib/vtruVault");
 
 // Create mock instances
 const mockAddress = "0x1234567890abcdef1234567890abcdef12345678";
-const mockConfig = { getAbi: sinon.stub().returns([]) };
-const mockWeb3 = { getProvider: sinon.stub().returns({}) };
+const mockWeb3 = {
+    getConfig: sinon.stub().returns({
+        getAbi: sinon.stub().returns(["mocked ABI"]),
+    }),
+    getProvider: sinon.stub().returns({}),
+};
 
 // ✅ Create a proper mock contract object
 const mockContract = {
@@ -31,7 +35,7 @@ const mockContract = {
 sinon.stub(ethers, "Contract").callsFake(() => mockContract);
 
 // ✅ Create the `VtruVault` instance
-const vault = new VtruVault(mockAddress, mockConfig, mockWeb3);
+const vault = new VtruVault(mockAddress, mockWeb3);
 
 // ✅ Manually assign the mock contract (ensuring it's properly linked)
 vault.contract = mockContract;

@@ -21,14 +21,14 @@ const testWallets = {
 
 async function testNetworkConnection(network) {
     console.log(`\nTesting connection to ${network.toUpperCase()}...`);
-    const connection = await Web3.create(network);  // Use the factory method
-    const latestBlock = connection.getLatestBlockNumber();
+    const web3 = await Web3.create(network);  // Use the factory method
+    const latestBlock = web3.getLatestBlockNumber();
     console.log(`Latest block on ${network.toUpperCase()}: ${latestBlock}`);
 }
 
 async function testWalletBalances(network) {
     console.log(`\nTesting wallet balance retrieval on ${network.toUpperCase()}...`);
-    const connection = await Web3.create(network);  // Use the factory method
+    const web3 = await Web3.create(network);  // Use the factory method
     const wallet = testWallets[network];
     
     if (!wallet || wallet === "0x0000000000000000000000000000000000000000") {
@@ -36,7 +36,7 @@ async function testWalletBalances(network) {
         return;
     }
     
-    const balance = await connection.getWalletRawBalance(wallet);
+    const balance = await web3.getWalletRawBalance(wallet);
     const scaled = scaleDown(balance);
     console.log(`Wallet balance for ${wallet} on ${network.toUpperCase()}: ${balance} WEI; scaled ${scaled}`);
 }

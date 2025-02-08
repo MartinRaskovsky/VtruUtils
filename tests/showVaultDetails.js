@@ -8,16 +8,16 @@
 * These tests use the actual class and do not rely on mocks.
 */
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
-async function getVaultDetails(config, vaultAddress, summaryMode) {
+async function getVaultDetails(vaultAddress, summaryMode) {
     try {
-        const web3 = new VtruWeb3(config);
-        const vault = new VtruVault(vaultAddress, config, web3);
+        const web3 = await Web3.create(Web3.VTRU);
+        const vault = new VtruVault(vaultAddress, web3);
 
-        const vaultDetails = new VtruVaultDetails(config, web3, 0);
+        const vaultDetails = new VtruVaultDetails(web3, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
 
         if (vaultDetailsData) {
@@ -41,7 +41,7 @@ async function getVaultDetails(config, vaultAddress, summaryMode) {
 }
 
 function main() {
-    const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
+    const config = new VtruConfig();
     let vaultAddress = config.get('VAULT_ADDRESS');
 
     if (!vaultAddress) {
@@ -50,8 +50,8 @@ function main() {
     }
 
     try {
-        getVaultDetails(config, vaultAddress, 0);
-        getVaultDetails(config, vaultAddress, 1);
+        getVaultDetails(vaultAddress, 0);
+        getVaultDetails(vaultAddress, 1);
     } catch (error) {
         console.error('Error:', error.message);
     }

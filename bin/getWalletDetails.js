@@ -9,14 +9,13 @@
  **/
 
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruWalletDetails = require('../lib/vtruWalletDetails');
 
 async function getWalletDetails(wallets, summaryMode) {
     try {
-        const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3 = new VtruWeb3(config);
-        const walletDetails = new VtruWalletDetails(config, web3);
+        const web3 = await Web3.create(Web3.VTRU);
+        const walletDetails = new VtruWalletDetails(web3);
 
         const details = await walletDetails.get(wallets, 1, 1);
 

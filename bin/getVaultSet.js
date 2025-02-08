@@ -9,7 +9,7 @@
  **/
 
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
@@ -21,25 +21,24 @@ function abort(message) {
 }
 async function getVaultSet(vaultAddress, wallets, summaryMode) {
     try {
-        const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3 = new VtruWeb3(config);
+        const web3 = await Web3.create(Web3.VTRU);
 
         if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
-            vaultAddress = config.get('VAULT_ADDRESS');
+            vaultAddress = web3.getConfig().get('VAULT_ADDRESS');
         }
         if (!vaultAddress || vaultAddress.length === 0) {
             abort('Vault address not provided and not found in .env');
         }
         vaultAddress = vaultAddress.toLowerCase();
     
-        const vault = new VtruVault(vaultAddress, config, web3);
+        const vault = new VtruVault(vaultAddress, web3);
 
         if (await vault.isBlocked()) {
             abort(`Vault is blocked: ${vaultAddress}`);
         }
 
         if (!wallets || wallets.length === 0) {
-            wallets = config.get('WALLETS');
+            wallets = web3.getConfig().get('WALLETS');
             wallets = wallets
                 ? wallets.split(/\s+/).map(addr => addr.trim()).filter(addr => addr.length > 0)
                 : [];
@@ -49,7 +48,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
         vaultWallets = [vaultAddress, ...vaultWallets]; 
         wallets = mergeUnique(vaultWallets, wallets);
 
-        const vaultDetails = new VtruVaultDetails(config, web3, 0);
+        const vaultDetails = new VtruVaultDetails(web3, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1, wallets);
 
         if (vaultDetailsData) {

@@ -9,7 +9,7 @@
  */
 
 const assert = require("assert");
-const { sleep, connectTo } = require("../lib/vtruSystem");
+const { sleep } = require("../lib/vtruSystem");
 
 console.log("Running unit tests for vtruSystem.js...");
 

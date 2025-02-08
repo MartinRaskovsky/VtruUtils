@@ -10,13 +10,12 @@
 
 const { formatNumber } = require('../lib/vtruUtils');
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 
 async function main() {
   try {
-    const config  = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-    const web3    = new VtruWeb3(config);
-    const wallet  = config.get('WALLET_ADDRESS');
+    const web3 = await Web3.create(Web3.VTRU);
+    const wallet  = web3.getConfig().get('WALLET_ADDRESS');
 
     console.log(`'Balance in ${wallet}:'`,   formatNumber(await web3.getWalletRawBalance(wallet)));
 

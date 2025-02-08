@@ -7,7 +7,7 @@
  */
 
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruStakedContract = require('../lib/vtruStakedContract');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
@@ -54,12 +54,11 @@ function getGroupKey(date, groupBy) {
 
 async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
-        const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3 = new VtruWeb3(config);
-        const stakedContract = new VtruStakedContract(config, web3);
+        const web3 = await Web3.create(Web3.VTRU);
+        const stakedContract = new VtruStakedContract(web3);
 
         if (vaultAddress) {
-            const vault = new VtruVault(vaultAddress, config, web3);
+            const vault = new VtruVault(vaultAddress, web3);
             let vaultWallets = await vault.getVaultWallets();
             vaultWallets = mergeUnique([vault.getAddress()], vaultWallets);
             wallets = mergeUnique(vaultWallets, wallets);

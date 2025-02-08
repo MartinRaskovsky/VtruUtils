@@ -10,22 +10,21 @@
  **/
 
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
 async function getVaultDetails(vaultAddress, summaryMode) {
     try {
-        const config = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3 = new VtruWeb3(config);
-        const vault = new VtruVault(vaultAddress, config, web3);
+        const web3 = await Web3.create(Web3.VTRU);
+        const vault = new VtruVault(vaultAddress, web3);
 
         if (await vault.isBlocked()) {
             console.log(`Vault is blocked: ${vaultAddress}`);
             return;
         }
 
-        const vaultDetails = new VtruVaultDetails(config, web3, 0);
+        const vaultDetails = new VtruVaultDetails(web3, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
 
         if (vaultDetailsData) {

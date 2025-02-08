@@ -14,11 +14,11 @@ const VtruVaultDetails = require("../lib/vtruVaultDetails");
 const VtruWalletDetails = require("../lib/vtruWalletDetails");
 const { scaleUp, formatRawNumber } = require("../lib/vtruUtils");
 
-// Create mock instances
-const mockConfig = {};
-
 const mockWeb3 = {
-    getProvider: sinon.stub().returns({}), // Providing a stubbed provider
+    getConfig: sinon.stub().returns({
+        getAbi: sinon.stub().returns(["mocked ABI"]),
+    }),
+    getProvider: sinon.stub().returns({}),
 };
 
 // ✅ Create a mock vault contract
@@ -46,7 +46,7 @@ const mockWalletDetails = {
 sinon.stub(VtruWalletDetails.prototype, "get").resolves(mockWalletDetails);
 
 // ✅ Create the `VtruVaultDetails` instance with mocks
-const vaultDetails = new VtruVaultDetails(mockConfig, mockWeb3, 4); // minBalance = 4 ETH
+const vaultDetails = new VtruVaultDetails(mockWeb3, 4); // minBalance = 4 ETH
 
 console.log("Running unit tests for VtruVaultDetails.js...");
 

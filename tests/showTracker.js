@@ -11,16 +11,16 @@
 
 //const { ethers } = require("ethers");
 const VtruConfig = require('../lib/vtruConfig');
-const VtruWeb3 = require('../lib/vtruWeb3');
+const { Web3 } = require("../lib/libWeb3");
 //const VtruVault = require('../lib/vtruVault');
 const VtruTracker = require("../lib/vtruTracker");
 
 async function main() {
     try {
-        const config  = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
-        const web3    = new VtruWeb3(config);
+        const web3 = await Web3.create(Web3.VTRU);
+        const config = web3.getConfig();
         const vaultAddress = config.get('VAULT_ADDRESS');
-        //const vault   = new VtruVault(vaultAddress, config, web3);
+        //const vault   = new VtruVault(vaultAddress, web3);
 
         const wallet  = config.get('WALLET_ADDRESS');
         //const wallets = await vault.getVaultWallets();
