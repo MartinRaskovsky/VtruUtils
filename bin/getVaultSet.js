@@ -25,6 +25,10 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
 
         if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
             vaultAddress = web3.getConfig().get('VAULT_ADDRESS');
+            wallets = web3.getConfig().get('WALLETS');
+            wallets = wallets
+                ? wallets.split(/\s+/).map(addr => addr.trim()).filter(addr => addr.length > 0)
+                : [];
         }
         if (!vaultAddress || vaultAddress.length === 0) {
             abort('Vault address not provided and not found in .env');
@@ -35,13 +39,6 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
 
         if (await vault.isBlocked()) {
             abort(`Vault is blocked: ${vaultAddress}`);
-        }
-
-        if (!wallets || wallets.length === 0) {
-            wallets = web3.getConfig().get('WALLETS');
-            wallets = wallets
-                ? wallets.split(/\s+/).map(addr => addr.trim()).filter(addr => addr.length > 0)
-                : [];
         }
         
         let vaultWallets = await vault.getVaultWallets();
