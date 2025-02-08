@@ -12,7 +12,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const VtruVaultFactory = require("../lib/vtruVaultFactory");
 const VtruVault = require("../lib/vtruVault");
-const { sleep } = require("../lib/vtruSystem");
+const { sleep } = require("../lib/libSystem");
 
 // ✅ Create a mock config object with getAbi()
 const mockConfig = { getAbi: sinon.stub().returns([]) };

@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Author: Dr Martín Raskovsky
- * Date: January 2025
+ * Author: Dr. Martín Raskovsky
+ * Date: February 2025
  *
- * Unit tests for the vtruSystem utility module.
- * These tests ensure that sleep() correctly delays execution.
+ * Unit tests for the libSystem utility module.
+ * These tests ensure correct behavior of sleep() and connectTo().
  */
 
 const assert = require("assert");
-const { sleep } = require("../lib/vtruSystem");
+const { sleep, connectTo } = require("../lib/libSystem");
+const sinon = require("sinon");
 
-console.log("Running unit tests for vtruSystem.js...");
+console.log("Running unit tests for libSystem.js...");
 
 /**
  * Test sleep function with a short delay.
@@ -49,10 +50,35 @@ async function testSleepLong() {
     console.log("✅ testSleepLong passed.");
 }
 
+/**
+ * Test connectTo function with mock dependencies.
+ */
+function testConnectTo() {
+    const mockConfig = sinon.stub().returns({});
+    const mockWeb3 = sinon.stub().returns({});
+    
+    const VtruConfig = require("../lib/vtruConfig");
+    const VtruWeb3 = require("../lib/vtruWeb3");
+
+    sinon.stub(VtruConfig.prototype, "constructor").callsFake(mockConfig);
+    sinon.stub(VtruWeb3.prototype, "constructor").callsFake(mockWeb3);
+    
+    const networks = ["vtru", "bsc"];
+    networks.forEach(network => {
+        const { config, web3 } = connectTo(network);
+        assert(config, `❌ testConnectTo failed: config should not be null for ${network}`);
+        assert(web3, `❌ testConnectTo failed: web3 should not be null for ${network}`);
+        console.log(`✅ testConnectTo passed for ${network}.`);
+    });
+
+    sinon.restore();
+}
+
 // Run all tests
 (async () => {
     await testSleepShort();
     await testSleepLong();
-    console.log("🎉 All vtruSystem tests passed successfully!");
+    testConnectTo();
+    console.log("🎉 All libSystem tests passed successfully!");
 })();
 
