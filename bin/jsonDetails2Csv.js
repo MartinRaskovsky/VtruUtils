@@ -12,6 +12,10 @@
 const fs = require('fs');
 const { getFileName } = require('../lib/vtruUtils');
 
+function stripDecimal(numberStr) {
+    return numberStr.split('.')[0];
+}
+
 // Converts JSON data to CSV format
 function jsonToCsv(jsonData) {
     const rows = [];
@@ -33,7 +37,9 @@ function jsonToCsv(jsonData) {
     jsonData.forEach((data) => {
         indexCounter++;
 
-        const { count, address, name, balance, hasStakes, wallets, walletBalances, walletStaked, held, staked } = data;
+        let { count, address, name, balance, hasStakes, wallets, walletBalances, walletStaked, held, staked } = data;
+        held = stripDecimal(held);
+        staked = stripDecimal(staked);
 
         if (balance !== undefined) {
             let row = `${indexCounter},"${held}","${staked}","${name}","${address}","${balance}","${hasStakes}"`;
