@@ -19,10 +19,11 @@ const fse = require('fs-extra');
 
 async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", verbose = 1) {
     try {
-        const web3 = await Web3.create(Web3.VTRU);
-        const vaultFactory = new VtruVaultFactory(web3, contractName);
+        const vtru = await Web3.create(Web3.VTRU);
+        const bsc = null;
+        const vaultFactory = new VtruVaultFactory(vtru, contractName);
         const aggregator = new VtruResultAggregator();
-        const vaultDetails = new VtruVaultDetails(web3, minBalance);
+        const vaultDetails = new VtruVaultDetails(vtru, bsc, minBalance);
 
         await vaultFactory.processVaults(limit, async (vault, index) => {
             if (!(await vault.isBlocked())) {

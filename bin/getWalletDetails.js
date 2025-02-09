@@ -2,20 +2,22 @@
 
 /**
  * Author: Dr Martín Raskovsky
- * Date: January 2025
+ * Date: February 2025
  * 
  * Retrieves details for one or more wallet addresses, displaying either full details 
  * or a summary based on user input. If no wallets are provided, the script exits with an error.
  **/
 
-const VtruConfig = require('../lib/vtruConfig');
+
 const { Web3 } = require("../lib/libWeb3");
 const VtruWalletDetails = require('../lib/vtruWalletDetails');
 
 async function getWalletDetails(wallets, summaryMode) {
     try {
-        const web3 = await Web3.create(Web3.VTRU);
-        const walletDetails = new VtruWalletDetails(web3);
+        const vtru = await Web3.create(Web3.VTRU);
+        const bsc  = await Web3.create(Web3.BSC);
+  
+        const walletDetails = new VtruWalletDetails(vtru, bsc);
 
         const details = await walletDetails.get(wallets, 1, 1);
 

@@ -21,11 +21,12 @@ function abort(message) {
 }
 async function getVaultSet(vaultAddress, wallets, summaryMode) {
     try {
-        const web3 = await Web3.create(Web3.VTRU);
+        const vtru = await Web3.create(Web3.VTRU);
+        const bsc = await Web3.create(Web3.BSC);;
 
         if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
-            vaultAddress = web3.getConfig().get('VAULT_ADDRESS');
-            wallets = web3.getConfig().get('WALLETS');
+            vaultAddress = vtru.getConfig().get('VAULT_ADDRESS');
+            wallets = vtru.getConfig().get('WALLETS');
             wallets = wallets
                 ? wallets.split(/\s+/).map(addr => addr.trim()).filter(addr => addr.length > 0)
                 : [];
@@ -35,7 +36,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
         }
         vaultAddress = vaultAddress.toLowerCase();
     
-        const vault = new VtruVault(vaultAddress, web3);
+        const vault = new VtruVault(vaultAddress, vtru);
 
         if (await vault.isBlocked()) {
             abort(`Vault is blocked: ${vaultAddress}`);
@@ -45,7 +46,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
         vaultWallets = [vaultAddress, ...vaultWallets]; 
         wallets = mergeUnique(vaultWallets, wallets);
 
-        const vaultDetails = new VtruVaultDetails(web3, 0);
+        const vaultDetails = new VtruVaultDetails(vtru, bsc, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1, wallets);
 
         if (vaultDetailsData) {
@@ -57,6 +58,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
                         staked: vaultDetailsData.staked,
                         verses: vaultDetailsData.verses,
                         vibes: vaultDetailsData.vibes,
+                        sevoxs: vaultDetailsData.seboxs,
                     } 
                     : vaultDetailsData, 
                 null, 2

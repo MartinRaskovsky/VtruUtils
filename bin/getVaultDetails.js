@@ -16,15 +16,16 @@ const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
 async function getVaultDetails(vaultAddress, summaryMode) {
     try {
-        const web3 = await Web3.create(Web3.VTRU);
-        const vault = new VtruVault(vaultAddress, web3);
+        const vtru = await Web3.create(Web3.VTRU);
+        const bsc = null;
+        const vault = new VtruVault(vaultAddress, vtru);
 
         if (await vault.isBlocked()) {
             console.log(`Vault is blocked: ${vaultAddress}`);
             return;
         }
 
-        const vaultDetails = new VtruVaultDetails(web3, 0);
+        const vaultDetails = new VtruVaultDetails(vtru, bsc, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
 
         if (vaultDetailsData) {
