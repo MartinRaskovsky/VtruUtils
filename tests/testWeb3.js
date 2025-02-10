@@ -5,130 +5,156 @@
  * Date: February 2025
  *
  * Unit tests for the Web3 class.
- * These tests use mocks to simulate RPC provider interactions.
+ * These tests use mocks to simulate blockchain connection behavior.
  */
 
 const assert = require("assert");
 const sinon = require("sinon");
 const { ethers } = require("ethers");
+
+// ----------------------------------------------------------------------------
+// Stub the prototype methods on ethers.JsonRpcProvider BEFORE loading Web3.
+// ----------------------------------------------------------------------------
+
+// Stub getBlockNumber to always resolve to 1234.
+sinon.stub(ethers.JsonRpcProvider.prototype, "getBlockNumber").resolves(1234);
+
+// Stub getBalance to always resolve to 1 ETH in wei.
+sinon.stub(ethers.JsonRpcProvider.prototype, "getBalance").resolves(1000000000000000000n);
+
+// Now import the Web3 class.
 const { Web3 } = require("../lib/libWeb3");
 
-async function runTests() {
-    // ✅ Step 1: Stub `ethers.JsonRpcProvider` before `Web3.create()`
-    const mockProvider = {
-        getBlockNumber: sinon.stub().resolves(123456), // Success case
-        getBalance: sinon.stub().resolves(1000000000000000000n), // Mock balance
-    };
+console.log("Running unit tests for Web3.js...");
 
-    // ✅ Step 2: Stub `ethers.JsonRpcProvider` to always return the mock
-    sinon.stub(ethers, "JsonRpcProvider").returns(mockProvider);
+/**
+ * Test the getters and connection check.
+ * Verifies that the correct properties are set and that getLatestBlockNumber returns the stubbed value.
+ */
+async function testGettersAndConnection() {
+  // Create a Web3 instance for the "vtru" network.
+  const web3Instance = new Web3(Web3.VTRU);
 
-    // ✅ Step 3: Create `Web3` instance
-    const web3 = await Web3.create(Web3.VTRU);
+  // Wait for the asynchronous connection check to complete.
+  const blockNumber = await web3Instance.getLatestBlockNumber();
+  assert.strictEqual(
+    blockNumber,
+    1234,
+    `Expected block number 1234, but got ${blockNumber}`
+  );
 
-    // ✅ Step 4: Explicitly ensure `web3.provider` is the mock
-    web3.provider = mockProvider;
-    console.log("🛠 DEBUG1: web3.provider after override =", web3.provider);
+  // Verify that the getters return the expected values.
+  assert.strictEqual(web3Instance.getId(), "vtru", "Expected id to be 'vtru'");
+  assert.strictEqual(
+    web3Instance.getRpcUrl(),
+    "https://rpc.vitruveo.xyz",
+    "Unexpected RPC URL for vtru"
+  );
+  assert.strictEqual(
+    web3Instance.getJsonPath(),
+    "CONFIG_JSON_FILE_PATH",
+    "Unexpected JSON path for vtru"
+  );
 
-    console.log("Running unit tests for Web3.js...");
-
-    function testGetNetwork() {
-        assert.strictEqual(web3.getNetwork(), Web3.VTRU, "❌ testGetNetwork failed: Incorrect network.");
-        console.log("✅ testGetNetwork passed.");
-    }
-
-    function testGetJsonPath() {
-        assert.strictEqual(web3.getJsonPath(), "CONFIG_JSON_FILE_PATH", "❌ testGetJsonPath failed: Incorrect JSON path.");
-        console.log("✅ testGetJsonPath passed.");
-    }
-
-    function testGetProvider() {
-        const provider = web3.getProvider();
-        assert.ok(provider.getBlockNumber, "❌ testGetProvider failed: getBlockNumber method is missing.");
-        assert.ok(provider.getBalance, "❌ testGetProvider failed: getBalance method is missing.");
-        console.log("✅ testGetProvider passed.");
-    }
-
-    async function testCheckConnectionSuccess() {
-        await web3.checkConnection();
-        console.log("🛠 DEBUG3: Latest block number =", web3.getLatestBlockNumber());
-        assert.strictEqual(
-            web3.getLatestBlockNumber(),
-            123456,
-            "❌ testCheckConnectionSuccess failed: Incorrect block number."
-        );
-        console.log("✅ testCheckConnectionSuccess passed.");
-    }
-
-    async function testCheckConnectionFailure() {
-        console.log("🛠 DEBUG: Running testCheckConnectionFailure...");
-    
-        // ✅ Restore all previous stubs to avoid "already stubbed" error
-        sinon.restore();
-    
-        // ✅ Intercept `process.exit` to prevent test termination
-        const exitStub = sinon.stub(process, "exit");
-    
-        // ✅ Ensure `getBlockNumber` is properly stubbed before execution
-        const failingProvider = {
-            getBlockNumber: sinon.stub().rejects(new Error("RPC not reachable")),
-            getBalance: sinon.stub().resolves(1000000000000000000n),
-        };
-    
-        // ✅ Assign the failing provider to `web3.provider`
-        web3.provider = failingProvider;
-        console.log("🛠 DEBUG: web3.provider after forcing failure =", web3.provider);
-    
-        try {
-            await web3.checkConnection();
-            console.error("❌ testCheckConnectionFailure failed: Expected error was not thrown.");
-        } catch (error) {
-            console.log("✅ testCheckConnectionFailure passed (error thrown as expected).");
-        } finally {
-            // ✅ Restore `process.exit` after the test
-            exitStub.restore();
-        }
-    }
-    
-    async function testGetWalletRawBalance() {
-        console.log("🛠 DEBUG: Running testGetWalletRawBalance...");
-        const balance = await web3.getWalletRawBalance("0xValidWallet");
-        assert.strictEqual(balance, 1000000000000000000n, "❌ testGetWalletRawBalance failed: Expected 1 ETH but got " + balance);
-        console.log("✅ testGetWalletRawBalance passed.");
-    }
-    
-    async function testGetWalletRawBalanceFailure() {
-        console.log("🛠 DEBUG: Running testGetWalletRawBalanceFailure...");
-        mockProvider.getBalance.withArgs("0xInvalidWallet").rejects(new Error("Invalid address"));
-        const balance = await web3.getWalletRawBalance("0xInvalidWallet");
-        assert.strictEqual(balance, 0n, "❌ testGetWalletRawBalanceFailure failed: Expected 0n but got " + balance);
-        console.log("✅ testGetWalletRawBalanceFailure passed.");
-    }
-    
-    async function testGetWalletRawBalances() {
-        console.log("🛠 DEBUG: Running testGetWalletRawBalances...");
-        const balances = await web3.getWalletRawBalances(["0xWallet1", "0xWallet2"]);
-        assert.deepStrictEqual(
-            balances,
-            [1000000000000000000n, 1000000000000000000n],
-            "❌ testGetWalletRawBalances failed: Expected [1 ETH, 1 ETH] but got " + balances.map(b => b.toString())
-        );
-        console.log("✅ testGetWalletRawBalances passed.");
-    }    
-
-    testGetNetwork();
-    testGetJsonPath();
-    testGetProvider();
-    await testCheckConnectionSuccess();
-    //await testCheckConnectionFailure();
-    await testGetWalletRawBalance();
-    await testGetWalletRawBalanceFailure();
-    await testGetWalletRawBalances();
-
-    console.log("🎉 All Web3 tests passed successfully!");
+  console.log("✅ testGettersAndConnection passed.");
 }
 
-runTests().catch((error) => {
-    console.error("❌ Test execution failed:", error);
+/**
+ * Test getWalletRawBalance.
+ * Verifies that for a given wallet address the provider’s getBalance is called
+ * and that the returned balance matches the stubbed value.
+ */
+async function testGetWalletRawBalance() {
+  // Reset call history for getBalance.
+  ethers.JsonRpcProvider.prototype.getBalance.resetHistory();
+
+  const web3Instance = new Web3(Web3.VTRU);
+  await web3Instance.getLatestBlockNumber();
+
+  const wallet = "0xWalletA";
+  const balance = await web3Instance.getWalletRawBalance(wallet);
+
+  // Verify that getBalance was called with the correct wallet address.
+  sinon.assert.calledWith(ethers.JsonRpcProvider.prototype.getBalance, wallet);
+  assert.strictEqual(
+    balance,
+    1000000000000000000n,
+    `Expected balance of 1 ETH in wei, but got ${balance}`
+  );
+
+  console.log("✅ testGetWalletRawBalance passed.");
+}
+
+/**
+ * Test getWalletRawBalances.
+ * Verifies that an array of wallet addresses returns an array of balances.
+ */
+async function testGetWalletRawBalances() {
+  // Reset call history.
+  ethers.JsonRpcProvider.prototype.getBalance.resetHistory();
+
+  const web3Instance = new Web3(Web3.VTRU);
+  await web3Instance.getLatestBlockNumber();
+
+  const wallets = ["0xWalletA", "0xWalletB"];
+  const balances = await web3Instance.getWalletRawBalances(wallets);
+
+  // Both wallets should return 1 ETH in wei.
+  const expected = [1000000000000000000n, 1000000000000000000n];
+
+  // Convert BigInts to strings in the error message for serialization.
+  assert.deepStrictEqual(
+    balances,
+    expected,
+    `Expected balances ${expected.map(b => b.toString())} but got ${balances.map(b => b.toString())}`
+  );
+
+  // Ensure that getBalance was called once per wallet.
+  sinon.assert.callCount(ethers.JsonRpcProvider.prototype.getBalance, 2);
+
+  console.log("✅ testGetWalletRawBalances passed.");
+}
+
+/**
+ * Test error handling in getWalletRawBalance.
+ * Simulate a provider error so that getWalletRawBalance returns 0n.
+ */
+async function testGetWalletRawBalanceError() {
+  // Make the getBalance stub reject with an error.
+  ethers.JsonRpcProvider.prototype.getBalance.rejects(new Error("Simulated provider error"));
+
+  const web3Instance = new Web3(Web3.VTRU);
+  await web3Instance.getLatestBlockNumber();
+
+  const wallet = "0xWalletError";
+  const balance = await web3Instance.getWalletRawBalance(wallet);
+  assert.strictEqual(
+    balance,
+    0n,
+    `Expected balance 0n on error, but got ${balance}`
+  );
+
+  console.log("✅ testGetWalletRawBalanceError passed.");
+
+  // Reset getBalance to default behavior for further tests.
+  ethers.JsonRpcProvider.prototype.getBalance.resolves(1000000000000000000n);
+}
+
+// ----------------------------------------------------------------------------
+// Run all tests sequentially.
+// ----------------------------------------------------------------------------
+(async () => {
+  try {
+    await testGettersAndConnection();
+    await testGetWalletRawBalance();
+    await testGetWalletRawBalances();
+    await testGetWalletRawBalanceError();
+
+    console.log("🎉 All Web3 tests passed successfully!");
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Test failed:", error);
     process.exit(1);
-});
+  }
+})();
+

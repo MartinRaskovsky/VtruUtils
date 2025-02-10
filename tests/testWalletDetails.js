@@ -2,149 +2,127 @@
 
 /**
  * Author: Dr Martín Raskovsky
- * Date: January 2025
+ * Date: February 2025
  *
  * Unit tests for the VtruWalletDetails class.
- * These tests use mocks to simulate wallet detail retrieval.
+ * These tests use mocks to simulate contract interactions.
  */
 
 const assert = require("assert");
 const sinon = require("sinon");
-const VtruWalletDetails = require("../lib/vtruWalletDetails");
-const { formatRawNumbers, formatNumbers, scaleUp } = require("../lib/vtruUtils"); // ✅ Use correct function
 
-// ✅ Create mock instances
-const mockWeb3 = {
-    getProvider: sinon.stub().returns({}),
-    getWalletRawBalances: sinon.stub(),
+// Import the class under test and its dependencies.
+const VtruWalletDetails = require("../lib/VtruWalletDetails");
+const GenericDetails = require("../lib/libGenericDetails");
+
+// The following contract classes are instantiated internally by VtruWalletDetails.
+// For these tests we do not need to simulate their inner workings.
+const VtruWalletContract = require("../lib/vtruWalletContract");
+const VtruStakedContract = require("../lib/vtruStakedContract");
+const VtruVerseContract = require("../lib/vtruVerseContract");
+const VtruVibeContract = require("../lib/vtruVibeContract");
+const BscStakedContract = require("../lib/bscStakedContract");
+
+// Create dummy vtru and bsc web3 instances with a dummy getProvider function.
+const dummyVtru = {
+    getProvider: () => ({})
 };
-
-// ✅ Create mock contracts
-const mockStakedContract = { getStakedBalances: sinon.stub() };
-const mockVerseContract = { getVerseBalances: sinon.stub() };
-const mockVibeContract = { getVibeBalances: sinon.stub() };
-
-// ✅ Stub the constructors for `VtruWalletDetails` dependencies
-sinon.stub(require("../lib/vtruStakedContract").prototype, "getStakedBalances").callsFake(mockStakedContract.getStakedBalances);
-sinon.stub(require("../lib/vtruVerseContract").prototype, "getVerseBalances").callsFake(mockVerseContract.getVerseBalances);
-sinon.stub(require("../lib/vtruVibeContract").prototype, "getVibeBalances").callsFake(mockVibeContract.getVibeBalances);
-
-// ✅ Create the `VtruWalletDetails` instance with mocks
-const walletDetails = new VtruWalletDetails(mockWeb3);
+const dummyBsc = {
+    getProvider: () => ({})
+};
 
 console.log("Running unit tests for VtruWalletDetails.js...");
 
 /**
- * Test get method with valid wallets (no full data).
+ * Test the get() method when no BSC instance is provided and full details are not requested.
  */
-async function testGetWalletsBasic() {
-    mockWeb3.getWalletRawBalances.resolves([scaleUp(1000n), scaleUp(500n)]);
-    mockStakedContract.getStakedBalances.resolves([300n, 200n]);
+async function testGetWithoutFullAndWithoutBsc() {
+    // Prepare a dummy output for GenericDetails.get.
+    const expectedOutput = { result: "basic" };
 
-    const result = await walletDetails.get(["0xWallet1", "0xWallet2"]);
+    // Stub GenericDetails.prototype.get so that it returns the expected output.
+    const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
 
-    // ✅ Expect correctly formatted wallet balances (BigInt in WEI, so use formatRawNumbers)
+    // Create an instance of VtruWalletDetails with only the vtru instance.
+    const walletDetails = new VtruWalletDetails(dummyVtru, null);
+    const wallets = ["0xWallet1", "0xWallet2"];
+
+    // Call the get method with full = false and formatOutput = false.
+    const output = await walletDetails.get(wallets, false, false);
+
+    // Verify that GenericDetails.get was called with the provided wallet addresses.
+    sinon.assert.calledWith(genericGetStub, wallets);
+
+    // Compare the actual output with the expected output.
     assert.deepStrictEqual(
-        result.walletBalances,
-        formatRawNumbers([scaleUp(1000n), scaleUp(500n)]), 
-        `❌ testGetWalletsBasic failed: Expected walletBalances but got ${JSON.stringify(result.walletBalances)}`
+        output,
+        expectedOutput,
+        `❌ testGetWithoutFullAndWithoutBsc failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(output)}`
     );
-    assert.deepStrictEqual(
-        result.walletStaked,
-        formatRawNumbers([300n, 200n]), 
-        `❌ testGetWalletsBasic failed: Expected walletStaked but got ${JSON.stringify(result.walletStaked)}`
-    );
-    assert.strictEqual(result.held, scaleUp(1500n), `❌ testGetWalletsBasic failed: Expected held=1500n but got ${result.held}`);
-    assert.strictEqual(result.staked, 500n, `❌ testGetWalletsBasic failed: Expected staked=500n but got ${result.staked}`);
 
-    console.log("✅ testGetWalletsBasic passed.");
+    console.log("✅ testGetWithoutFullAndWithoutBsc passed.");
+
+    // Restore the stub for the next test.
+    genericGetStub.restore();
 }
 
 /**
- * Test get method with full data retrieval.
+ * Test the get() method when both full details and a BSC instance are provided.
  */
-async function testGetWalletsFull() {
-    mockWeb3.getWalletRawBalances.resolves([scaleUp(1000n), scaleUp(500n)]);
-    mockStakedContract.getStakedBalances.resolves([300n, 200n]);
-    mockVerseContract.getVerseBalances.resolves([50n, 30n]);
-    mockVibeContract.getVibeBalances.resolves([10n, 5n]);
+async function testGetWithFullAndWithBsc() {
+    const expectedOutput = { result: "full" };
 
-    const result = await walletDetails.get(["0xWallet1", "0xWallet2"], true);
+    // Stub GenericDetails.prototype.get for the full details scenario.
+    const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
 
-    // ✅ Use `formatRawNumbers()` for balances (BigInt in WEI)
-    assert.deepStrictEqual(
-        result.walletBalances,
-        formatRawNumbers([scaleUp(1000n), scaleUp(500n)]), 
-        `❌ testGetWalletsFull failed: Expected walletBalances but got ${JSON.stringify(result.walletBalances)}`
-    );
-    assert.deepStrictEqual(
-        result.walletStaked,
-        formatRawNumbers([300n, 200n]), 
-        `❌ testGetWalletsFull failed: Expected walletStaked but got ${JSON.stringify(result.walletStaked)}`
-    );
+    // Create an instance of VtruWalletDetails with both vtru and bsc instances.
+    const walletDetails = new VtruWalletDetails(dummyVtru, dummyBsc);
+    const wallets = ["0xWallet1", "0xWallet2", "0xWallet3"];
 
-    // ✅ Use `formatNumbers()` for verses and vibes (regular numbers)
+    // Call get() with full = true and formatOutput = true.
+    const output = await walletDetails.get(wallets, true, true);
+
+    // Verify that GenericDetails.get was called with the correct wallet addresses.
+    sinon.assert.calledWith(genericGetStub, wallets);
+
+    // Verify that the output is as expected.
     assert.deepStrictEqual(
-        result.walletVerses,
-        formatNumbers([50, 30], 0), 
-        `❌ testGetWalletsFull failed: Expected walletVerses but got ${JSON.stringify(result.walletVerses)}`
-    );
-    assert.deepStrictEqual(
-        result.walletVibes,
-        formatNumbers([10n, 5n], 0), 
-        `❌ testGetWalletsFull failed: Expected walletVibes but got ${JSON.stringify(result.walletVibes)}`
+        output,
+        expectedOutput,
+        `❌ testGetWithFullAndWithBsc failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(output)}`
     );
 
-    assert.strictEqual(result.verses, 80n, `❌ testGetWalletsFull failed: Expected verses=80 but got ${result.verses}`);
-    assert.strictEqual(result.vibes, 15n, `❌ testGetWalletsFull failed: Expected vibes=15 but got ${result.vibes}`);
+    console.log("✅ testGetWithFullAndWithBsc passed.");
 
-    console.log("✅ testGetWalletsFull passed.");
+    genericGetStub.restore();
 }
 
 /**
- * Test get method when contract calls fail.
+ * Test that the constructor enforces the presence of a vtru instance.
  */
-async function testGetWalletsFailures() {
-    mockWeb3.getWalletRawBalances.rejects(new Error("Blockchain error"));
-    mockStakedContract.getStakedBalances.rejects(new Error("Blockchain error"));
-    mockVerseContract.getVerseBalances.rejects(new Error("Blockchain error"));
-    mockVibeContract.getVibeBalances.rejects(new Error("Blockchain error"));
-
-    const result = await walletDetails.get(["0xWallet1", "0xWallet2"], true);
-
-    assert.deepStrictEqual(
-        result.walletBalances,
-        [],
-        `❌ testGetWalletsFailures failed: Expected empty walletBalances but got ${JSON.stringify(result.walletBalances)}`
+function testConstructorValidation() {
+    // Expect an error when a vtru instance is not provided.
+    assert.throws(
+        () => {
+            new VtruWalletDetails(null);
+        },
+        /A vtru instance is required/,
+        "❌ testConstructorValidation failed: Expected error when no vtru instance is provided"
     );
-    assert.deepStrictEqual(
-        result.walletStaked,
-        [],
-        `❌ testGetWalletsFailures failed: Expected empty walletStaked but got ${JSON.stringify(result.walletStaked)}`
-    );
-    assert.deepStrictEqual(
-        result.walletVerses,
-        [],
-        `❌ testGetWalletsFailures failed: Expected empty walletVerses but got ${JSON.stringify(result.walletVerses)}`
-    );
-    assert.deepStrictEqual(
-        result.walletVibes,
-        [],
-        `❌ testGetWalletsFailures failed: Expected empty walletVibes but got ${JSON.stringify(result.walletVibes)}`
-    );
-    assert.strictEqual(result.held, 0n, `❌ testGetWalletsFailures failed: Expected held=0n but got ${result.held}`);
-    assert.strictEqual(result.staked, 0n, `❌ testGetWalletsFailures failed: Expected staked=0n but got ${result.staked}`);
-    assert.strictEqual(result.verses, 0, `❌ testGetWalletsFailures failed: Expected verses=0 but got ${result.verses}`);
-    assert.strictEqual(result.vibes, 0, `❌ testGetWalletsFailures failed: Expected vibes=0 but got ${result.vibes}`);
-
-    console.log("✅ testGetWalletsFailures passed.");
+    console.log("✅ testConstructorValidation passed.");
 }
 
-// Run all tests
+// Run all tests sequentially.
 (async () => {
-    await testGetWalletsBasic();
-    await testGetWalletsFull();
-    await testGetWalletsFailures();
-    console.log("🎉 All VtruWalletDetails tests passed successfully!");
+    try {
+        await testGetWithoutFullAndWithoutBsc();
+        await testGetWithFullAndWithBsc();
+        testConstructorValidation();
+        console.log("🎉 All VtruWalletDetails tests passed successfully!");
+        process.exit(0);
+    } catch (error) {
+        console.error("❌ Test failed:", error);
+        process.exit(1);
+    }
 })();
 

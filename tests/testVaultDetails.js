@@ -46,7 +46,7 @@ const mockWalletDetails = {
 sinon.stub(VtruWalletDetails.prototype, "get").resolves(mockWalletDetails);
 
 // ✅ Create the `VtruVaultDetails` instance with mocks
-const vaultDetails = new VtruVaultDetails(mockWeb3, 4); // minBalance = 4 ETH
+const vaultDetails = new VtruVaultDetails(mockWeb3, null, 4); // minBalance = 4 ETH
 
 console.log("Running unit tests for VtruVaultDetails.js...");
 

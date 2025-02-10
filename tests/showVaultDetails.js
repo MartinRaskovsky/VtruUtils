@@ -17,7 +17,7 @@ async function getVaultDetails(vaultAddress, summaryMode) {
         const web3 = await Web3.create(Web3.VTRU);
         const vault = new VtruVault(vaultAddress, web3);
 
-        const vaultDetails = new VtruVaultDetails(web3, 0);
+        const vaultDetails = new VtruVaultDetails(web3, null, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
 
         if (vaultDetailsData) {

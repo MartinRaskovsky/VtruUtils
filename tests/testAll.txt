@@ -29,6 +29,15 @@ Failed to create contract instance due to missing ABI or address.
 🎉 All VtruContract tests passed successfully!
 ===========================================================
 
+testNetwork.js
+
+Running unit tests for Network.js...
+✅ testNetworkCreation passed.
+✅ testGetAll passed.
+✅ testWeb3Methods passed.
+🎉 All Network tests passed successfully!
+===========================================================
+
 testResultAggregator.js
 
 Running unit tests for VtruResultAggregator.js...
@@ -175,32 +184,20 @@ Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
 testWalletDetails.js
 
 Running unit tests for VtruWalletDetails.js...
-✅ testGetWalletsBasic passed.
-✅ testGetWalletsFull passed.
-Error fetching wallet details: Blockchain error
-✅ testGetWalletsFailures passed.
+✅ testGetWithoutFullAndWithoutBsc passed.
+✅ testGetWithFullAndWithBsc passed.
+✅ testConstructorValidation passed.
 🎉 All VtruWalletDetails tests passed successfully!
 ===========================================================
 
 testWeb3.js
 
-🛠 DEBUG1: web3.provider after override = {
-  getBlockNumber: [Function: functionStub],
-  getBalance: [Function: functionStub]
-}
 Running unit tests for Web3.js...
-✅ testGetNetwork passed.
-✅ testGetJsonPath passed.
-✅ testGetProvider passed.
-🛠 DEBUG3: Latest block number = 123456
-✅ testCheckConnectionSuccess passed.
-🛠 DEBUG: Running testGetWalletRawBalance...
+✅ testGettersAndConnection passed.
 ✅ testGetWalletRawBalance passed.
-🛠 DEBUG: Running testGetWalletRawBalanceFailure...
-Error fetching balance for wallet 0xInvalidWallet: Invalid address
-✅ testGetWalletRawBalanceFailure passed.
-🛠 DEBUG: Running testGetWalletRawBalances...
 ✅ testGetWalletRawBalances passed.
+Error fetching balance for wallet 0xWalletError: Simulated provider error
+✅ testGetWalletRawBalanceError passed.
 🎉 All Web3 tests passed successfully!
 ===========================================================
 

@@ -18,7 +18,7 @@ const mockWeb3 = { getProvider: sinon.stub().returns({}) };
 
 // ✅ Create a mock contract
 const mockContract = {
-    getVibeNFTsByOwner: sinon.stub(),
+    getVibeNFTSharesByOwner: sinon.stub(),
 };
 
 // ✅ Stub `VtruContract.getContract()` to return the mock contract
@@ -33,13 +33,10 @@ console.log("Running unit tests for VtruVibeContract.js...");
  * Test getVibeBalance method with a valid wallet.
  */
 async function testGetVibeBalanceValid() {
-    mockContract.getVibeNFTsByOwner.resolves([
-        ["id1", 300n],
-        ["id2", 200n],
-    ]);
+    mockContract.getVibeNFTSharesByOwner.resolves(300n);
 
     const balance = await vibeContract.getVibeBalance("0xWallet1");
-    assert.strictEqual(balance, 500n, `❌ testGetVibeBalanceValid failed: Expected 500n but got ${balance}`);
+    assert.strictEqual(balance, 300n, `❌ testGetVibeBalanceValid failed: Expected 300n but got ${balance}`);
 
     console.log("✅ testGetVibeBalanceValid passed.");
 }
@@ -48,10 +45,10 @@ async function testGetVibeBalanceValid() {
  * Test getVibeBalance method when the wallet has no NFTs.
  */
 async function testGetVibeBalanceEmpty() {
-    mockContract.getVibeNFTsByOwner.resolves([]); // No NFTs
+    mockContract.getVibeNFTSharesByOwner.resolves(null);
 
     const balance = await vibeContract.getVibeBalance("0xWallet2");
-    assert.strictEqual(balance, 0n, `❌ testGetVibeBalanceEmpty failed: Expected 0n but got ${balance}`);
+    assert.strictEqual(balance, null, `❌ testGetVibeBalanceEmpty failed: Expected null but got ${balance}`);
 
     console.log("✅ testGetVibeBalanceEmpty passed.");
 }
@@ -60,7 +57,7 @@ async function testGetVibeBalanceEmpty() {
  * Test getVibeBalance method when contract call fails.
  */
 async function testGetVibeBalanceFailure() {
-    mockContract.getVibeNFTsByOwner.rejects(new Error("Contract call failed"));
+    mockContract.getVibeNFTSharesByOwner.rejects(new Error("Contract call failed"));
 
     const balance = await vibeContract.getVibeBalance("0xWallet3");
     assert.strictEqual(balance, null, `❌ testGetVibeBalanceFailure failed: Expected null but got ${balance}`);
@@ -72,35 +69,34 @@ async function testGetVibeBalanceFailure() {
  * Test getVibeBalances method with multiple wallets.
  */
 async function testGetVibeBalances() {
-    mockContract.getVibeNFTsByOwner.withArgs("0xWallet1").resolves([
-        ["id1", 400n],
-        ["id2", 100n],
-    ]);
-    mockContract.getVibeNFTsByOwner.withArgs("0xWallet2").resolves([]);
-    mockContract.getVibeNFTsByOwner.withArgs("0xWallet3").resolves([
-        ["id3", 250n],
-    ]);
-
+    mockContract.getVibeNFTSharesByOwner.withArgs("0xWallet1").resolves(400n);
+    mockContract.getVibeNFTSharesByOwner.withArgs("0xWallet2").resolves(null);
+    mockContract.getVibeNFTSharesByOwner.withArgs("0xWallet3").resolves(250n);
+    
     const balances = await vibeContract.getVibeBalances(["0xWallet1", "0xWallet2", "0xWallet3"]);
+    
+    // Use a safe mapping that handles null values
+    const mappedBalances = balances.map(b => b === null ? "null" : b.toString());
     
     assert.deepStrictEqual(
         balances,
-        [500n, 0n, 250n],
-        `❌ testGetVibeBalances failed: Expected [500n, 0n, 250n] but got ${JSON.stringify(balances.map(b => b.toString()))}`
+        [400n, null, 250n],
+        `❌ testGetVibeBalances failed: Expected [400n, null, 250n] but got ${JSON.stringify(mappedBalances)}`
     );
 
     console.log("✅ testGetVibeBalances passed.");
 }
+
 
 /**
  * Test getVibeBalances method when all contract calls fail.
  */
 async function testGetVibeBalancesFailures() {
     // ✅ Reset stubs before overriding them for failures
-    mockContract.getVibeNFTsByOwner.reset();
+    mockContract.getVibeNFTSharesByOwner.reset();
     
     // ✅ Ensure all calls reject
-    mockContract.getVibeNFTsByOwner.rejects(new Error("Contract call failed"));
+    mockContract.getVibeNFTSharesByOwner.rejects(new Error("Contract call failed"));
 
     const balances = await vibeContract.getVibeBalances(["0xWallet1", "0xWallet2"]);
     
