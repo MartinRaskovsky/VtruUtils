@@ -126,7 +126,7 @@ function testConstructorValidation() {
     () => {
       new VtruWalletDetails(dummyNetwork);
     },
-    /A vtru instance is required/,
+    /❌ A VTRU network instance is required/,
     "❌ testConstructorValidation failed: Expected an error when no vtru instance is provided"
   );
 

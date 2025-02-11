@@ -1,13 +1,13 @@
 testConfig.js
 
 Running unit tests for VtruConfig.js...
-"NON_EXISTENT_KEY" not found in .env file.
+❌ "NON_EXISTENT_KEY" not found in .env file.
 ✅ testGet passed.
-Wallets not found in .env file.
-Wallets not found in .env file.
+❌ Wallets not found in .env file.
+❌ Wallets not found in .env file.
 ✅ testGetWallets passed.
-Vault address not found in .env file.
-Vault address not found in .env file.
+❌ Vault address not found in .env file.
+❌ Vault address not found in .env file.
 ✅ testGetVaultAddress passed.
 ✅ testGetAbi passed.
 ✅ testGetContractAddress passed.
@@ -19,12 +19,12 @@ Vault address not found in .env file.
 testContract.js
 
 Running unit tests for VtruContract.js...
-The specified contract address for 'NonExistentContract' does not exist.
-The specified contract address for 'NonExistentContract' does not exist.
+❌ Contract address for 'NonExistentContract' does not exist.
+❌ Contract address for 'NonExistentContract' does not exist.
 ✅ testGetAddress passed.
 ✅ testGetContract passed.
-The specified contract address for 'TestContract' does not exist.
-Failed to create contract instance due to missing ABI or address.
+❌ Contract address for 'TestContract' does not exist.
+❌ Failed to create contract instance due to missing ABI or address.
 ✅ testGetContractFailure passed.
 🎉 All VtruContract tests passed successfully!
 ===========================================================
@@ -58,10 +58,10 @@ Running unit tests for VtruSimpleTracker.js...
 Tracking transactions for: 0xTestAddress
 ✅ testTrackSuccess passed.
 Tracking transactions for: 0xTestAddress
-No transactions found or an error occurred: { status: '1', result: [] }
+❌ No transactions found or an error occurred: { status: '1', result: [] }
 ✅ testTrackNoTransactions passed.
 Tracking transactions for: 0xTestAddress
-Error fetching transactions: API request failed
+❌ Error fetching transactions: API request failed
 ✅ testTrackApiFailure passed.
 ✅ testGetEmpty passed.
 🎉 All VtruSimpleTracker tests passed successfully!
@@ -89,10 +89,10 @@ testTracker.js
 Running unit tests for VtruTracker.js...
 ✅ testTrackSuccess passed.
 ✅ testTrackNoTransactions passed.
-Error tracking address 0xTestAddress: API request failed
+❌ Error tracking address 0xTestAddress: API request failed
 ✅ testTrackApiFailure passed.
 ✅ testGetEmpty passed.
-Starting walk at level 1...
+🔍 Starting walk at level 1...
 ✅ testWalk passed.
 ✅ testTrackMultiple passed.
 🎉 All VtruTracker tests passed successfully!
@@ -171,16 +171,16 @@ testVibeContract.js
 Running unit tests for VtruVibeContract.js...
 ✅ testGetVibeBalanceValid passed.
 ✅ testGetVibeBalanceEmpty passed.
-Error fetching VIBE balance for wallet 0xWallet3: Contract call failed
+❌ Error fetching VIBE balance for wallet 0xWallet3: Contract call failed
 ✅ testGetVibeBalanceFailure passed.
 ✅ testGetVibeBalances passed.
-Error fetching VIBE balance for wallet 0xWallet1: Contract call failed
-Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
+❌ Error fetching VIBE balance for wallet 0xWallet1: Contract call failed
+❌ Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
 ✅ testGetVibeBalancesFailures passed.
 🎉 All VtruVibeContract tests passed successfully!
 ===========================================================
 
-testWallDetails.js
+testWalletDetails.js
 
 Running unit tests for VtruWalletDetails.js...
 ✅ testGetWithoutFullAndWithoutBSC passed.
@@ -195,7 +195,7 @@ Running unit tests for Web3.js...
 ✅ testGettersAndConnection passed.
 ✅ testGetWalletRawBalance passed.
 ✅ testGetWalletRawBalances passed.
-Error fetching balance for wallet 0xWalletError: Simulated provider error
+❌ Error fetching balance for wallet 0xWalletError: Simulated provider error
 ✅ testGetWalletRawBalanceError passed.
 🎉 All Web3 tests passed successfully!
 ===========================================================
