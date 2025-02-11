@@ -51,7 +51,6 @@ function getGroupKey(date, groupBy) {
     return `${("0" + date.getDate()).slice(-2)}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString().slice(-2)}`;
 }
 
-
 async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
         const web3 = await Web3.create(Web3.VTRU);

@@ -83,41 +83,38 @@ async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOut
             ? await (useBalance ? bscStakedContract.getStakedDetail(wallets[0]) : bscStakedContract.getStakedDetail(wallets[0]))
             : await (useBalance ? bscStakedContract.getStakedDetails(wallets) : bscStakedContract.getStakedDetails(wallets));
 
-        if (!Array.isArray(result)) {
-            result = [result];
-        }
-
         let totals = {
             wallet: 'Total',
-            reward: 0n,
+            unlocked: 0n,
+            locked: 0n,
             date: ""
         };
 
-
+        let rows = result.sort((a, b) => Number(a.stamp) - Number(b.stamp));
         let formattedData = [];
-        for (let i=0; i< result.length; i++) {
-            const outer = result[i];
-            const balance = outer['balance'];
-            const rows = outer['rows'];
-            for (let j=0; j<rows.length; j++) {
-                let inner = rows[j]
-                const date = inner['date'];
-                const amount = inner['amount'];
-                const wallet = inner['wallet'];
-                totals.reward += amount;
+        
+        for (let j=0; j<rows.length; j++) {
+            let row = rows[j];
 
-                formattedData.push({
-                  wallet: wallet,
-                  reward: formatRawNumber(amount),
-                  date: await formatStamp(bsc, date),
-                });
-           }
-        };
+            const stamp = row['stamp'];
+            const locked = row['locked'];
+            const unlocked = ((locked * 100n) / 95n) - locked;
+            const wallet = row['wallet'];
+            totals.unlocked += unlocked;
+            totals.locked += locked;
 
+            formattedData.push({
+                wallet: wallet,
+                unlocked: formatRawNumber(unlocked),
+                locked: formatRawNumber(locked),
+                date: await formatStamp(bsc, stamp),
+            });
+        }
 
         formattedData.push({
             wallet: 'Total',
-            reward: formatRawNumber(totals.reward),
+            locked: formatRawNumber(totals. locked),
+            unlocked: formatRawNumber(totals. unlocked),
                 date: ""
             });
         
