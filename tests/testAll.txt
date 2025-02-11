@@ -141,9 +141,8 @@ Running unit tests for VtruVault.js...
 testVaultDetails.js
 
 Running unit tests for VtruVaultDetails.js...
-✅ testGetVaultAboveMinBalance passed.
-✅ testGetVaultBelowMinBalance passed.
-✅ testGetSummary passed.
+FakeGenericDetails.get called with wallets: [ '0xwallet1', '0xwallet2' ]
+✅ testGetBelowThreshold passed.
 🎉 All VtruVaultDetails tests passed successfully!
 ===========================================================
 
@@ -181,11 +180,11 @@ Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
 🎉 All VtruVibeContract tests passed successfully!
 ===========================================================
 
-testWalletDetails.js
+testWallDetails.js
 
 Running unit tests for VtruWalletDetails.js...
-✅ testGetWithoutFullAndWithoutBsc passed.
-✅ testGetWithFullAndWithBsc passed.
+✅ testGetWithoutFullAndWithoutBSC passed.
+✅ testGetWithFullAndWithBSC passed.
 ✅ testConstructorValidation passed.
 🎉 All VtruWalletDetails tests passed successfully!
 ===========================================================

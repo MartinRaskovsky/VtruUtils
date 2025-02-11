@@ -11,118 +11,139 @@
 const assert = require("assert");
 const sinon = require("sinon");
 
-// Import the class under test and its dependencies.
-const VtruWalletDetails = require("../lib/VtruWalletDetails");
+// Import dependencies
+const { Web3 } = require("../lib/libWeb3");
+const { Network } = require("../lib/libNetwork");
 const GenericDetails = require("../lib/libGenericDetails");
 
-// The following contract classes are instantiated internally by VtruWalletDetails.
-// For these tests we do not need to simulate their inner workings.
-const VtruWalletContract = require("../lib/vtruWalletContract");
-const VtruStakedContract = require("../lib/vtruStakedContract");
-const VtruVerseContract = require("../lib/vtruVerseContract");
-const VtruVibeContract = require("../lib/vtruVibeContract");
-const BscStakedContract = require("../lib/bscStakedContract");
+// Import the class under test.
+const VtruWalletDetails = require("../lib/vtruWalletDetails");
 
-// Create dummy vtru and bsc web3 instances with a dummy getProvider function.
-const dummyVtru = {
-    getProvider: () => ({})
+// -----------------------------------------------------------------------------
+// Create dummy objects for the vtru and bsc instances.
+// Note: We include a dummy getProvider() method because contract constructors
+// (like in VtruStakedContract) call web3.getProvider()
+// -----------------------------------------------------------------------------
+const dummyVtru = { 
+  getProvider: () => ({}) 
 };
-const dummyBsc = {
-    getProvider: () => ({})
+const dummyBsc  = { 
+  getProvider: () => ({}) 
 };
 
 console.log("Running unit tests for VtruWalletDetails.js...");
 
 /**
- * Test the get() method when no BSC instance is provided and full details are not requested.
+ * Test the get() method when only a vtru instance is provided (no BSC)
+ * and full details are not requested.
  */
-async function testGetWithoutFullAndWithoutBsc() {
-    // Prepare a dummy output for GenericDetails.get.
-    const expectedOutput = { result: "basic" };
+async function testGetWithoutFullAndWithoutBSC() {
+  // Prepare a dummy output for GenericDetails.get.
+  const expectedOutput = { result: "basic" };
 
-    // Stub GenericDetails.prototype.get so that it returns the expected output.
-    const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
+  // Stub GenericDetails.prototype.get so that it returns the expected output.
+  const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
 
-    // Create an instance of VtruWalletDetails with only the vtru instance.
-    const walletDetails = new VtruWalletDetails(dummyVtru, null);
-    const wallets = ["0xWallet1", "0xWallet2"];
+  // Create a dummy network that returns only a vtru instance.
+  const dummyNetwork = {
+    get: (id) => {
+      if (id === Web3.VTRU) return dummyVtru;
+      return undefined;
+    }
+  };
 
-    // Call the get method with full = false and formatOutput = false.
-    const output = await walletDetails.get(wallets, false, false);
+  // Create the VtruWalletDetails instance.
+  const walletDetails = new VtruWalletDetails(dummyNetwork);
+  const wallets = ["0xWallet1", "0xWallet2"];
 
-    // Verify that GenericDetails.get was called with the provided wallet addresses.
-    sinon.assert.calledWith(genericGetStub, wallets);
+  // Call get() with full = false and formatOutput = false.
+  const result = await walletDetails.get(wallets, false, false);
 
-    // Compare the actual output with the expected output.
-    assert.deepStrictEqual(
-        output,
-        expectedOutput,
-        `❌ testGetWithoutFullAndWithoutBsc failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(output)}`
-    );
+  // Verify that GenericDetails.get was called with the provided wallet addresses.
+  sinon.assert.calledWith(genericGetStub, wallets);
 
-    console.log("✅ testGetWithoutFullAndWithoutBsc passed.");
+  // Compare the result with the expected output.
+  assert.deepStrictEqual(
+    result,
+    expectedOutput,
+    `❌ testGetWithoutFullAndWithoutBSC failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(result)}`
+  );
 
-    // Restore the stub for the next test.
-    genericGetStub.restore();
+  console.log("✅ testGetWithoutFullAndWithoutBSC passed.");
+  genericGetStub.restore();
 }
 
 /**
- * Test the get() method when both full details and a BSC instance are provided.
+ * Test the get() method when both vtru and bsc instances are provided,
+ * and full details are requested.
  */
-async function testGetWithFullAndWithBsc() {
-    const expectedOutput = { result: "full" };
+async function testGetWithFullAndWithBSC() {
+  const expectedOutput = { result: "full" };
 
-    // Stub GenericDetails.prototype.get for the full details scenario.
-    const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
+  // Stub GenericDetails.prototype.get to return the expected output.
+  const genericGetStub = sinon.stub(GenericDetails.prototype, "get").resolves(expectedOutput);
 
-    // Create an instance of VtruWalletDetails with both vtru and bsc instances.
-    const walletDetails = new VtruWalletDetails(dummyVtru, dummyBsc);
-    const wallets = ["0xWallet1", "0xWallet2", "0xWallet3"];
+  // Create a dummy network that returns both vtru and bsc.
+  const dummyNetwork = {
+    get: (id) => {
+      if (id === Web3.VTRU) return dummyVtru;
+      if (id === Web3.BSC)  return dummyBsc;
+    }
+  };
 
-    // Call get() with full = true and formatOutput = true.
-    const output = await walletDetails.get(wallets, true, true);
+  // Create the VtruWalletDetails instance.
+  const walletDetails = new VtruWalletDetails(dummyNetwork);
+  const wallets = ["0xWallet1", "0xWallet2", "0xWallet3"];
 
-    // Verify that GenericDetails.get was called with the correct wallet addresses.
-    sinon.assert.calledWith(genericGetStub, wallets);
+  // Call get() with full = true and formatOutput = true.
+  const result = await walletDetails.get(wallets, true, true);
 
-    // Verify that the output is as expected.
-    assert.deepStrictEqual(
-        output,
-        expectedOutput,
-        `❌ testGetWithFullAndWithBsc failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(output)}`
-    );
+  // Verify that GenericDetails.get was called with the correct wallet addresses.
+  sinon.assert.calledWith(genericGetStub, wallets);
 
-    console.log("✅ testGetWithFullAndWithBsc passed.");
+  // Compare the result with the expected output.
+  assert.deepStrictEqual(
+    result,
+    expectedOutput,
+    `❌ testGetWithFullAndWithBSC failed: Expected ${JSON.stringify(expectedOutput)} but got ${JSON.stringify(result)}`
+  );
 
-    genericGetStub.restore();
+  console.log("✅ testGetWithFullAndWithBSC passed.");
+  genericGetStub.restore();
 }
 
 /**
- * Test that the constructor enforces the presence of a vtru instance.
+ * Test that the constructor throws an error when no vtru instance is provided.
  */
 function testConstructorValidation() {
-    // Expect an error when a vtru instance is not provided.
-    assert.throws(
-        () => {
-            new VtruWalletDetails(null);
-        },
-        /A vtru instance is required/,
-        "❌ testConstructorValidation failed: Expected error when no vtru instance is provided"
-    );
-    console.log("✅ testConstructorValidation passed.");
+  // Create a dummy network that returns undefined for any id.
+  const dummyNetwork = {
+    get: (id) => undefined
+  };
+
+  // Expect an error when constructing VtruWalletDetails without a vtru instance.
+  assert.throws(
+    () => {
+      new VtruWalletDetails(dummyNetwork);
+    },
+    /A vtru instance is required/,
+    "❌ testConstructorValidation failed: Expected an error when no vtru instance is provided"
+  );
+
+  console.log("✅ testConstructorValidation passed.");
 }
 
 // Run all tests sequentially.
 (async () => {
-    try {
-        await testGetWithoutFullAndWithoutBsc();
-        await testGetWithFullAndWithBsc();
-        testConstructorValidation();
-        console.log("🎉 All VtruWalletDetails tests passed successfully!");
-        process.exit(0);
-    } catch (error) {
-        console.error("❌ Test failed:", error);
-        process.exit(1);
-    }
+  try {
+    await testGetWithoutFullAndWithoutBSC();
+    await testGetWithFullAndWithBSC();
+    testConstructorValidation();
+    console.log("🎉 All VtruWalletDetails tests passed successfully!");
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Test failed:", error);
+    process.exit(1);
+  }
 })();
 

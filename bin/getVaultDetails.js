@@ -9,15 +9,18 @@
  * Command-line options allow for a summary mode and help display.
  **/
 
-const VtruConfig = require('../lib/vtruConfig');
-const { Web3 } = require("../lib/libWeb3");
+
+const { Web3 } = require('../lib/libWeb3');
+const { Network } = require("../lib/libNetwork");
+
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
 async function getVaultDetails(vaultAddress, summaryMode) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
-        const bsc = null;
+        const network = await new Network([Web3.VTRU]);
+        const vtru = network.get(Web3.VTRU);
+
         const vault = new VtruVault(vaultAddress, vtru);
 
         if (await vault.isBlocked()) {
@@ -25,7 +28,7 @@ async function getVaultDetails(vaultAddress, summaryMode) {
             return;
         }
 
-        const vaultDetails = new VtruVaultDetails(vtru, bsc, 0);
+        const vaultDetails = new VtruVaultDetails(network, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
 
         if (vaultDetailsData) {

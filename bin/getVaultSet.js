@@ -8,8 +8,9 @@
  * Displays either full details or a summary based on user input.
  **/
 
-const VtruConfig = require('../lib/vtruConfig');
 const { Web3 } = require("../lib/libWeb3");
+const { Network } = require("../lib/libNetwork");
+
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 
@@ -21,8 +22,8 @@ function abort(message) {
 }
 async function getVaultSet(vaultAddress, wallets, summaryMode) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
-        const bsc = await Web3.create(Web3.BSC);;
+        const network = await new Network([Web3.VTRU, Web3.BSC]);
+        const vtru = network.get(Web3.VTRU);
 
         if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
             vaultAddress = vtru.getConfig().get('VAULT_ADDRESS');
@@ -46,7 +47,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
         vaultWallets = [vaultAddress, ...vaultWallets]; 
         wallets = mergeUnique(vaultWallets, wallets);
 
-        const vaultDetails = new VtruVaultDetails(vtru, bsc, 0);
+        const vaultDetails = new VtruVaultDetails(network, 0);
         const vaultDetailsData = await vaultDetails.get(vault, 0, 1, wallets);
 
         if (vaultDetailsData) {
