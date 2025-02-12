@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+
+/**
+ * showVortexDetails.js
+ * 
+ * Active test for the VtruVortexContract class.
+ * Retrieves and displays VORTEX details for given wallet addresses.
+ * 
+ * Author: Dr. Martín Raskovsky
+ * Date: January 2025
+ */
+
+const { Web3 } = require("../lib/libWeb3");
+const VtruVortexContract = require("../lib/vtruVortexContract");
+
+/**
+ * Displays VORTEX details for a given wallet.
+ * 
+ * @param {string} wallet - The wallet address.
+ * @param {Array<Object>} data - The VORTEX data containing tokenId and rarity.
+ */
+function show(wallet, data) {
+    if (data.length == 0) return;
+    console.log(`\nWallet: ${wallet}`);
+    const count = { Common: 0, Epic: 0, Rare: 0, Ultra: 0 };
+
+    data.forEach(({ rarity }) => count[rarity]++);
+
+    console.log(`Count: ${data.length}; Common: ${count['Common']}; Epic: ${count['Epic']}; Rare: ${count['Rare']}; Ultra: ${count['Ultra']}`);
+}
+
+/**
+ * Fetches and displays VORTEX details for multiple wallets.
+ * 
+ * @param {Array<string>} wallets - List of wallet addresses.
+ */
+async function getVortexDetails(wallets) {
+    try {
+        const web3 = await Web3.create(Web3.VTRU);
+        const vortexContract = new VtruVortexContract(web3);
+        const rows = await vortexContract.getVortexDetails(wallets);
+
+        rows.forEach((row, index) => show(wallets[index], row));
+    } catch (error) {
+        console.error("Error:", error.message);
+    }
+}
+
+/**
+ * Displays usage instructions.
+ */
+function displayUsage() {
+    console.log(`Usage: showVortexDetails.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>
+
+Options:
+  -h              Display this usage information
+
+Arguments:
+  <walletAddress>  One or more wallet addresses to process (required)`);
+}
+
+/**
+ * Main function to handle command-line arguments and execute logic.
+ */
+async function main() {
+    const args = process.argv.slice(2);
+    let walletAddresses = [];
+
+    for (let i = 0; i < args.length; i++) {
+        switch (args[i]) {
+            case "-h":
+                displayUsage();
+                process.exit(0);
+            default:
+                walletAddresses.push(args[i]);
+                break;
+        }
+    }
+
+    if (walletAddresses.length === 0) {
+        console.error("Error: Missing wallet address(es).");
+        displayUsage();
+        process.exit(1);
+    }
+
+    await getVortexDetails(walletAddresses);
+}
+
+main();
+
