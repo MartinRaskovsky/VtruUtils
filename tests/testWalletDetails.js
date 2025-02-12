@@ -4,7 +4,7 @@
  * Author: Dr Martín Raskovsky
  * Date: February 2025
  *
- * Unit tests for the VtruWalletDetails class.
+ * Unit tests for the Sections class.
  * These tests use mocks to simulate contract interactions.
  */
 
@@ -17,7 +17,7 @@ const { Network } = require("../lib/libNetwork");
 const GenericDetails = require("../lib/libGenericDetails");
 
 // Import the class under test.
-const VtruWalletDetails = require("../lib/vtruWalletDetails");
+const Sections = require("../lib/libSections");
 
 // -----------------------------------------------------------------------------
 // Create dummy objects for the vtru and bsc instances.
@@ -31,7 +31,7 @@ const dummyBsc  = {
   getProvider: () => ({}) 
 };
 
-console.log("Running unit tests for VtruWalletDetails.js...");
+console.log("Running unit tests for Sections.js...");
 
 /**
  * Test the get() method when only a vtru instance is provided (no BSC)
@@ -52,8 +52,8 @@ async function testGetWithoutFullAndWithoutBSC() {
     }
   };
 
-  // Create the VtruWalletDetails instance.
-  const walletDetails = new VtruWalletDetails(dummyNetwork);
+  // Create the Sections instance.
+  const walletDetails = new Sections(dummyNetwork);
   const wallets = ["0xWallet1", "0xWallet2"];
 
   // Call get() with full = false and formatOutput = false.
@@ -91,8 +91,8 @@ async function testGetWithFullAndWithBSC() {
     }
   };
 
-  // Create the VtruWalletDetails instance.
-  const walletDetails = new VtruWalletDetails(dummyNetwork);
+  // Create the Sections instance.
+  const walletDetails = new Sections(dummyNetwork);
   const wallets = ["0xWallet1", "0xWallet2", "0xWallet3"];
 
   // Call get() with full = true and formatOutput = true.
@@ -121,10 +121,10 @@ function testConstructorValidation() {
     get: (id) => undefined
   };
 
-  // Expect an error when constructing VtruWalletDetails without a vtru instance.
+  // Expect an error when constructing Sections without a vtru instance.
   assert.throws(
     () => {
-      new VtruWalletDetails(dummyNetwork);
+      new Sections(dummyNetwork);
     },
     /❌ A VTRU network instance is required/,
     "❌ testConstructorValidation failed: Expected an error when no vtru instance is provided"
@@ -139,7 +139,7 @@ function testConstructorValidation() {
     await testGetWithoutFullAndWithoutBSC();
     await testGetWithFullAndWithBSC();
     testConstructorValidation();
-    console.log("🎉 All VtruWalletDetails tests passed successfully!");
+    console.log("🎉 All Sections tests passed successfully!");
     process.exit(0);
   } catch (error) {
     console.error("❌ Test failed:", error);

@@ -182,11 +182,11 @@ Running unit tests for VtruVibeContract.js...
 
 testWalletDetails.js
 
-Running unit tests for VtruWalletDetails.js...
+Running unit tests for Sections.js...
 ✅ testGetWithoutFullAndWithoutBSC passed.
 ✅ testGetWithFullAndWithBSC passed.
 ✅ testConstructorValidation passed.
-🎉 All VtruWalletDetails tests passed successfully!
+🎉 All Sections tests passed successfully!
 ===========================================================
 
 testWeb3.js

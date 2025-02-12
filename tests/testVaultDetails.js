@@ -46,7 +46,7 @@ const { Network } = require("../lib/libNetwork");
 // 3. Import Classes Under Test
 // -----------------------------------------------------------------------------
 const VtruVaultDetails = require("../lib/vtruVaultDetails");
-const VtruWalletDetails = require("../lib/vtruWalletDetails");
+const Sections = require("../lib/libSections");
 
 // -----------------------------------------------------------------------------
 // 4. Stub Formatting Functions from vtruUtils for Predictable Outputs

@@ -4,7 +4,7 @@
 * Author: Dr Martín Raskovsky
 * Date: February 2025
 * 
-* Unit tests for the ETH Network.
+* Unit tests for the BSC Network.
 * These tests use network and do not rely on mocks.
 */
 
@@ -13,8 +13,9 @@ const { ethers } = require("ethers");
 
 async function main() {
 
-const rpcUrL = 'https://rpc.mevblocker.io';
+const rpcUrL = "https://bsc-dataseed.binance.org";
 const provider = new ethers.JsonRpcProvider(rpcUrL);
+
 const wallet = '0x0e476B2dc47643E71d2A85BadE57407260D1d976';
 
 let latestBlockNumber = 0;

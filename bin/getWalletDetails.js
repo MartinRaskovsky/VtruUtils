@@ -12,12 +12,12 @@
 const { Web3 } = require("../lib/libWeb3");
 const { Network } = require("../lib/libNetwork");
 
-const VtruWalletDetails = require('../lib/vtruWalletDetails');
+const Sections = require('../lib/libSections');
 
 async function getWalletDetails(wallets, summaryMode) {
     try {
         const network = await new Network(Web3.networkIds);
-        const walletDetails = new VtruWalletDetails(network);
+        const walletDetails = new Sections(network);
 
         const details = await walletDetails.get(wallets, 1, 1);
 
