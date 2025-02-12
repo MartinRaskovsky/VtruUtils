@@ -1,0 +1,9 @@
+{
+    "mainnet": {
+        "ETH": "0x26f6448253fdF3883f9510C3b119a8BFdaC069FF"
+    },
+    "abi": {
+            "ETH":[
+	    ]
+	   }
+}

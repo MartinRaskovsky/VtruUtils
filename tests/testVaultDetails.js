@@ -26,7 +26,7 @@ function DummyContract() {
   };
 }
 const contractModules = [
-  "../lib/vtruWalletContract",
+  "../lib/libWalletContract",
   "../lib/vtruStakedContract",
   "../lib/vtruVerseContract",
   "../lib/vtruVibeContract",

@@ -16,7 +16,7 @@ const VtruWalletDetails = require('../lib/vtruWalletDetails');
 
 async function getWalletDetails(wallets, summaryMode) {
     try {
-        const network = await new Network([Web3.VTRU, Web3.BSC]);;
+        const network = await new Network(Web3.networkIds);
         const walletDetails = new VtruWalletDetails(network);
 
         const details = await walletDetails.get(wallets, 1, 1);

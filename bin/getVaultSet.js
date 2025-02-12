@@ -22,7 +22,7 @@ function abort(message) {
 }
 async function getVaultSet(vaultAddress, wallets, summaryMode) {
     try {
-        const network = await new Network([Web3.VTRU, Web3.BSC]);
+        const network = await new Network(Web3.networkIds);
         const vtru = network.get(Web3.VTRU);
 
         if (wallets.length == 0 && (!vaultAddress || vaultAddress.length === 0)) {
@@ -59,6 +59,7 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
                         staked: vaultDetailsData.staked,
                         verses: vaultDetailsData.verses,
                         vibes: vaultDetailsData.vibes,
+                        eths: vaultDetailsData.eths,
                         sevoxs: vaultDetailsData.seboxs,
                     } 
                     : vaultDetailsData, 

@@ -16,11 +16,13 @@ async function getVibeDetails(wallet) {
         const web3 = await Web3.create(Web3.VTRU);
         const vibeContract = new VtruVibeContract(web3);
 
-        const balance = await vibeContract.getVibeBalance(wallet);
-        const revenue = await vibeContract.getVibeRevenue(wallet);
+        
+        const { balance, noTokens, claimed, unclaimed } = await vibeContract.getVibeDetail(wallet);
         console.log(`Wallet: ${wallet}`);
-        console.log(`Vibe balance: ${formatNumber(balance, 0)}`);
-        console.log(`Vibe revenue: ${formatRawNumber(revenue)}`);
+        console.log(`Vibe Balance: ${formatNumber(balance, 0)}`);
+        console.log(`Vibe #Tokens: ${typeof noTokens} ${noTokens}`);
+        console.log(`Vibe Claimed: ${formatRawNumber(claimed)}`);
+        console.log(`Vibe Unclaimed: ${formatRawNumber(unclaimed)}`);
         
     } catch (error) {
         console.error('Error:', error.message);
