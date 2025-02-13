@@ -4,14 +4,14 @@
  * Author: Dr Martín Raskovsky
  * Date: January 2025
  *
- * Unit tests for the VtruVerseContract class.
+ * Unit tests for the TokenVerse class.
  * These tests use mocks to simulate VERSE contract interactions.
  */
 
 const assert = require("assert");
 const sinon = require("sinon");
 const ethers = require("ethers"); // Import ethers
-const VtruVerseContract = require("../lib/vtruVerseContract");
+const TokenVerse = require("../lib/tokenVerse");
 
 // ✅ Mock valid Ethereum addresses
 const wallet1 = "0x0000000000000000000000000000000000000001";
@@ -32,12 +32,12 @@ const mockContract = {
 };
 
 // ✅ Stub `VtruContract.getContract()` to return the mock contract
-sinon.stub(VtruVerseContract.prototype, "getContract").returns(mockContract);
+sinon.stub(TokenVerse.prototype, "getContract").returns(mockContract);
 
-// ✅ Create the `VtruVerseContract` instance with mocks
-const verseContract = new VtruVerseContract(mockConfig, mockWeb3);
+// ✅ Create the `TokenVerse` instance with mocks
+const verseContract = new TokenVerse(mockConfig, mockWeb3);
 
-console.log("Running unit tests for VtruVerseContract.js...");
+console.log("Running unit tests for TokenVerse.js...");
 
 async function testGetVerseBalanceValid() {
     mockContract.getVerseNFTByOwner.resolves(["id", "owner", 500]); // Mock NFT structure
@@ -94,6 +94,6 @@ async function testGetVerseBalancesFailures() {
     await testGetVerseBalanceFailure();
     await testGetVerseBalances();
     await testGetVerseBalancesFailures();
-    console.log("🎉 All VtruVerseContract tests passed successfully!");
+    console.log("🎉 All TokenVerse tests passed successfully!");
 })();
 

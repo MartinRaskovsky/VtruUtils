@@ -26,11 +26,11 @@ function DummyContract() {
   };
 }
 const contractModules = [
-  "../lib/libWalletContract",
-  "../lib/vtruStakedContract",
-  "../lib/vtruVerseContract",
-  "../lib/vtruVibeContract",
-  "../lib/bscStakedContract"
+  "../lib/tokenWallet",
+  "../lib/tokenStakedVtru",
+  "../lib/tokenVerse",
+  "../lib/tokenVibe",
+  "../lib/tokenStakedSevo"
 ];
 contractModules.forEach((modPath) => {
   require.cache[require.resolve(modPath)] = { exports: DummyContract };

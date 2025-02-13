@@ -3,7 +3,7 @@
 /**
  * showVortexDetails.js
  * 
- * Active test for the VtruVortexContract class.
+ * Active test for the TokenVortex class.
  * Retrieves and displays VORTEX details for given wallet addresses.
  * 
  * Author: Dr. Martín Raskovsky
@@ -11,7 +11,7 @@
  */
 
 const { Web3 } = require("../lib/libWeb3");
-const VtruVortexContract = require("../lib/vtruVortexContract");
+const TokenVortex = require("../lib/tokenVortex");
 
 /**
  * Displays VORTEX details for a given wallet.
@@ -37,7 +37,7 @@ function show(wallet, data) {
 async function getVortexDetails(wallets) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const vortexContract = new VtruVortexContract(web3);
+        const vortexContract = new TokenVortex(web3);
         const rows = await vortexContract.getVortexDetails(wallets);
 
         rows.forEach((row, index) => show(wallets[index], row));

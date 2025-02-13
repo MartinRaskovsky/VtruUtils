@@ -8,13 +8,13 @@
  */
 
 const { Web3 } = require("../lib/libWeb3");
-const VtruVerseContract = require("../lib/vtruVerseContract");
+const TokenVerse = require("../lib/tokenVerse");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 
 async function getVerseDetails(outWallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const verseContract = new VtruVerseContract(web3);
+        const verseContract = new TokenVerse(web3);
 
         
         const data = await verseContract.getVerseDetail(outWallet);

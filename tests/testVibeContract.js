@@ -4,14 +4,14 @@
  * Author: Dr Martín Raskovsky
  * Date: January 2025
  *
- * Unit tests for the VtruVibeContract class.
+ * Unit tests for the TokenVibe class.
  * These tests use mocks to simulate VIBE contract interactions.
  */
 
 const assert = require("assert");
 const sinon = require("sinon");
 const ethers = require("ethers"); // Import ethers
-const VtruVibeContract = require("../lib/vtruVibeContract");
+const TokenVibe = require("../lib/tokenVibe");
 
 // ✅ Mock valid Ethereum addresses
 const wallet1 = "0x0000000000000000000000000000000000000001";
@@ -32,12 +32,12 @@ const mockContract = {
 };
 
 // ✅ Stub `VtruContract.getContract()` to return the mock contract
-sinon.stub(VtruVibeContract.prototype, "getContract").returns(mockContract);
+sinon.stub(TokenVibe.prototype, "getContract").returns(mockContract);
 
-// ✅ Create the `VtruVibeContract` instance with mocks
-const vibeContract = new VtruVibeContract(mockConfig, mockWeb3);
+// ✅ Create the `TokenVibe` instance with mocks
+const vibeContract = new TokenVibe(mockConfig, mockWeb3);
 
-console.log("Running unit tests for VtruVibeContract.js...");
+console.log("Running unit tests for TokenVibe.js...");
 
 /**
  * Test getVibeBalance method with a valid wallet.
@@ -125,6 +125,6 @@ async function testGetVibeBalancesFailures() {
     await testGetVibeBalanceFailure();
     await testGetVibeBalances();
     await testGetVibeBalancesFailures();
-    console.log("🎉 All VtruVibeContract tests passed successfully!");
+    console.log("🎉 All TokenVibe tests passed successfully!");
 })();
 

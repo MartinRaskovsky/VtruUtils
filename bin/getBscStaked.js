@@ -11,8 +11,8 @@ const { Web3 } = require('../lib/libWeb3');
 const { Network } = require("../lib/libNetwork");
 
 const VtruVault = require('../lib/vtruVault');
-const VtruStakedContract = require('../lib/vtruStakedContract');
-const BscStakedContract = require('../lib/bscStakedContract');
+const TokenStakedVtru = require('../lib/tokenStakedVtru');
+const TokenStakedSevo = require('../lib/tokenStakedSevo');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
@@ -70,7 +70,7 @@ async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOut
         const network = await new Network([Web3.VTRU, Web3.BSC]);
         const vtru = network.get(Web3.VTRU);
         const bsc = network.get(Web3.BSC);
-        const bscStakedContract = new BscStakedContract(bsc);
+        const tokenStakedSevo = new TokenStakedSevo(bsc);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
@@ -80,8 +80,8 @@ async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOut
         }
 
         let result = wallets.length === 1
-            ? await (useBalance ? bscStakedContract.getStakedDetail(wallets[0]) : bscStakedContract.getStakedDetail(wallets[0]))
-            : await (useBalance ? bscStakedContract.getStakedDetails(wallets) : bscStakedContract.getStakedDetails(wallets));
+            ? await (useBalance ? tokenStakedSevo.getStakedDetail(wallets[0]) : tokenStakedSevo.getStakedDetail(wallets[0]))
+            : await (useBalance ? tokenStakedSevo.getStakedDetails(wallets) : tokenStakedSevo.getStakedDetails(wallets));
 
         let totals = {
             wallet: 'Total',

@@ -22,7 +22,7 @@ const Sections = require("../lib/libSections");
 // -----------------------------------------------------------------------------
 // Create dummy objects for the vtru and bsc instances.
 // Note: We include a dummy getProvider() method because contract constructors
-// (like in VtruStakedContract) call web3.getProvider()
+// (like in TokenStakedVtru) call web3.getProvider()
 // -----------------------------------------------------------------------------
 const dummyVtru = { 
   getProvider: () => ({}) 

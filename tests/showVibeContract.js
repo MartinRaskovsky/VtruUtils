@@ -8,13 +8,13 @@
  */
 
 const { Web3 } = require("../lib/libWeb3");
-const VtruVibeContract = require("../lib/vtruVibeContract");
+const TokenVibe = require("../lib/tokenVibe");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 
 async function getVibeDetails(wallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const vibeContract = new VtruVibeContract(web3);
+        const vibeContract = new TokenVibe(web3);
 
         
         const { balance, noTokens, claimed, unclaimed } = await vibeContract.getVibeDetail(wallet);

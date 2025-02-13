@@ -9,7 +9,7 @@
 const { Web3 } = require("../lib/libWeb3");
 const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
-const VtruVerseContract = require("../lib/vtruVerseContract");
+const TokenVerse = require("../lib/tokenVerse");
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
@@ -23,7 +23,7 @@ function showUsage() {
 async function runVerseContractDetails(vaultAddress, wallets) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
-        const verseContract = new VtruVerseContract(vtru);
+        const verseContract = new TokenVerse(vtru);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);

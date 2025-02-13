@@ -73,7 +73,7 @@ testStakedContract.js
 ✅ testGetStakedBalances passed.
 ✅ testGetStakedDetail passed.
 ✅ testGetStakedDetails passed.
-🎉 All VtruStakedContract tests passed successfully!
+🎉 All TokenStakedVtru tests passed successfully!
 ===========================================================
 
 testSystem.js
@@ -158,17 +158,17 @@ Running unit tests for VtruVaultFactory.js...
 
 testVerseContract.js
 
-Running unit tests for VtruVerseContract.js...
+Running unit tests for TokenVerse.js...
 ✅ testGetVerseBalanceValid passed.
 ✅ testGetVerseBalanceFailure passed.
 ✅ testGetVerseBalances passed.
 ✅ testGetVerseBalancesFailures passed.
-🎉 All VtruVerseContract tests passed successfully!
+🎉 All TokenVerse tests passed successfully!
 ===========================================================
 
 testVibeContract.js
 
-Running unit tests for VtruVibeContract.js...
+Running unit tests for TokenVibe.js...
 ✅ testGetVibeBalanceValid passed.
 ✅ testGetVibeBalanceEmpty passed.
 ❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000003: Contract call failed
@@ -177,7 +177,7 @@ Running unit tests for VtruVibeContract.js...
 ❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000001: Contract call failed
 ❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000002: Contract call failed
 ✅ testGetVibeBalancesFailures passed.
-🎉 All VtruVibeContract tests passed successfully!
+🎉 All TokenVibe tests passed successfully!
 ===========================================================
 
 testWalletDetails.js

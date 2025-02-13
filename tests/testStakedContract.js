@@ -4,7 +4,7 @@
  * Author: Dr Martín Raskovsky
  * Date: January 2025
  *
- * Unit tests for the VtruStakedContract class.
+ * Unit tests for the TokenStakedVtru class.
  * These tests use mocks to simulate API responses.
  */
 
@@ -12,13 +12,13 @@ const assert = require("assert");
 const sinon = require("sinon");
 const VtruConfig = require("../lib/vtruConfig");
 const { Web3 } = require("../lib/libWeb3");
-const VtruStakedContract = require("../lib/vtruStakedContract");
+const TokenStakedVtru = require("../lib/tokenStakedVtru");
 const { getAddress } = require("ethers"); // Import getAddress for checksum matching
 
 async function runTests() {
     // Create mock instances
     const web3 = await Web3.create(Web3.VTRU);
-    const stakedContract = new VtruStakedContract(web3);
+    const stakedContract = new TokenStakedVtru(web3);
 
     // Stub contract interaction
     const mockContract = {
@@ -173,7 +173,7 @@ async function runTests() {
     await testGetStakedBalances();
     await testGetStakedDetail();
     await testGetStakedDetails();
-    console.log("🎉 All VtruStakedContract tests passed successfully!");
+    console.log("🎉 All TokenStakedVtru tests passed successfully!");
 }
 
 // Run tests

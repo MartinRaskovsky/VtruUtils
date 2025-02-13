@@ -9,7 +9,7 @@
 const { Web3 } = require("../lib/libWeb3");
 const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
-const VtruVibeContract = require("../lib/vtruVibeContract");
+const TokenVibe = require("../lib/tokenVibe");
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
@@ -23,7 +23,7 @@ function showUsage() {
 async function runVibeContractDetails(vaultAddress, wallets) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
-        const vibeContract = new VtruVibeContract(vtru);
+        const vibeContract = new TokenVibe(vtru);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
