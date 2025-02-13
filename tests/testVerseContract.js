@@ -10,7 +10,17 @@
 
 const assert = require("assert");
 const sinon = require("sinon");
+const ethers = require("ethers"); // Import ethers
 const VtruVerseContract = require("../lib/vtruVerseContract");
+
+// ✅ Mock valid Ethereum addresses
+const wallet1 = "0x0000000000000000000000000000000000000001";
+const wallet2 = "0x0000000000000000000000000000000000000002";
+const wallet3 = "0x0000000000000000000000000000000000000003";
+
+// ✅ Stub ethers functions to bypass validation
+sinon.stub(ethers, "isAddress").returns(true);
+sinon.stub(ethers, "getAddress").callsFake(wallet => wallet);
 
 // ✅ Create mock instances
 const mockConfig = { getAbi: sinon.stub().returns([]) };
@@ -29,39 +39,30 @@ const verseContract = new VtruVerseContract(mockConfig, mockWeb3);
 
 console.log("Running unit tests for VtruVerseContract.js...");
 
-/**
- * Test getVerseBalance method with a valid wallet.
- */
 async function testGetVerseBalanceValid() {
     mockContract.getVerseNFTByOwner.resolves(["id", "owner", 500]); // Mock NFT structure
 
-    const balance = await verseContract.getVerseBalance("0xWallet1");
+    const balance = await verseContract.getVerseBalance(wallet1);
     assert.strictEqual(balance, 500, `❌ testGetVerseBalanceValid failed: Expected 500 but got ${balance}`);
 
     console.log("✅ testGetVerseBalanceValid passed.");
 }
 
-/**
- * Test getVerseBalance method when contract call fails.
- */
 async function testGetVerseBalanceFailure() {
     mockContract.getVerseNFTByOwner.rejects(new Error("Contract call failed"));
 
-    const balance = await verseContract.getVerseBalance("0xWallet2");
+    const balance = await verseContract.getVerseBalance(wallet2);
     assert.strictEqual(balance, null, `❌ testGetVerseBalanceFailure failed: Expected null but got ${balance}`);
 
     console.log("✅ testGetVerseBalanceFailure passed.");
 }
 
-/**
- * Test getVerseBalances method with multiple wallets.
- */
 async function testGetVerseBalances() {
-    mockContract.getVerseNFTByOwner.withArgs("0xWallet1").resolves(["id", "owner", 500]);
-    mockContract.getVerseNFTByOwner.withArgs("0xWallet2").resolves(["id", "owner", 300]);
-    mockContract.getVerseNFTByOwner.withArgs("0xWallet3").resolves(["id", "owner", 0]);
+    mockContract.getVerseNFTByOwner.withArgs(wallet1).resolves(["id", "owner", 500]);
+    mockContract.getVerseNFTByOwner.withArgs(wallet2).resolves(["id", "owner", 300]);
+    mockContract.getVerseNFTByOwner.withArgs(wallet3).resolves(["id", "owner", 0]);
 
-    const balances = await verseContract.getVerseBalances(["0xWallet1", "0xWallet2", "0xWallet3"]);
+    const balances = await verseContract.getVerseBalances([wallet1, wallet2, wallet3]);
     
     assert.deepStrictEqual(
         balances,
@@ -72,17 +73,11 @@ async function testGetVerseBalances() {
     console.log("✅ testGetVerseBalances passed.");
 }
 
-/**
- * Test getVerseBalances method when all contract calls fail.
- */
 async function testGetVerseBalancesFailures() {
-    // ✅ Reset stubs before overriding them for failures
     mockContract.getVerseNFTByOwner.reset();
-    
-    // ✅ Ensure all calls reject
     mockContract.getVerseNFTByOwner.rejects(new Error("Contract call failed"));
 
-    const balances = await verseContract.getVerseBalances(["0xWallet1", "0xWallet2"]);
+    const balances = await verseContract.getVerseBalances([wallet1, wallet2]);
     
     assert.deepStrictEqual(
         balances,

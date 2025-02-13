@@ -38,7 +38,7 @@ async function runTests() {
      * Test getStakedBalance method with a valid wallet.
      */
     async function testGetStakedBalance() {
-        const wallet = "0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE";
+        const wallet = "0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE";
         const checksummedWallet = getAddress(wallet); // Ensure correct address format
 
         mockContract.getUserStakesInfo.withArgs(checksummedWallet).resolves([
@@ -61,8 +61,8 @@ async function runTests() {
      */
     async function testGetStakedBalances() {
         const wallets = [
-            "0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE",
-            "0xAB5801A7D398351B8BE11C439E05C5B3259AEC9B"
+            "0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE",
+            "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
         ];
 
         const checksummedWallets = wallets.map(getAddress);
@@ -90,7 +90,7 @@ async function runTests() {
      * Test getStakedDetail method with object return type.
      */
     async function testGetStakedDetail() {
-        const wallet = "0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE";
+        const wallet = "0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE";
         const checksummedWallet = getAddress(wallet);
         mockProvider.getBlockNumber.resolves(6524767);
 
@@ -102,7 +102,7 @@ async function runTests() {
         const expectedMaturity = Math.max(0, Math.floor(((6529767 - 6524767) * 5) / 86400));
 
         const expectedDetails = [{
-            wallet: '0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE',
+            wallet: '0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE',
             amount: 100n,
             unstakeAmount: 10n,
             lockedAmount: 5n,
@@ -119,8 +119,8 @@ async function runTests() {
      */
     async function testGetStakedDetails() {
         const wallets = [
-            "0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE",
-            "0xAB5801A7D398351B8BE11C439E05C5B3259AEC9B"
+            "0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE",
+            "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
         ];
 
         const checksummedWallets = wallets.map(getAddress);
@@ -147,7 +147,7 @@ async function runTests() {
 
         const expectedDetails = [
             {
-                wallet: '0x5AEDA56215B167893E80B4FE645BA6D5BAB767DE',
+                wallet: '0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE',
                 amount: 50n,
                 unstakeAmount: 5n,
                 lockedAmount: 2n,
@@ -155,7 +155,7 @@ async function runTests() {
                 maturityDays: expectedMaturity1
             },
             {
-                wallet: '0xAB5801A7D398351B8BE11C439E05C5B3259AEC9B',
+                wallet: '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
                 amount: 200n,
                 unstakeAmount: 20n,
                 lockedAmount: 10n,

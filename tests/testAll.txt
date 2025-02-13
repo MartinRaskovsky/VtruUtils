@@ -171,11 +171,11 @@ testVibeContract.js
 Running unit tests for VtruVibeContract.js...
 ✅ testGetVibeBalanceValid passed.
 ✅ testGetVibeBalanceEmpty passed.
-❌ Error fetching VIBE balance for wallet 0xWallet3: Contract call failed
+❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000003: Contract call failed
 ✅ testGetVibeBalanceFailure passed.
 ✅ testGetVibeBalances passed.
-❌ Error fetching VIBE balance for wallet 0xWallet1: Contract call failed
-❌ Error fetching VIBE balance for wallet 0xWallet2: Contract call failed
+❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000001: Contract call failed
+❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000002: Contract call failed
 ✅ testGetVibeBalancesFailures passed.
 🎉 All VtruVibeContract tests passed successfully!
 ===========================================================

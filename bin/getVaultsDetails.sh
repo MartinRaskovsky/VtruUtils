@@ -4,7 +4,7 @@
 # Usage: ./script.sh [-m min_balance] [-c contract_name] [-l limit]
 # Defaults: min_balance = 4000, contract_name = CreatorVaultFactory, no limit
 
-MIN_BALANCE=500
+MIN_BALANCE=3000
 CONTRACT="CreatorVaultFactory"
 LIMIT=""
 
