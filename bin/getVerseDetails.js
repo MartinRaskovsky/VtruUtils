@@ -23,7 +23,7 @@ function showUsage() {
 async function runVerseContractDetails(vaultAddress, wallets) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
-        const verseContract = new TokenVerse(vtru);
+        const tokenVerse = new TokenVerse(vtru);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
@@ -32,7 +32,7 @@ async function runVerseContractDetails(vaultAddress, wallets) {
             wallets = mergeUnique(vaultWallets, wallets);
         }
 
-        let rows = await verseContract.getVerseDetails(wallets);
+        let rows = await tokenVerse.getVerseDetails(wallets);
 
         let totals = {
             wallet: "Total",

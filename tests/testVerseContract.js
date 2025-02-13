@@ -35,14 +35,14 @@ const mockContract = {
 sinon.stub(TokenVerse.prototype, "getContract").returns(mockContract);
 
 // ✅ Create the `TokenVerse` instance with mocks
-const verseContract = new TokenVerse(mockConfig, mockWeb3);
+const tokenVerse = new TokenVerse(mockConfig, mockWeb3);
 
 console.log("Running unit tests for TokenVerse.js...");
 
 async function testGetVerseBalanceValid() {
     mockContract.getVerseNFTByOwner.resolves(["id", "owner", 500]); // Mock NFT structure
 
-    const balance = await verseContract.getVerseBalance(wallet1);
+    const balance = await tokenVerse.getVerseBalance(wallet1);
     assert.strictEqual(balance, 500, `❌ testGetVerseBalanceValid failed: Expected 500 but got ${balance}`);
 
     console.log("✅ testGetVerseBalanceValid passed.");
@@ -51,7 +51,7 @@ async function testGetVerseBalanceValid() {
 async function testGetVerseBalanceFailure() {
     mockContract.getVerseNFTByOwner.rejects(new Error("Contract call failed"));
 
-    const balance = await verseContract.getVerseBalance(wallet2);
+    const balance = await tokenVerse.getVerseBalance(wallet2);
     assert.strictEqual(balance, null, `❌ testGetVerseBalanceFailure failed: Expected null but got ${balance}`);
 
     console.log("✅ testGetVerseBalanceFailure passed.");
@@ -62,7 +62,7 @@ async function testGetVerseBalances() {
     mockContract.getVerseNFTByOwner.withArgs(wallet2).resolves(["id", "owner", 300]);
     mockContract.getVerseNFTByOwner.withArgs(wallet3).resolves(["id", "owner", 0]);
 
-    const balances = await verseContract.getVerseBalances([wallet1, wallet2, wallet3]);
+    const balances = await tokenVerse.getVerseBalances([wallet1, wallet2, wallet3]);
     
     assert.deepStrictEqual(
         balances,
@@ -77,7 +77,7 @@ async function testGetVerseBalancesFailures() {
     mockContract.getVerseNFTByOwner.reset();
     mockContract.getVerseNFTByOwner.rejects(new Error("Contract call failed"));
 
-    const balances = await verseContract.getVerseBalances([wallet1, wallet2]);
+    const balances = await tokenVerse.getVerseBalances([wallet1, wallet2]);
     
     assert.deepStrictEqual(
         balances,

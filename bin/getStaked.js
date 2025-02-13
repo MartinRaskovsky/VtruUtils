@@ -54,7 +54,7 @@ function getGroupKey(date, groupBy) {
 async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const stakedContract = new TokenStakedVtru(web3);
+        const tokenStakedVtru = new TokenStakedVtru(web3);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, web3);
@@ -64,8 +64,8 @@ async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput
         }
 
         let result = wallets.length === 1
-            ? await (useBalance ? stakedContract.getStakedBalance(wallets[0]) : stakedContract.getStakedDetail(wallets[0]))
-            : await (useBalance ? stakedContract.getStakedBalances(wallets) : stakedContract.getStakedDetails(wallets));
+            ? await (useBalance ? tokenStakedVtru.getStakedBalance(wallets[0]) : tokenStakedVtru.getStakedDetail(wallets[0]))
+            : await (useBalance ? tokenStakedVtru.getStakedBalances(wallets) : tokenStakedVtru.getStakedDetails(wallets));
 
         if (!Array.isArray(result)) {
             result = [result];

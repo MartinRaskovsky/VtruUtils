@@ -3,27 +3,27 @@
 /**
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Retrieves JSON of vibe details for given wallet addresses.
+ * Description: Retrieves JSON of vortex details for given wallet addresses.
  */
 
 const { Web3 } = require("../lib/libWeb3");
 const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
-const TokenVibe = require("../lib/tokenVibe");
-const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const TokenVortex = require("../lib/tokenVortex");
+const { groupByWalletAndKind, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
-    console.log("\nUsage: getVibeDetails.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n");
+    console.log("\nUsage: getVortexDetails.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -h                  Show this usage information.");
     process.exit(0);
 }
 
-async function runVibeContractDetails(vaultAddress, wallets) {
+async function runVortexContractDetails(vaultAddress, wallets) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
-        const tokenVibe = new TokenVibe(vtru);
+        const tokenVortex = new TokenVortex(vtru);
 
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
@@ -32,37 +32,31 @@ async function runVibeContractDetails(vaultAddress, wallets) {
             wallets = mergeUnique(vaultWallets, wallets);
         }
 
-        let rows = await tokenVibe.getVibeDetails(wallets);
+        let rows = await tokenVortex.getVortexDetails(wallets);
+        let groups = groupByWalletAndKind(rows);
 
         let totals = {
             wallet: "Total",
-            noTokens: 0n,
-            balance: 0n,
-            claimed: 0n,
-            unclaimed: 0n,
+            kind: "",
+            count: 0,
         };
 
-        let formattedData = rows.map(row => {
-            totals.noTokens += row.noTokens;
-            totals.balance += row.balance;
-            totals.claimed += row.claimed;
-            totals.unclaimed += row.unclaimed;
+        let formattedData = groups.map(group => {
+            totals.count += group.ids.length;
 
             return {
-                wallet: row.wallet,
-                noTokens: formatNumber(row.noTokens, 0),
-                balance: formatNumber(row.balance),
-                claimed: formatRawNumber(row.claimed),
-                unclaimed: formatRawNumber(row.unclaimed),
+                wallet: group.wallet,
+                kind: group.kind,
+                count: group.ids.length,
+                //ids: group.ids.map((id) => Number(id)),
             };
         });
 
         formattedData.push({
             wallet: "Total",
-            noTokens: formatNumber(totals.noTokens, 0),
-            balance: formatNumber(totals.balance),
-            claimed: formatRawNumber(totals.claimed),
-            unclaimed: formatRawNumber(totals.unclaimed),
+            kind: "",
+            count: totals.count,
+            ids: [],
         });
 
         console.log(JSON.stringify(formattedData, null, 2));
@@ -91,7 +85,7 @@ function main() {
         }
     }
 
-    runVibeContractDetails(vaultAddress, walletAddresses).catch(error => {
+    runVortexContractDetails(vaultAddress, walletAddresses).catch(error => {
         console.error("❌ Error:", error.message);
     });
 }

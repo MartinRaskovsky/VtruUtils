@@ -60,7 +60,7 @@ async function testWalletBalances(network) {
 async function testStakedContract(network) {
     console.log(`\nTesting staked contract balance retrieval on ${network.toUpperCase()}...`);
     const web3 = await Web3.create(network);  // Use the factory method
-    const stakedContract = new TokenStakedSevo(web3);
+    const tokenStakedVtru = new TokenStakedSevo(web3);
     const inWallet = testWallets[network];
     
     if (!inWallet || inWallet === "0x0000000000000000000000000000000000000000") {
@@ -68,7 +68,7 @@ async function testStakedContract(network) {
         return;
     }
     
-    const data = await stakedContract.getStakedDetail(inWallet);
+    const data = await tokenStakedVtru.getStakedDetail(inWallet);
     const {wallet, stamp, locked} = data[0];
     const amount = formatNumber(scaleDown(locked));
     const date = await formatStamp(web3, stamp);

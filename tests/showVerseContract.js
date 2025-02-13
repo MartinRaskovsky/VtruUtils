@@ -14,10 +14,10 @@ const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 async function getVerseDetails(outWallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const verseContract = new TokenVerse(web3);
+        const tokenVerse = new TokenVerse(web3);
 
         
-        const data = await verseContract.getVerseDetail(outWallet);
+        const data = await tokenVerse.getVerseDetail(outWallet);
         if (!data) return;
         const { wallet, balance } = data;
         console.log(`Verse Balance: ${formatNumber(balance, 0)} in ${wallet}`);

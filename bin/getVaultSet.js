@@ -54,13 +54,14 @@ async function getVaultSet(vaultAddress, wallets, summaryMode) {
             console.log(JSON.stringify(
                 summaryMode 
                     ? {
-                        name: vaultDetailsData.name,
-                        held: vaultDetailsData.held,
-                        staked: vaultDetailsData.staked,
-                        verses: vaultDetailsData.verses,
-                        vibes: vaultDetailsData.vibes,
-                        eths: vaultDetailsData.eths,
-                        sevoxs: vaultDetailsData.seboxs,
+                        name:    vaultDetailsData.name,
+                        held:    vaultDetailsData.held,
+                        staked:  vaultDetailsData.staked,
+                        verses:  vaultDetailsData.verses,
+                        vibes:   vaultDetailsData.vibes,
+                        vortexs: vaultDetailsData.vortexs,
+                        eths:    vaultDetailsData.eths,
+                        sevoxs:  vaultDetailsData.seboxs,
                     } 
                     : vaultDetailsData, 
                 null, 2

@@ -11,6 +11,8 @@
  */
 
 const { Web3 } = require("../lib/libWeb3");
+const { groupByWalletAndKind } = require("../lib/vtruUtils");
+
 const TokenVortex = require("../lib/tokenVortex");
 
 /**
@@ -19,14 +21,9 @@ const TokenVortex = require("../lib/tokenVortex");
  * @param {string} wallet - The wallet address.
  * @param {Array<Object>} data - The VORTEX data containing tokenId and rarity.
  */
-function show(wallet, data) {
-    if (data.length == 0) return;
-    console.log(`\nWallet: ${wallet}`);
-    const count = { Common: 0, Epic: 0, Rare: 0, Ultra: 0 };
-
-    data.forEach(({ rarity }) => count[rarity]++);
-
-    console.log(`Count: ${data.length}; Common: ${count['Common']}; Epic: ${count['Epic']}; Rare: ${count['Rare']}; Ultra: ${count['Ultra']}`);
+function show(group) {
+    const { wallet, kind, ids } = group;
+    console.log(wallet, kind, ids.length);
 }
 
 /**
@@ -39,8 +36,8 @@ async function getVortexDetails(wallets) {
         const web3 = await Web3.create(Web3.VTRU);
         const vortexContract = new TokenVortex(web3);
         const rows = await vortexContract.getVortexDetails(wallets);
-
-        rows.forEach((row, index) => show(wallets[index], row));
+        let groups = groupByWalletAndKind(rows);
+        groups.forEach((group) => show(group));
     } catch (error) {
         console.error("Error:", error.message);
     }

@@ -14,10 +14,10 @@ const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 async function getVibeDetails(wallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const vibeContract = new TokenVibe(web3);
+        const tokenVibe = new TokenVibe(web3);
 
         
-        const { balance, noTokens, claimed, unclaimed } = await vibeContract.getVibeDetail(wallet);
+        const { balance, noTokens, claimed, unclaimed } = await tokenVibe.getVibeDetail(wallet);
         console.log(`Wallet: ${wallet}`);
         console.log(`Vibe Balance: ${formatNumber(balance, 0)}`);
         console.log(`Vibe #Tokens: ${typeof noTokens} ${noTokens}`);

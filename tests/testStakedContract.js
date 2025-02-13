@@ -18,7 +18,7 @@ const { getAddress } = require("ethers"); // Import getAddress for checksum matc
 async function runTests() {
     // Create mock instances
     const web3 = await Web3.create(Web3.VTRU);
-    const stakedContract = new TokenStakedVtru(web3);
+    const tokenStakedVtru = new TokenStakedVtru(web3);
 
     // Stub contract interaction
     const mockContract = {
@@ -26,13 +26,13 @@ async function runTests() {
     };
 
     // Stub `getContract` method to return the mock contract
-    sinon.stub(stakedContract, "getContract").returns(mockContract);
+    sinon.stub(tokenStakedVtru, "getContract").returns(mockContract);
 
     // Mock provider and current block number
     const mockProvider = {
         getBlockNumber: sinon.stub().resolves(6524767), // Simulating current block number
     };
-    sinon.stub(stakedContract, "provider").value(mockProvider);
+    sinon.stub(tokenStakedVtru, "provider").value(mockProvider);
 
     /**
      * Test getStakedBalance method with a valid wallet.
@@ -45,7 +45,7 @@ async function runTests() {
             [{ 4: 100n }], []
         ]);
 
-        const balance = await stakedContract.getStakedBalance(wallet);
+        const balance = await tokenStakedVtru.getStakedBalance(wallet);
 
         assert.strictEqual(
             balance,
@@ -75,7 +75,7 @@ async function runTests() {
             [{ 4: 200n }], []
         ]);
 
-        const balances = await stakedContract.getStakedBalances(wallets);
+        const balances = await tokenStakedVtru.getStakedBalances(wallets);
 
         assert.deepStrictEqual(
             balances,
@@ -98,7 +98,7 @@ async function runTests() {
             [{ 4: 100n, 5: 10n, 6: 5n, 7: false, 3: 6529767n }], []
         ]);
 
-        const details = await stakedContract.getStakedDetail(wallet);
+        const details = await tokenStakedVtru.getStakedDetail(wallet);
         const expectedMaturity = Math.max(0, Math.floor(((6529767 - 6524767) * 5) / 86400));
 
         const expectedDetails = [{
@@ -139,7 +139,7 @@ async function runTests() {
             ], []
         ]);
 
-        const details = await stakedContract.getStakedDetails(wallets);
+        const details = await tokenStakedVtru.getStakedDetails(wallets);
 
         // Expected maturity calculation
         const expectedMaturity1 = Math.max(0, Math.floor(((6529767 - mockCurrentBlock) * 5) / 86400));
