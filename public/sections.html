@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault & Wallets</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Vault & Wallet Details</h1>
+    
+    <div class="form-container">
+        <label for="vaultAddress">Vault:</label>
+        <input type="text" id="vaultAddress" placeholder="Enter Vault Address">
+    
+        <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
+        <textarea id="walletAddresses" rows="5" placeholder="Enter Wallet Addresses, one per line"></textarea>
+    
+        <button onclick="runSections()">Get Details</button>
+    </div>
+
+    <div id="output"></div>
+
+    <!-- Stake Contract Modal (Correct Placement) -->
+    <div id="DetailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailsModal()">&times;</span>
+            <div id="DetailsModalContent">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Load JavaScript at the End for Better Performance -->
+    <script src="sections.js"></script>
+    <script src="details.js"></script>
+</body>
+</html>
+

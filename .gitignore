@@ -37,6 +37,8 @@ details-*-*.json
 # Backup directories
 lib/bak/
 bin/bak/
+public/bak
+server/bak
 tests/bak/
 data/bak
 
@@ -48,10 +50,6 @@ npm-shrinkwrap.json
 
 # Linting cache
 .eslintcache
-
-# Local web server and client
-server
-public
 
 # data used by local web client
 public/data
