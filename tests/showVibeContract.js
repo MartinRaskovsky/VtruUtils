@@ -11,7 +11,7 @@ const { Web3 } = require("../lib/libWeb3");
 const TokenVibe = require("../lib/tokenVibe");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 
-async function getVibeDetails(wallet) {
+async function getDetailVibe(wallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
         const tokenVibe = new TokenVibe(web3);
@@ -37,7 +37,7 @@ async function main() {
     }
 
     try {
-        await getVibeDetails(wallet);
+        await getDetailVibe(wallet);
     } catch (error) {
         console.error('Error:', error.message);
     }

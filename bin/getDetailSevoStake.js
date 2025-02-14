@@ -11,45 +11,16 @@ const { Web3 } = require('../lib/libWeb3');
 const { Network } = require("../lib/libNetwork");
 
 const VtruVault = require('../lib/vtruVault');
-const TokenStakedVtru = require('../lib/tokenStakedVtru');
 const TokenStakedSevo = require('../lib/tokenStakedSevo');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
-    console.log(`\nUsage: getBscStaked.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
+    console.log(`\nUsage: getDetailSevoStake.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
     console.log(`Options:`);
     console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
     console.log(`  -b                  Use balance instead of staking details.`);
-    console.log(`  -f                  Format output as an aligned table.`);
-    console.log(`  -g [day|month|year] Group results by maturity day, month, or year.`);
     console.log(`  -h                  Show this usage information.`);
     process.exit(0);
-}
-
-function alignNumbers(rows) {
-    const keys = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
-    const columnWidths = {};
-
-    keys.forEach(key => {
-        columnWidths[key] = rows.reduce((max, row) => {
-            const value = row[key] ? String(row[key]) : "";
-            return Math.max(max, value.length);
-        }, key.length);
-    });
-
-    const headers = keys.map(key => key.padStart(columnWidths[key], ' ')).join(' | ');
-    const separator = keys.map(key => '-'.repeat(columnWidths[key])).join('-|-');
-    const formattedRows = rows.filter(row => Object.values(row).some(value => value !== ""));
-
-    const formattedData = formattedRows.map(row => {
-        return keys.map(key => String(row[key] || "").padStart(columnWidths[key], ' ')).join(' | ');
-    });
-
-    return [headers, separator, ...formattedData].join('\n');
-}
-
-function getGroupKey(date) {
-    return `${("0" + date.getDate()).slice(-2)}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString().slice(-2)}`;
 }
 
 async function formatStamp(bsc, stamp) {
@@ -65,7 +36,7 @@ async function formatStamp(bsc, stamp) {
     return (`${day}-${month}-${year}`);
 }
 
-async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
+async function runBscStakedContract(vaultAddress, wallets) {
     try {
         const network = await new Network([Web3.VTRU, Web3.BSC]);
         const vtru = network.get(Web3.VTRU);
@@ -79,9 +50,11 @@ async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOut
             wallets = mergeUnique(vaultWallets, wallets);
         }
 
-        let result = wallets.length === 1
-            ? await (useBalance ? tokenStakedSevo.getStakedDetail(wallets[0]) : tokenStakedSevo.getStakedDetail(wallets[0]))
-            : await (useBalance ? tokenStakedSevo.getStakedDetails(wallets) : tokenStakedSevo.getStakedDetails(wallets));
+        let result = await tokenStakedSevo.getStakedDetails(wallets);
+        if (!result) {
+            console.error("Failed to get Stked SevoX");
+            process.exit(1);
+        }
 
         let totals = {
             wallet: 'Total',
@@ -118,12 +91,7 @@ async function runBscStakedContract(vaultAddress, wallets, useBalance, formatOut
                 date: ""
             });
         
-
-        if (formatOutput) {
-            console.log("\n" + alignNumbers(formattedData));
-        } else {
-            console.log(JSON.stringify(formattedData, null, 2));
-        }
+        console.log(JSON.stringify(formattedData, null, 2));
     } catch (error) {
         console.error("❌ Error:", error.message);
     }
@@ -133,24 +101,9 @@ function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
     let walletAddresses = [];
-    let useBalance = false;
-    let formatOutput = false;
-    let groupBy = null;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
-            case '-b':
-                useBalance = true;
-                break;
-            case '-f':
-                formatOutput = true;
-                break;
-            case '-g':
-                groupBy = ['none', 'day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
-                if (!groupBy) showUsage();
-                if (groupBy === 'none') groupBy = null;
-                i++;
-                break;
             case '-v':
                 vaultAddress = args[i + 1];
                 i++;
@@ -163,7 +116,7 @@ function main() {
         }
     }
 
-    runBscStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput, groupBy).catch(error => {
+    runBscStakedContract(vaultAddress, walletAddresses).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }

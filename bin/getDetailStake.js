@@ -3,7 +3,7 @@
 /**
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Retrieves and formats staking details for given wallet addresses.
+ * Description: Retrieves and formats staking details for given addresses.
  */
 
 const VtruConfig = require('../lib/vtruConfig');
@@ -13,7 +13,7 @@ const TokenStakedVtru = require('../lib/tokenStakedVtru');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 
 function showUsage() {
-    console.log(`\nUsage: getStaked.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
+    console.log(`\nUsage: getDetailStake.js [options] <address1> <address2> ... <walletAddressN>\n`);
     console.log(`Options:`);
     console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
     console.log(`  -b                  Use balance instead of staking details.`);
@@ -51,7 +51,7 @@ function getGroupKey(date, groupBy) {
     return `${("0" + date.getDate()).slice(-2)}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString().slice(-2)}`;
 }
 
-async function runStakedContract(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
+async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
         const tokenStakedVtru = new TokenStakedVtru(web3);
@@ -205,7 +205,7 @@ function main() {
         }
     }
 
-    runStakedContract(vaultAddress, walletAddresses, useBalance, formatOutput, groupBy).catch(error => {
+    getDetailStake(vaultAddress, walletAddresses, useBalance, formatOutput, groupBy).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }
