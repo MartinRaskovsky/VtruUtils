@@ -26,7 +26,7 @@ async function getVaultDetails(minBalance, outputFilePath, limit, contractName =
  
         const vaultFactory = new VtruVaultFactory(vtru, contractName);
         const aggregator = new VtruResultAggregator();
-        const vaultDetails = new VtruVaultDetails(network, minBalance);
+        const vaultDetails = new VtruVaultDetails(network, minBalance, false);
 
         await vaultFactory.processVaults(limit, async (vault, index) => {
             if (!(await vault.isBlocked())) {

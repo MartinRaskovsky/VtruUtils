@@ -28,8 +28,8 @@ async function getVaultDetails(vaultAddress, summaryMode) {
             return;
         }
 
-        const vaultDetails = new VtruVaultDetails(network, 0);
-        const vaultDetailsData = await vaultDetails.get(vault, 0, 1);
+        const vaultDetails = new VtruVaultDetails(network, 0, true);
+        const vaultDetailsData = await vaultDetails.get(vault, 0);
 
         if (vaultDetailsData) {
             console.log(JSON.stringify(

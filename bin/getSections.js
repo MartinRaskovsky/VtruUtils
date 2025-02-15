@@ -59,9 +59,6 @@ async function getSections(vaultAddress, wallets, formatOutput) {
         const data = await walletSections.get(merged);
 
         if (data) {
-            data['address'] = vault ? vault.address : "";
-            data['name'] = vault? await vault.getName() : "";
-            data['wallets'] = merged;
             if (formatOutput) {
                 const keys = ['wallet', 'balance'];
                 prettyfier2(data['wallets'], data['sectionVTRUHeld'], 'VTRU Held', keys);              
@@ -73,6 +70,9 @@ async function getSections(vaultAddress, wallets, formatOutput) {
                 prettyfier2(data['wallets'], data['sectionETH'], 'ETH', keys);
                 prettyfier2(data['wallets'], data['sectionBNB'], 'BNB', keys);
             } else {
+                data['address'] = vault ? vault.address : "";
+                data['name'] = vault? await vault.getName() : "";
+                data['wallets'] = merged;
                 console.log(JSON.stringify( data, null, 2));
             }
         } else {

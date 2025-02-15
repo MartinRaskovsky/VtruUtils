@@ -105,23 +105,9 @@ function renderVaultSet(modifiedData) {
                 </tr>
             </thead>
             <tbody>
-                ${generateSection(SEC_VTRU_HELD, vault, modifiedData.wallets, modifiedData.sectionVTRUHeld, modifiedData.totalVTRUHeld)}
-                ${generateSection(SEC_VTRU_STAKED, vault, modifiedData.wallets, modifiedData.sectionVTRUStaked, modifiedData.totalVTRUStaked)}
-                ${generateSection(SEC_VERSE, vault, modifiedData.wallets, modifiedData.sectionVERSE, modifiedData.totalVERSE)}
-                ${generateSection(SEC_VIBE,  vault, modifiedData.wallets, modifiedData.sectionVIBE,  modifiedData.totalVIBE)}
-                ${generateSection(SEC_VORTEX,  vault, modifiedData.wallets, modifiedData.sectionVORTEX,  modifiedData.totalVORTEX)}
-                ${generateSection(SEC_SEVOX, vault, modifiedData.wallets, modifiedData.sectionSEVOXStaked, modifiedData.totalSEVOXStaked)}
-                ${generateSection(SEC_ETH, vault, modifiedData.wallets, modifiedData.sectionETH, modifiedData.totalETH)}
-                ${generateSection(SEC_BNB, vault, modifiedData.wallets, modifiedData.sectionBNB, modifiedData.totalBNB)}          
+                ${generateSections(modifiedData, vault)}         
                 <tr class="section-header"><td colspan="3">Summary</td></tr>
-                ${generateLastRow(SEC_VTRU_HELD, modifiedData.totalVTRUHeld)}
-                ${generateLastRow(SEC_VTRU_STAKED, modifiedData.totalVTRUStaked)}
-                ${generateLastRow(SEC_VERSE, modifiedData.totalVERSE)}
-                ${generateLastRow(SEC_VIBE, modifiedData.totalVIBE)}
-                ${generateLastRow(SEC_VORTEX, modifiedData.totalVORTEX)}
-                ${generateLastRow(SEC_SEVOX, modifiedData.totalSEVOXStaked)}
-                ${generateLastRow(SEC_ETH, modifiedData.totalETH)}
-                ${generateLastRow(SEC_BNB, modifiedData.totalBNB)}
+                ${generateTotals(modifiedData)}
             </tbody>
         </table>
     `;
@@ -154,26 +140,37 @@ function computeDifferencesForDisplay(currentData, previousData) {
     modifiedData.balance = getDifference(currentData.balance, previousData.balance);
 
     // Process wallet-based arrays using the hash lookup
-    ["sectionVTRUHeld", "sectionVTRUStaked", "sectionVIBE", "sectionVORTEX", "sectionVERSE", "sectionSEVOXStaked", "sectionBNB", "sectionETH"].forEach(field => {
-        if (currentData[field]) {
-            modifiedData[field] = currentData[field].map((currValue, index) => {
+    modifiedData.sectionKeys.forEach((key, kindex) => {
+        if (currentData[key]) {
+            const decimals = modifiedData.decimals[kindex] ? modifiedData.decimals[kindex] : 0;
+            modifiedData[key] = currentData[key].map((currValue, index) => {
                 const wallet = currentData.wallets[index];
                 const prevIndex = previousWalletsHash[wallet];
-                const prevValue = (prevIndex !== undefined && previousData[field] !== undefined) ? previousData[field][prevIndex] : null;
-                const decimals = (field === "sectionVERSE" || field === "sectionVIBE" || field === "sectionVORTEX")? 0: 2;
+                const prevValue = (prevIndex !== undefined && previousData[key] !== undefined) ? previousData[key][prevIndex] : null;
                 return getDifference(currValue, prevValue, decimals);
             });
         }
     });
 
     // Process totals
-    ["totalVTRUHeld", "totalVTRUStaked", "totalVERSE", "totalVIBE", "totalVORTEX", "totalSEVOXStaked", "totalBNB", "totalETH"].forEach(field => {
-        const decimals = (field === "totalVERSE" || field === "totalVIBE" || field === "totalVORTEX")? 0: 2;
-        modifiedData[field] = getDifference(currentData[field], previousData[field], decimals);
+    modifiedData.totalKeys.forEach((key, kindex) => {
+        const decimals = modifiedData.decimals[kindex];
+        //const decimals = (key === "totalVERSE" || key === "totalVIBE" || key === "totalVORTEX")? 0: 2;
+        modifiedData[key] = getDifference(currentData[key], previousData[key], decimals);
     });
 
     return modifiedData;
 }
+
+function generateTotals(modifiedData) {
+    const sectionTitles = modifiedData.sectionTitles;
+    const totalKeys = modifiedData.totalKeys;
+    let rows = sectionTitles.map((title, index) => {
+        const totalKey = totalKeys[index];
+        return generateLastRow(title, modifiedData[totalKey]);
+    }).filter(row => row).join("");
+    return rows;
+}   
 
 function generateLastRow(label, data) {
     if (!data || !data.value || data.value === "0" || data.value === "0.00") return "";
@@ -184,6 +181,18 @@ function generateLastRow(label, data) {
                     <td class="balance-cell"><strong>${data.value}</strong></td>
                 </tr>`
 }
+
+function generateSections(modifiedData, vault) {
+    const sectionTitles = modifiedData.sectionTitles;
+    const sectionKeys = modifiedData.sectionKeys;
+    const totalKeys = modifiedData.totalKeys;
+    let rows = sectionTitles.map((title, index) => {
+        const sectionKey = sectionKeys[index];
+        const totalKey = totalKeys[index];
+        return generateSection(title, vault, modifiedData.wallets, modifiedData[sectionKey], modifiedData[totalKey]);
+    }).filter(row => row).join("");
+    return rows;
+}         
 
 function generateSection(title, vault, wallets, values, total) {
     if (!wallets || wallets.length === 0 || !values) return "";
