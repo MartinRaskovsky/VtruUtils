@@ -122,27 +122,27 @@ function createDummyVault(balance, wallets, name, hasStakesValue) {
 const dummyWalletDetailsLow = {
   held: 300n,
   staked: 50n,
-  walletBalances: [100n, 200n],
-  walletStaked: [10n, 20n],
-  walletVibes: [5n, 5n],
-  walletVerses: [2n, 3n],
+  sectionVTRUHeld: [100n, 200n],
+  sectionVTRUStaked: [10n, 20n],
+  sectionVIBE: [5n, 5n],
+  sectionVERSE: [2n, 3n],
   verses: 5n,
   vibes: 10n,
   sevoxs: 0n,
-  walletSevoxs: []
+  sectionSEVOX: []
 };
 
 const dummyWalletDetailsHigh = {
   held: 5000n,
   staked: 1000n,
-  walletBalances: [2000n, 3000n],
-  walletStaked: [500n, 500n],
-  walletVibes: [50n, 50n],
-  walletVerses: [10n, 20n],
+  sectionVTRUHeld: [2000n, 3000n],
+  sectionVTRUStaked: [500n, 500n],
+  sectionVIBE: [50n, 50n],
+  sectionVERSE: [10n, 20n],
   verses: 30n,
   vibes: 40n,
   sevoxs: 600n,
-  walletSevoxs: [300n, 300n]
+  sectionSEVOX: [300n, 300n]
 };
 
 // -----------------------------------------------------------------------------
@@ -199,16 +199,16 @@ async function testGetAboveThreshold() {
     balance: "1000",      // formatted from vault balance (1000n)
     hasStakes: true,
     wallets: ["0xextrawallet", "0xwallet1", "0xwallet2"],
-    walletBalances: ["2000", "3000"],
-    walletStaked: ["500", "500"],
-    walletVibes: ["50", "50"],
-    walletVerses: ["10", "20"],
+    sectionVTRUHeld: ["2000", "3000"],
+    sectionVTRUStaked: ["500", "500"],
+    sectionVIBE: ["50", "50"],
+    sectionVERSE: ["10", "20"],
     held: "6000",         // formatted from (5000n + 1000n)
     staked: "1000",       // formatted from dummyWalletDetailsHigh.staked
     verses: "30",         // formatted from dummyWalletDetailsHigh.verses
     vibes: "40",          // formatted from dummyWalletDetailsHigh.vibes
     sevoxs: "600",        // formatted from dummyWalletDetailsHigh.sevoxs
-    walletSevoxs: [300n, 300n]
+    sectionSEVOX: [300n, 300n]
   };
   
   assert.deepStrictEqual(

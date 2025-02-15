@@ -47,10 +47,10 @@ function jsonToCsv(jsonData) {
     const wallets = jsonData.wallets;
     
     if (wallets && wallets.length > 0) {
-        group(rows, wallets, jsonData.walletBalances, jsonData.held, 'Held');
-        group(rows, wallets, jsonData.walletStaked, jsonData.staked, 'Staked');
-        group(rows, wallets, jsonData.walletVerses, jsonData.verses, 'Verse');
-        group(rows, wallets, jsonData.walletVibes, jsonData.vibes, 'Vibe'); 
+        group(rows, wallets, jsonData.sectionVTRUHeld, jsonData.held, 'Held');
+        group(rows, wallets, jsonData.sectionVTRUStaked, jsonData.staked, 'Staked');
+        group(rows, wallets, jsonData.sectionVERSE, jsonData.verses, 'Verse');
+        group(rows, wallets, jsonData.sectionVIBE, jsonData.vibes, 'Vibe'); 
 
         rows.push('');
         rows.push('Totals');

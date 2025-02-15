@@ -64,14 +64,14 @@ async function getSections(vaultAddress, wallets, formatOutput) {
             data['wallets'] = merged;
             if (formatOutput) {
                 const keys = ['wallet', 'balance'];
-                prettyfier2(data['wallets'], data['walletBalances'], 'VTRU Held', keys);              
-                prettyfier2(data['wallets'], data['walletStaked'], 'VTRU Staked', keys);
-                prettyfier2(data['wallets'], data['walletVerses'], 'VERSE', keys);
-                prettyfier2(data['wallets'], data['walletVibes'], 'VIBE', keys);
-                prettyfier2(data['wallets'], data['walletVortexs'], 'VORTEX', keys);
-                prettyfier2(data['wallets'], data['walletSevoxs'], 'SEVO-X Staked', keys);
-                prettyfier2(data['wallets'], data['walletEths'], 'ETH', keys);
-                prettyfier2(data['wallets'], data['walletBscs'], 'BNB', keys);
+                prettyfier2(data['wallets'], data['sectionVTRUHeld'], 'VTRU Held', keys);              
+                prettyfier2(data['wallets'], data['sectionVTRUStaked'], 'VTRU Staked', keys);
+                prettyfier2(data['wallets'], data['sectionVERSE'], 'VERSE', keys);
+                prettyfier2(data['wallets'], data['sectionVIBE'], 'VIBE', keys);
+                prettyfier2(data['wallets'], data['sectionVORTEX'], 'VORTEX', keys);
+                prettyfier2(data['wallets'], data['sectionSEVOX'], 'SEVO-X Staked', keys);
+                prettyfier2(data['wallets'], data['sectionETH'], 'ETH', keys);
+                prettyfier2(data['wallets'], data['sectionBNB'], 'BNB', keys);
             } else {
                 console.log(JSON.stringify( data, null, 2));
             }

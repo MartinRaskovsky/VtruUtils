@@ -37,7 +37,7 @@ function jsonToCsv(jsonData) {
     jsonData.forEach((data) => {
         indexCounter++;
 
-        let { count, address, name, balance, hasStakes, wallets, walletBalances, walletStaked, held, staked } = data;
+        let { count, address, name, balance, hasStakes, wallets, sectionVTRUHeld, sectionVTRUStaked, held, staked } = data;
         held = stripDecimal(held);
         staked = stripDecimal(staked);
 
@@ -46,7 +46,7 @@ function jsonToCsv(jsonData) {
 
             if (wallets && wallets.length > 0) {
                 wallets.forEach((wallet, j) => {
-                    row += `,"${wallet}","${walletBalances[j]}","${walletStaked[j]}"`;
+                    row += `,"${wallet}","${sectionVTRUHeld[j]}","${sectionVTRUStaked[j]}"`;
                 });
             }
 
