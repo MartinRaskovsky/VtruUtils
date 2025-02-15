@@ -39,7 +39,7 @@ class MockVault {
     }
     getAddress() { return this.address; }
     async getName() { return "MockVault"; }
-    async vaultBalance() { return 1000000000000000000n; } // 1 ETH in wei
+    async vaultBalance() { return 1000000000000000000n; } // 1 totalETH in wei
     async getVaultWallets() { return ["0xWalletA", "0xWalletB"]; }
     async hasStakes() { return false; }
 }

@@ -80,7 +80,7 @@ const dummyConfig = {
 // -----------------------------------------------------------------------------
 const dummyVtru = { 
   getProvider: () => ({}),
-  getWalletRawBalance: async (wallet) => 1000000000000000000n, // e.g., 1 ETH in wei
+  getWalletRawBalance: async (wallet) => 1000000000000000000n, // e.g., 1 totalETH in wei
   getConfig: () => dummyConfig,
   config: dummyConfig  // added property in case contracts use this.web3.config
 };
@@ -120,29 +120,29 @@ function createDummyVault(balance, wallets, name, hasStakesValue) {
 // 9. Define Dummy Wallet Details Objects
 // -----------------------------------------------------------------------------
 const dummyWalletDetailsLow = {
-  held: 300n,
-  staked: 50n,
+  totalVTRUHeld: 300n,
+  totalVTRUStaked: 50n,
   sectionVTRUHeld: [100n, 200n],
   sectionVTRUStaked: [10n, 20n],
   sectionVIBE: [5n, 5n],
   sectionVERSE: [2n, 3n],
-  verses: 5n,
-  vibes: 10n,
-  sevoxs: 0n,
-  sectionSEVOX: []
+  totalVERSE: 5n,
+  totalVIBE: 10n,
+  totalSEVOXStaked: 0n,
+  sectionSEVOXStaked: []
 };
 
 const dummyWalletDetailsHigh = {
-  held: 5000n,
-  staked: 1000n,
+  totalVTRUHeld: 5000n,
+  totalVTRUStaked: 1000n,
   sectionVTRUHeld: [2000n, 3000n],
   sectionVTRUStaked: [500n, 500n],
   sectionVIBE: [50n, 50n],
   sectionVERSE: [10n, 20n],
-  verses: 30n,
-  vibes: 40n,
-  sevoxs: 600n,
-  sectionSEVOX: [300n, 300n]
+  totalVERSE: 30n,
+  totalVIBE: 40n,
+  totalSEVOXStaked: 600n,
+  sectionSEVOXStaked: [300n, 300n]
 };
 
 // -----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ async function testGetBelowThreshold() {
   // For below threshold, GenericDetails.get() returns dummyWalletDetailsLow.
   const vaultDetailsInstance = new VtruVaultDetails(networkWithoutBsc);
   const result = await vaultDetailsInstance.get(vault, 0, true, []);
-  // Total held = dummyWalletDetailsLow.held (300n) + vault balance (50n) = 350n, below min (scaleUp(4000) -> 4000n)
+  // Total totalVTRUHeld = dummyWalletDetailsLow.totalVTRUHeld (300n) + vault balance (50n) = 350n, below min (scaleUp(4000) -> 4000n)
   assert.strictEqual(
     result,
     null,
@@ -190,7 +190,7 @@ async function testGetAboveThreshold() {
   const vaultDetailsInstance = new VtruVaultDetails(networkWithBsc);
   const result = await vaultDetailsInstance.get(vault, 1, true, extraWallets);
   
-  // Total held = dummyWalletDetailsHigh.held (5000n) + vault balance (1000n) = 6000n.
+  // Total totalVTRUHeld = dummyWalletDetailsHigh.totalVTRUHeld (5000n) + vault balance (1000n) = 6000n.
   const expected = {
     count: 1,
     index: 1,
@@ -203,12 +203,12 @@ async function testGetAboveThreshold() {
     sectionVTRUStaked: ["500", "500"],
     sectionVIBE: ["50", "50"],
     sectionVERSE: ["10", "20"],
-    held: "6000",         // formatted from (5000n + 1000n)
-    staked: "1000",       // formatted from dummyWalletDetailsHigh.staked
-    verses: "30",         // formatted from dummyWalletDetailsHigh.verses
-    vibes: "40",          // formatted from dummyWalletDetailsHigh.vibes
-    sevoxs: "600",        // formatted from dummyWalletDetailsHigh.sevoxs
-    sectionSEVOX: [300n, 300n]
+    totalVTRUHeld: "6000",         // formatted from (5000n + 1000n)
+    totalVTRUStaked: "1000",       // formatted from dummyWalletDetailsHigh.totalVTRUStaked
+    totalVERSE: "30",         // formatted from dummyWalletDetailsHigh.totalVERSE
+    totalVIBE: "40",          // formatted from dummyWalletDetailsHigh.totalVIBE
+    totalSEVOXStaked: "600",        // formatted from dummyWalletDetailsHigh.totalSEVOXStaked
+    sectionSEVOXStaked: [300n, 300n]
   };
   
   assert.deepStrictEqual(
@@ -231,8 +231,8 @@ async function testGetSummary() {
   const summary = vaultDetailsInstance.getSummary();
   // After one vault, totalHeld should be 6000n, totalStaked should be 1000n, analyzedVaultCount = 1.
   const expectedSummary = {
-    held: "6000",
-    staked: "1000",
+    totalVTRUHeld: "6000",
+    totalVTRUStaked: "1000",
     totalHeld: "6000",
     totalStaked: "1000",
     analyzedVaultCount: 1

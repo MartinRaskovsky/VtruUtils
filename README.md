@@ -92,11 +92,13 @@ node src/bin/getVaultDetails.js 0xYourVaultAddress
 Expected output:
 ```
 {
+   ...
   "name": "Owner's Vault",
-  "held": "vtru held",
-  "staked": "vtru stacked",
-  "verses": "verses held",
-  "vibes": "number of vibes"
+  "totalVTRUHeld": "vtru held",
+  "totalVTRUStaked": "vtru stacked",
+  "totalVERSE": "VERSE held",
+  "totalVIBE": "VIBE held"
+  ...
 }
 
 ...

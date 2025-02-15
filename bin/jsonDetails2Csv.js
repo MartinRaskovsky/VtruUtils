@@ -37,12 +37,12 @@ function jsonToCsv(jsonData) {
     jsonData.forEach((data) => {
         indexCounter++;
 
-        let { count, address, name, balance, hasStakes, wallets, sectionVTRUHeld, sectionVTRUStaked, held, staked } = data;
-        held = stripDecimal(held);
-        staked = stripDecimal(staked);
+        let { count, address, name, balance, hasStakes, wallets, sectionVTRUHeld, sectionVTRUStaked, totalVTRUHeld, totalVTRUStaked } = data;
+        totalVTRUHeld = stripDecimal(totalVTRUHeld);
+        totalVTRUStaked = stripDecimal(totalVTRUStaked);
 
         if (balance !== undefined) {
-            let row = `${indexCounter},"${held}","${staked}","${name}","${address}","${balance}","${hasStakes}"`;
+            let row = `${indexCounter},"${totalVTRUHeld}","${totalVTRUStaked}","${name}","${address}","${balance}","${hasStakes}"`;
 
             if (wallets && wallets.length > 0) {
                 wallets.forEach((wallet, j) => {
@@ -52,7 +52,7 @@ function jsonToCsv(jsonData) {
 
             rows.push(row);
         } else {
-            rows.push(`${count},"${held}","${staked}"`);
+            rows.push(`${count},"${totalVTRUHeld}","${totalVTRUStaked}"`);
         }
     });
 

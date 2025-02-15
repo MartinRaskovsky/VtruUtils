@@ -47,17 +47,17 @@ function jsonToCsv(jsonData) {
     const wallets = jsonData.wallets;
     
     if (wallets && wallets.length > 0) {
-        group(rows, wallets, jsonData.sectionVTRUHeld, jsonData.held, 'Held');
-        group(rows, wallets, jsonData.sectionVTRUStaked, jsonData.staked, 'Staked');
-        group(rows, wallets, jsonData.sectionVERSE, jsonData.verses, 'Verse');
-        group(rows, wallets, jsonData.sectionVIBE, jsonData.vibes, 'Vibe'); 
+        group(rows, wallets, jsonData.sectionVTRUHeld, jsonData.totalVTRUHeld, 'Held');
+        group(rows, wallets, jsonData.sectionVTRUStaked, jsonData.totalVTRUStaked, 'Staked');
+        group(rows, wallets, jsonData.sectionVERSE, jsonData.totalVERSE, 'Verse');
+        group(rows, wallets, jsonData.sectionVIBE, jsonData.totalVIBE, 'Vibe'); 
 
         rows.push('');
         rows.push('Totals');
-        addTotal(rows, 'Held', jsonData.held);
-        addTotal(rows, 'Staked', jsonData.staked);
-        addTotal(rows, 'Verse', jsonData.verses);
-        addTotal(rows, 'Vibe', jsonData.vibes);
+        addTotal(rows, 'Held', jsonData.totalVTRUHeld);
+        addTotal(rows, 'Staked', jsonData.totalVTRUStaked);
+        addTotal(rows, 'Verse', jsonData.totalVERSE);
+        addTotal(rows, 'Vibe', jsonData.totalVIBE);
     } else {
         console.error('Error: No wallet data found.');
     }

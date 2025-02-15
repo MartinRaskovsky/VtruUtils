@@ -19,7 +19,7 @@ const { ethers } = require("ethers");
 // Stub getBlockNumber to always resolve to 1234.
 sinon.stub(ethers.JsonRpcProvider.prototype, "getBlockNumber").resolves(1234);
 
-// Stub getBalance to always resolve to 1 ETH in wei.
+// Stub getBalance to always resolve to 1 totalETH in wei.
 sinon.stub(ethers.JsonRpcProvider.prototype, "getBalance").resolves(1000000000000000000n);
 
 // Now import the Web3 class.
@@ -79,7 +79,7 @@ async function testGetWalletRawBalance() {
   assert.strictEqual(
     balance,
     1000000000000000000n,
-    `Expected balance of 1 ETH in wei, but got ${balance}`
+    `Expected balance of 1 totalETH in wei, but got ${balance}`
   );
 
   console.log("✅ testGetWalletRawBalance passed.");
@@ -99,7 +99,7 @@ async function testGetWalletRawBalances() {
   const wallets = ["0xWalletA", "0xWalletB"];
   const balances = await web3Instance.getWalletRawBalances(wallets);
 
-  // Both wallets should return 1 ETH in wei.
+  // Both wallets should return 1 totalETH in wei.
   const expected = [1000000000000000000n, 1000000000000000000n];
 
   // Convert BigInts to strings in the error message for serialization.

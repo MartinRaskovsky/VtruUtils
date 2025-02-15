@@ -4,7 +4,7 @@
 * Author: Dr Martín Raskovsky
 * Date: February 2025
 * 
-* Unit tests for the ETH Network.
+* Unit tests for the totalETH Network.
 * These tests use network and do not rely on mocks.
 */
 

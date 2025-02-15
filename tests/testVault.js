@@ -25,7 +25,7 @@ const mockWeb3 = {
 // ✅ Create a proper mock contract object
 const mockContract = {
     isBlocked: sinon.stub().resolves(false),
-    vaultBalance: sinon.stub().resolves(1000000000000000000n), // 1 ETH in wei
+    vaultBalance: sinon.stub().resolves(1000000000000000000n), // 1 totalETH in wei
     getVaultWallets: sinon.stub().resolves(["0xWallet1", "0xWallet2"]),
     hasStakes: sinon.stub().resolves(true),
     name: sinon.stub().resolves("TestVault"),
@@ -59,7 +59,7 @@ async function testVaultBalance() {
     assert.strictEqual(
         result,
         1000000000000000000n,
-        `❌ testVaultBalance failed: Expected 1 ETH in wei but got ${result}`
+        `❌ testVaultBalance failed: Expected 1 totalETH in wei but got ${result}`
     );
     console.log("✅ testVaultBalance passed.");
 }

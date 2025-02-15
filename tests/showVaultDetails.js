@@ -24,10 +24,10 @@ async function getVaultDetails(vaultAddress, summaryMode) {
             if (summaryMode) {
                 console.log(JSON.stringify({
                     name: vaultDetailsData.name,
-                    held: vaultDetailsData.held,
-                    staked: vaultDetailsData.staked,
-                    verses: vaultDetailsData.verses,
-                    vibes: vaultDetailsData.vibes,
+                    totalVTRUHeld: vaultDetailsData.totalVTRUHeld,
+                    totalVTRUStaked: vaultDetailsData.totalVTRUStaked,
+                    totalVERSE: vaultDetailsData.totalVERSE,
+                    totalVIBE: vaultDetailsData.totalVIBE,
                 }, null, 2));
             } else {
                 console.log(JSON.stringify(vaultDetailsData, null, 2));

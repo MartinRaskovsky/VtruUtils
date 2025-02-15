@@ -69,7 +69,7 @@ async function getSections(vaultAddress, wallets, formatOutput) {
                 prettyfier2(data['wallets'], data['sectionVERSE'], 'VERSE', keys);
                 prettyfier2(data['wallets'], data['sectionVIBE'], 'VIBE', keys);
                 prettyfier2(data['wallets'], data['sectionVORTEX'], 'VORTEX', keys);
-                prettyfier2(data['wallets'], data['sectionSEVOX'], 'SEVO-X Staked', keys);
+                prettyfier2(data['wallets'], data['sectionSEVOXStaked'], 'SEVO-X Staked', keys);
                 prettyfier2(data['wallets'], data['sectionETH'], 'ETH', keys);
                 prettyfier2(data['wallets'], data['sectionBNB'], 'BNB', keys);
             } else {

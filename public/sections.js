@@ -105,23 +105,23 @@ function renderVaultSet(modifiedData) {
                 </tr>
             </thead>
             <tbody>
-                ${generateSection(SEC_VTRU_HELD, vault, modifiedData.wallets, modifiedData.sectionVTRUHeld, modifiedData.held)}
-                ${generateSection(SEC_VTRU_STAKED, vault, modifiedData.wallets, modifiedData.sectionVTRUStaked, modifiedData.staked)}
-                ${generateSection(SEC_VERSE, vault, modifiedData.wallets, modifiedData.sectionVERSE, modifiedData.verses)}
-                ${generateSection(SEC_VIBE,  vault, modifiedData.wallets, modifiedData.sectionVIBE,  modifiedData.vibes)}
-                ${generateSection(SEC_VORTEX,  vault, modifiedData.wallets, modifiedData.sectionVORTEX,  modifiedData.vortexs)}
-                ${generateSection(SEC_SEVOX, vault, modifiedData.wallets, modifiedData.sectionSEVOX, modifiedData.sevoxs)}
-                ${generateSection(SEC_ETH, vault, modifiedData.wallets, modifiedData.sectionETH, modifiedData.eths)}
-                ${generateSection(SEC_BNB, vault, modifiedData.wallets, modifiedData.sectionBNB, modifiedData.bscs)}          
+                ${generateSection(SEC_VTRU_HELD, vault, modifiedData.wallets, modifiedData.sectionVTRUHeld, modifiedData.totalVTRUHeld)}
+                ${generateSection(SEC_VTRU_STAKED, vault, modifiedData.wallets, modifiedData.sectionVTRUStaked, modifiedData.totalVTRUStaked)}
+                ${generateSection(SEC_VERSE, vault, modifiedData.wallets, modifiedData.sectionVERSE, modifiedData.totalVERSE)}
+                ${generateSection(SEC_VIBE,  vault, modifiedData.wallets, modifiedData.sectionVIBE,  modifiedData.totalVIBE)}
+                ${generateSection(SEC_VORTEX,  vault, modifiedData.wallets, modifiedData.sectionVORTEX,  modifiedData.totalVORTEX)}
+                ${generateSection(SEC_SEVOX, vault, modifiedData.wallets, modifiedData.sectionSEVOXStaked, modifiedData.totalSEVOXStaked)}
+                ${generateSection(SEC_ETH, vault, modifiedData.wallets, modifiedData.sectionETH, modifiedData.totalETH)}
+                ${generateSection(SEC_BNB, vault, modifiedData.wallets, modifiedData.sectionBNB, modifiedData.totalBNB)}          
                 <tr class="section-header"><td colspan="3">Summary</td></tr>
-                ${generateLastRow(SEC_VTRU_HELD, modifiedData.held)}
-                ${generateLastRow(SEC_VTRU_STAKED, modifiedData.staked)}
-                ${generateLastRow(SEC_VERSE, modifiedData.verses)}
-                ${generateLastRow(SEC_VIBE, modifiedData.vibes)}
-                ${generateLastRow(SEC_VORTEX, modifiedData.vortexs)}
-                ${generateLastRow(SEC_SEVOX, modifiedData.sevoxs)}
-                ${generateLastRow(SEC_ETH, modifiedData.eths)}
-                ${generateLastRow(SEC_BNB, modifiedData.bscs)}
+                ${generateLastRow(SEC_VTRU_HELD, modifiedData.totalVTRUHeld)}
+                ${generateLastRow(SEC_VTRU_STAKED, modifiedData.totalVTRUStaked)}
+                ${generateLastRow(SEC_VERSE, modifiedData.totalVERSE)}
+                ${generateLastRow(SEC_VIBE, modifiedData.totalVIBE)}
+                ${generateLastRow(SEC_VORTEX, modifiedData.totalVORTEX)}
+                ${generateLastRow(SEC_SEVOX, modifiedData.totalSEVOXStaked)}
+                ${generateLastRow(SEC_ETH, modifiedData.totalETH)}
+                ${generateLastRow(SEC_BNB, modifiedData.totalBNB)}
             </tbody>
         </table>
     `;
@@ -154,7 +154,7 @@ function computeDifferencesForDisplay(currentData, previousData) {
     modifiedData.balance = getDifference(currentData.balance, previousData.balance);
 
     // Process wallet-based arrays using the hash lookup
-    ["sectionVTRUHeld", "sectionVTRUStaked", "sectionVIBE", "sectionVORTEX", "sectionVERSE", "sectionSEVOX", "sectionBNB", "sectionETH"].forEach(field => {
+    ["sectionVTRUHeld", "sectionVTRUStaked", "sectionVIBE", "sectionVORTEX", "sectionVERSE", "sectionSEVOXStaked", "sectionBNB", "sectionETH"].forEach(field => {
         if (currentData[field]) {
             modifiedData[field] = currentData[field].map((currValue, index) => {
                 const wallet = currentData.wallets[index];
@@ -167,8 +167,8 @@ function computeDifferencesForDisplay(currentData, previousData) {
     });
 
     // Process totals
-    ["held", "staked", "verses", "vibes", "vortexs", "sevoxs", "bscs", "eths"].forEach(field => {
-        const decimals = (field === "verses" || field === "vibes" || field === "vortexs")? 0: 2;
+    ["totalVTRUHeld", "totalVTRUStaked", "totalVERSE", "totalVIBE", "totalVORTEX", "totalSEVOXStaked", "totalBNB", "totalETH"].forEach(field => {
+        const decimals = (field === "totalVERSE" || field === "totalVIBE" || field === "totalVORTEX")? 0: 2;
         modifiedData[field] = getDifference(currentData[field], previousData[field], decimals);
     });
 

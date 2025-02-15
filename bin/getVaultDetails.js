@@ -36,10 +36,10 @@ async function getVaultDetails(vaultAddress, summaryMode) {
                 summaryMode 
                     ? {
                         name: vaultDetailsData.name,
-                        held: vaultDetailsData.held,
-                        staked: vaultDetailsData.staked,
-                        verses: vaultDetailsData.verses,
-                        vibes: vaultDetailsData.vibes,
+                        totalVTRUHeld: vaultDetailsData.totalVTRUHeld,
+                        totalVTRUStaked: vaultDetailsData.totalVTRUStaked,
+                        totalVERSE: vaultDetailsData.totalVERSE,
+                        totalVIBE: vaultDetailsData.totalVIBE,
                     } 
                     : vaultDetailsData, 
                 null, 2
@@ -57,7 +57,7 @@ function displayUsage() {
 
 Options:
   <vaultAddress>  Address of the vault to process (required)
-  -s              Display a summary (name, held, staked, verses, vibes)
+  -s              Display a summary (name, totalVTRUHeld, totalVTRUStaked, totalVERSE, totalVIBE)
   -h              Display this usage information`);
 }
 

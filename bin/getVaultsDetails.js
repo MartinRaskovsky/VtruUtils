@@ -37,13 +37,13 @@ async function getVaultDetails(minBalance, outputFilePath, limit, contractName =
             }
         });
 
-        // Summarize results and sort by "held" amount
+        // Summarize results and sort by "totalVTRUHeld" amount
         const summary = vaultDetails.getSummary();
-        aggregator.sort("held");
+        aggregator.sort("totalVTRUHeld");
 
-        aggregator.add({ count: '', held: summary.held, staked: summary.staked });
-        aggregator.add({ count: '', held: "...", staked: "..." });
-        aggregator.add({ count: summary.analyzedVaultCount, held: summary.totalHeld, staked: summary.totalStaked });
+        aggregator.add({ count: '', totalVTRUHeld: summary.totalVTRUHeld, totalVTRUStaked: summary.totalVTRUStaked });
+        aggregator.add({ count: '', totalVTRUHeld: "...", totalVTRUStaked: "..." });
+        aggregator.add({ count: summary.analyzedVaultCount, totalVTRUHeld: summary.totalHeld, totalVTRUStaked: summary.totalStaked });
 
         if (outputFilePath) {
             fse.writeJSONSync(outputFilePath, aggregator.get(), { spaces: 2 });
