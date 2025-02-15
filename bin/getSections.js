@@ -12,15 +12,25 @@ const { Network } = require("../lib/libNetwork");
 
 const VtruVault = require('../lib/vtruVault');
 const WalletSections = require('../lib/libWalletSections');
-
 const { mergeUnique } = require("../lib/vtruUtils");
+const { toConsole, prettyfier2 } = require("../lib/libPrettyfier");
+
+const TITLE = "Top Level Sections";
+const KEYS = ['address', 'name', 'wallets'];
 
 function abort(message) {
     console.error(message);
     process.exit(1);
 }
 
-async function getSections(vaultAddress, wallets) {
+/**
+ * Fetches and formats details from a vault or a list of wallets.
+ *
+ * @param {string} vaultAddress - Vault address (if provided).
+ * @param {Array<string>} wallets - Wallet addresses.
+ * @param {boolean} formatOutput - Whether to format output as a table.
+ */
+async function getSections(vaultAddress, wallets, formatOutput) {
     try {
         const network = await new Network(Web3.networkIds);
         const vtru = network.get(Web3.VTRU);
@@ -52,7 +62,19 @@ async function getSections(vaultAddress, wallets) {
             data['address'] = vault ? vault.address : "";
             data['name'] = vault? await vault.getName() : "";
             data['wallets'] = merged;
-            console.log(JSON.stringify( data, null, 2));
+            if (formatOutput) {
+                const keys = ['wallet', 'balance'];
+                prettyfier2(data['wallets'], data['walletBalances'], 'VTRU Held', keys);              
+                prettyfier2(data['wallets'], data['walletStaked'], 'VTRU Staked', keys);
+                prettyfier2(data['wallets'], data['walletVerses'], 'VERSE', keys);
+                prettyfier2(data['wallets'], data['walletVibes'], 'VIBE', keys);
+                prettyfier2(data['wallets'], data['walletVortexs'], 'VORTEX', keys);
+                prettyfier2(data['wallets'], data['walletSevoxs'], 'SEVO-X STaked', keys);
+                prettyfier2(data['wallets'], data['walletEths'], 'ETH', keys);
+                prettyfier2(data['wallets'], data['walletBscs'], 'BNB', keys);
+            } else {
+                console.log(JSON.stringify( data, null, 2));
+            }
         } else {
             abort('Error: No wallets data found.');
         }
@@ -77,12 +99,16 @@ function main() {
     const args = process.argv.slice(2);
     let vault = "";
     let wallets = [];
+    let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case '-v':
                 vault = args[i + 1];
                 i++;
+                break;
+            case '-f':
+                formatOutput = true;
                 break;
             case '-h':
                 displayUsage();
@@ -93,7 +119,7 @@ function main() {
         }
     }
 
-    getSections(vault, wallets).catch(error => {
+    getSections(vault, wallets, formatOutput).catch(error => {
         abort(error.message);
     });
 }

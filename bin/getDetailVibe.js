@@ -1,35 +1,46 @@
 #!/usr/bin/env node
 
 /**
+ * Retrieves JSON of VIBE details for given wallet addresses.
+ * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Retrieves JSON of vibe details for given wallet addresses.
  */
 
 const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
 const TokenVibe = require("../lib/tokenVibe");
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { toConsole } = require("../lib/libPrettyfier");
+
+const TITLE = "VIBE Details";
+const KEYS = ['wallet', 'noTokens', 'balance', 'claimed', 'unclaimed'];
 
 function showUsage() {
     console.log("\nUsage: getDetailVibe.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
+    console.log("  -f                  Format output as an aligned table.");
     console.log("  -h                  Show this usage information.");
     process.exit(0);
 }
 
-async function runVibeContractDetails(vaultAddress, wallets) {
+/**
+ * Fetches and formats VIBE token details for the given wallets.
+ * 
+ * @param {string|null} vaultAddress - Vault address, if provided.
+ * @param {Array<string>} wallets - Wallet addresses.
+ * @param {boolean} formatOutput - Whether to format output as a table.
+ */
+async function runVibeContractDetails(vaultAddress, wallets, formatOutput) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
         const tokenVibe = new TokenVibe(vtru);
 
+        // Retrieve associated wallets if vault address is provided
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
-            let vaultWallets = await vault.getVaultWallets();
-            vaultWallets = mergeUnique([vault.getAddress()], vaultWallets);
-            wallets = mergeUnique(vaultWallets, wallets);
+            wallets = mergeUnique([vault.getAddress()], await vault.getVaultWallets(), wallets);
         }
 
         let rows = await tokenVibe.getVibeDetails(wallets);
@@ -57,6 +68,7 @@ async function runVibeContractDetails(vaultAddress, wallets) {
             };
         });
 
+        // Append totals row
         formattedData.push({
             wallet: "Total",
             noTokens: formatNumber(totals.noTokens, 0),
@@ -65,22 +77,30 @@ async function runVibeContractDetails(vaultAddress, wallets) {
             unclaimed: formatRawNumber(totals.unclaimed),
         });
 
-        console.log(JSON.stringify(formattedData, null, 2));
+        toConsole(formattedData, TITLE, KEYS, formatOutput);
+
     } catch (error) {
         console.error("❌ Error:", error.message);
     }
 }
 
+/**
+ * Parses command-line arguments and initiates VIBE details retrieval.
+ */
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
     let walletAddresses = [];
+    let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
                 vaultAddress = args[i + 1];
                 i++;
+                break;
+            case "-f":
+                formatOutput = true;
                 break;
             case "-h":
                 showUsage();
@@ -91,10 +111,9 @@ function main() {
         }
     }
 
-    runVibeContractDetails(vaultAddress, walletAddresses).catch(error => {
+    runVibeContractDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
         console.error("❌ Error:", error.message);
     });
 }
 
 main();
-

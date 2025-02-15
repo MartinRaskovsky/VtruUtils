@@ -1,16 +1,20 @@
 #!/usr/bin/env node
 
 /**
+ * Retrieves and formats staking details for given addresses.
+ * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Retrieves and formats staking details for given addresses.
  */
 
-const VtruConfig = require('../lib/vtruConfig');
 const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const TokenStakedVtru = require('../lib/tokenStakedVtru');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { toConsole } = require("../lib/libPrettyfier");
+
+const TITLE = "VTRU Staked";
+const KEYS = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
 
 function showUsage() {
     console.log(`\nUsage: getDetailStake.js [options] <address1> <address2> ... <walletAddressN>\n`);
@@ -23,44 +27,37 @@ function showUsage() {
     process.exit(0);
 }
 
-function alignNumbers(rows) {
-    const keys = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
-    const columnWidths = {};
-
-    keys.forEach(key => {
-        columnWidths[key] = rows.reduce((max, row) => {
-            const value = row[key] ? String(row[key]) : "";
-            return Math.max(max, value.length);
-        }, key.length);
-    });
-
-    const headers = keys.map(key => key.padStart(columnWidths[key], ' ')).join(' | ');
-    const separator = keys.map(key => '-'.repeat(columnWidths[key])).join('-|-');
-    const formattedRows = rows.filter(row => Object.values(row).some(value => value !== ""));
-
-    const formattedData = formattedRows.map(row => {
-        return keys.map(key => String(row[key] || "").padStart(columnWidths[key], ' ')).join(' | ');
-    });
-
-    return [headers, separator, ...formattedData].join('\n');
-}
-
+/**
+ * Generates a grouping key based on a given date and grouping option.
+ * 
+ * @param {Date} date - The date object.
+ * @param {string} groupBy - Grouping option ('day', 'month', 'year').
+ * @return {string} - Grouped key.
+ */
 function getGroupKey(date, groupBy) {
     if (groupBy === "year") return date.getFullYear().toString();
-    if (groupBy === "month") return `${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString()}`;
-    return `${("0" + date.getDate()).slice(-2)}-${("0" + (date.getMonth() + 1)).slice(-2)}-${date.getFullYear().toString().slice(-2)}`;
+    if (groupBy === "month") return `${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear().toString().slice(-2)}`;
 }
 
+/**
+ * Fetches and formats staking details for given addresses.
+ * 
+ * @param {string|null} vaultAddress - Vault address, if provided.
+ * @param {Array<string>} wallets - Wallet addresses.
+ * @param {boolean} useBalance - Whether to use balance instead of staking details.
+ * @param {boolean} formatOutput - Whether to format output as a table.
+ * @param {string|null} groupBy - Grouping option.
+ */
 async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
         const tokenStakedVtru = new TokenStakedVtru(web3);
 
+        // Retrieve associated wallets if vault address is provided
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, web3);
-            let vaultWallets = await vault.getVaultWallets();
-            vaultWallets = mergeUnique([vault.getAddress()], vaultWallets);
-            wallets = mergeUnique(vaultWallets, wallets);
+            wallets = mergeUnique([vault.getAddress()], await vault.getVaultWallets(), wallets);
         }
 
         let result = wallets.length === 1
@@ -83,14 +80,15 @@ async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, g
         };
 
         let groupedData = {};
+
         if (groupBy) {
-            result.forEach(row => {
+            for (const row of result) {
                 const maturityDate = new Date(Date.now() + row.maturityDays * 86400000);
                 const groupKey = getGroupKey(maturityDate, groupBy);
 
                 if (!groupedData[groupKey]) {
                     groupedData[groupKey] = {
-                        wallet: 0,//`Group: ${groupKey}`,
+                        wallet: 0,
                         amount: 0n,
                         reward: 0n,
                         totalStaked: 0n,
@@ -98,30 +96,29 @@ async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, g
                         estimatedMaturity: groupKey
                     };
                 }
-                
+
                 groupedData[groupKey].wallet++;
                 groupedData[groupKey].amount += row.amount;
                 groupedData[groupKey].reward += row.lockedAmount;
                 groupedData[groupKey].totalStaked += row.unstakeAmount;
+
                 if (row.maturityDays <= 0) {
                     groupedData[groupKey].availableToUnstake += row.unstakeAmount;
                     groupedData[groupKey].totalStaked -= row.unstakeAmount;
                 }
-            });
+            }
         }
 
-        let formattedData = groupBy ? Object.values(groupedData).map(group => {
-            return {
-                ...group,
-                amount: formatRawNumber(group.amount),
-                reward: formatRawNumber(group.reward),
-                totalStaked: formatRawNumber(group.totalStaked),
-                availableToUnstake: group.availableToUnstake > 0n ? formatRawNumber(group.availableToUnstake) : ""
-            };
-        }) : result.map(row => {
+        let formattedData = groupBy ? Object.values(groupedData).map(group => ({
+            ...group,
+            amount: formatRawNumber(group.amount),
+            reward: formatRawNumber(group.reward),
+            totalStaked: formatRawNumber(group.totalStaked),
+            availableToUnstake: group.availableToUnstake > 0n ? formatRawNumber(group.availableToUnstake) : ""
+        })) : result.map(row => {
             const isMatured = row.maturityDays <= 0;
-            let availableToUnstake = isMatured ? row.unstakeAmount : 0n;
-            let totalStaked = isMatured ? 0n : row.unstakeAmount;
+            const availableToUnstake = isMatured ? row.unstakeAmount : 0n;
+            const totalStaked = isMatured ? 0n : row.unstakeAmount;
 
             totals.amount += row.amount;
             totals.reward += row.lockedAmount;
@@ -139,17 +136,14 @@ async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, g
         });
 
         if (groupBy) {
-            let groupTotals = {
+            formattedData.push({
                 wallet: formatNumber(Object.values(groupedData).reduce((sum, g) => sum + g.wallet, 0), 0),
                 amount: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.amount, 0n)),
                 reward: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.reward, 0n)),
                 totalStaked: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.totalStaked, 0n)),
-                availableToUnstake: Object.values(groupedData).reduce((sum, g) => sum + g.availableToUnstake, 0n) > 0n 
-                    ? formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.availableToUnstake, 0n)) 
-                    : "",
+                availableToUnstake: formatRawNumber(Object.values(groupedData).reduce((sum, g) => sum + g.availableToUnstake, 0n)),
                 estimatedMaturity: ""
-            };
-            formattedData.push(groupTotals);
+            });
         } else {
             formattedData.push({
                 wallet: 'Total',
@@ -161,11 +155,8 @@ async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, g
             });
         }
 
-        if (formatOutput) {
-            console.log("\n" + alignNumbers(formattedData));
-        } else {
-            console.log(JSON.stringify(formattedData, null, 2));
-        }
+        toConsole(formattedData, TITLE, KEYS, formatOutput);
+
     } catch (error) {
         console.error("❌ Error:", error.message);
     }
@@ -181,27 +172,12 @@ function main() {
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
-            case '-b':
-                useBalance = true;
-                break;
-            case '-f':
-                formatOutput = true;
-                break;
-            case '-g':
-                groupBy = ['none', 'day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
-                if (!groupBy) showUsage();
-                if (groupBy === 'none') groupBy = null;
-                i++;
-                break;
-            case '-v':
-                vaultAddress = args[i + 1];
-                i++;
-                break;
-            case '-h':
-                showUsage();
-            default:
-                walletAddresses.push(args[i]);
-                break;
+            case '-b': useBalance = true; break;
+            case '-f': formatOutput = true; break;
+            case '-g': groupBy = ['day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null; i++; break;
+            case '-v': vaultAddress = args[i + 1]; i++; break;
+            case '-h': showUsage(); break;
+            default: walletAddresses.push(args[i]); break;
         }
     }
 
@@ -211,4 +187,3 @@ function main() {
 }
 
 main();
-

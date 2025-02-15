@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 
 /**
+ * Retrieves and formats BSC staking details for given wallet addresses.
+ * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Retrieves and formats bsc staking details for given wallet addresses.
  */
 
-//const VtruConfig = require('../lib/vtruConfig');
 const { Web3 } = require('../lib/libWeb3');
 const { Network } = require("../lib/libNetwork");
-
 const VtruVault = require('../lib/vtruVault');
 const TokenStakedSevo = require('../lib/tokenStakedSevo');
-const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { toConsole } = require("../lib/libPrettyfier");
+
+const TITLE = "SEVO-X Staked on BSC";
+const KEYS = ['wallet', 'unlocked', 'locked', 'date'];
 
 function showUsage() {
     console.log(`\nUsage: getDetailSevoStake.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
@@ -23,26 +26,35 @@ function showUsage() {
     process.exit(0);
 }
 
+/**
+ * Formats a blockchain timestamp into DD-MM-YYYY format.
+ * 
+ * @param {Object} bsc - BSC network provider.
+ * @param {number} stamp - Blockchain timestamp.
+ * @return {Promise<string>} - Formatted date string.
+ */
 async function formatStamp(bsc, stamp) {
     const block = await bsc.getProvider().getBlock(stamp);
+    const date = new Date(block.timestamp * 1000);
 
-    const timestamp = block.timestamp * 1000; // Convert seconds to milliseconds
-    const date = new Date(timestamp);
-
-    // Get day, month, and year
-    const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed (January is 0)
-    const year = date.getFullYear();
-    return (`${day}-${month}-${year}`);
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
 }
 
-async function runBscStakedContract(vaultAddress, wallets) {
+/**
+ * Fetches and formats staking details for the given wallets.
+ * 
+ * @param {string|null} vaultAddress - Vault address, if specified.
+ * @param {Array<string>} wallets - List of wallet addresses.
+ * @param {boolean} formatOutput - Whether to format output as a table.
+ */
+async function runBscStakedContract(vaultAddress, wallets, formatOutput) {
     try {
         const network = await new Network([Web3.VTRU, Web3.BSC]);
         const vtru = network.get(Web3.VTRU);
         const bsc = network.get(Web3.BSC);
         const tokenStakedSevo = new TokenStakedSevo(bsc);
 
+        // Retrieve associated wallets if vaultAddress is provided
         if (vaultAddress) {
             const vault = new VtruVault(vaultAddress, vtru);
             let vaultWallets = await vault.getVaultWallets();
@@ -52,58 +64,56 @@ async function runBscStakedContract(vaultAddress, wallets) {
 
         let result = await tokenStakedSevo.getStakedDetails(wallets);
         if (!result) {
-            console.error("Failed to get Stked SevoX");
+            console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);
         }
 
-        let totals = {
-            wallet: 'Total',
-            unlocked: 0n,
-            locked: 0n,
-            date: ""
-        };
-
-        let rows = result.sort((a, b) => Number(a.stamp) - Number(b.stamp));
+        let totals = { wallet: 'Total', unlocked: 0n, locked: 0n, date: "" };
         let formattedData = [];
-        
-        for (let j=0; j<rows.length; j++) {
-            let row = rows[j];
 
-            const stamp = row['stamp'];
-            const locked = row['locked'];
-            const unlocked = ((locked * 100n) / 95n) - locked;
-            const wallet = row['wallet'];
+        // Process staking data
+        for (let row of result.sort((a, b) => Number(a.stamp) - Number(b.stamp))) {
+            const unlocked = ((row.locked * 100n) / 95n) - row.locked;
             totals.unlocked += unlocked;
-            totals.locked += locked;
+            totals.locked += row.locked;
 
             formattedData.push({
-                wallet: wallet,
+                wallet: row.wallet,
                 unlocked: formatRawNumber(unlocked),
-                locked: formatRawNumber(locked),
-                date: await formatStamp(bsc, stamp),
+                locked: formatRawNumber(row.locked),
+                date: await formatStamp(bsc, row.stamp),
             });
         }
 
+        // Append totals row
         formattedData.push({
             wallet: 'Total',
-            locked: formatRawNumber(totals. locked),
-            unlocked: formatRawNumber(totals. unlocked),
-                date: ""
-            });
+            unlocked: formatRawNumber(totals.unlocked),
+            locked: formatRawNumber(totals.locked),
+            date: ""
+        });
+
+        toConsole(formattedData, TITLE, KEYS, formatOutput);
         
-        console.log(JSON.stringify(formattedData, null, 2));
     } catch (error) {
         console.error("❌ Error:", error.message);
     }
 }
 
+/**
+ * Parses command-line arguments and initiates staking data retrieval.
+ */
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
     let walletAddresses = [];
+    let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
+            case '-f':
+                formatOutput = true;
+                break;
             case '-v':
                 vaultAddress = args[i + 1];
                 i++;
@@ -116,10 +126,9 @@ function main() {
         }
     }
 
-    runBscStakedContract(vaultAddress, walletAddresses).catch(error => {
+    runBscStakedContract(vaultAddress, walletAddresses, formatOutput).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }
 
 main();
-
