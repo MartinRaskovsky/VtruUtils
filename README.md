@@ -1,11 +1,11 @@
 # VtruUtils
 
 **Author:** Dr. Martín Raskovsky  
-**Date:** January 2025  
+**Date:** February 2025  
 
 ## Project Description
 
-This project for Vitruveo blockchain-related operations, providing reusable classes, environment-based configuration management, and program scripts for execution. It is designed for developers looking to simplify tasks like Vault and Wallet content listing.
+This project is designed for Vitruveo blockchain-related operations, providing reusable classes, environment-based configuration management, and program scripts for execution. It is meant for developers looking to simplify tasks like Vault and Wallet content listing.
 
 ### Real-World Applications
 
@@ -17,14 +17,28 @@ This project for Vitruveo blockchain-related operations, providing reusable clas
 
 ## Directory Structure
 
-- **`src/lib`**: Contains reusable JavaScript classes and core logic.
-- **`src/data`**: Stores configuration files like `.env` and other data resources.
-- **`src/bin`**: Contains executable scripts or main programs.
-- **`src/tests`**: Contains executable test programs.
+```
+src/
+├── bin/         # Executable scripts
+├── data/        # Configuration files (e.g., .env)
+├── lib/         # Reusable JavaScript classes
+├── public/      # Client-side code (HTML, JS, CSS)
+├── server/      # Express-based API server
+├── shared/      # Shared modules (e.g., constants.js)
+├── tests/       # Automated test scripts
+└── README.md    # Project documentation
+```
+
+### Explanation of Components
+
+- **`src/bin`**: Contains command-line scripts that produce JSON output or optionally formatted output with `-f`. These scripts **do not require the web server** and are fully functional on their own.
+- **`src/server` & `src/public`**: Implement a **local web server** that provides an HTML interface to interact with the scripts. It is **not required** for running command-line scripts but offers a convenient way to display results in a browser.
+- **`src/shared`**: Provides shared constants and modules that can be used across **server, client, and scripts**, ensuring a **single source of truth**.
 
 ## Setup Instructions
 
 ### Prerequisites
+
 - Node.js (v14 or higher recommended)
 - npm or yarn
 
@@ -65,12 +79,14 @@ This project for Vitruveo blockchain-related operations, providing reusable clas
 Tests are located in the `src/tests` directory and can be executed using the `testAll.sh` script:
 
 ### Running Tests at Installation Time
+
 After installing dependencies, you can run the test suite with:
 ```bash
 sh src/tests/testAll.sh
 ```
 
 ### Running Tests at Any Time
+
 To manually run the tests at any time, use:
 ```bash
 cd src/tests && sh testAll.sh
@@ -79,12 +95,14 @@ cd src/tests && sh testAll.sh
 ## Usage
 
 ### Running Scripts
+
 Execute scripts located in `src/bin`:
 ```bash
 node src/bin/yourScript.js
 ```
 
 ### Example Script
+
 Check the balances of a wallet:
 ```bash
 node src/bin/getVaultDetails.js 0xYourVaultAddress
@@ -104,7 +122,18 @@ Expected output:
 ...
 ```
 
+### Running the Web Server
+
+The web interface is **optional** but can be started locally with:
+
+```bash
+node src/server/server.js
+```
+
+Then, open `http://localhost:3000` in a browser.
+
 ### Adding New Environment Variables
+
 1. Update the `src/data/.env` file with the new variables.
 2. Use the `VtruConfig` class to access them in your code:
    ```javascript
@@ -114,6 +143,7 @@ Expected output:
    ```
 
 ## Contributing
+
 We welcome contributions to this project! Follow these steps to get started:
 
 1. Fork this repository.
@@ -133,12 +163,13 @@ We welcome contributions to this project! Follow these steps to get started:
 For significant changes, please open an issue to discuss them first. Follow the project's coding style and include tests for new functionality where applicable.
 
 ## License
+
 [MIT License](LICENSE)
 
 ---
 
 ### Badges
+
 ![Node.js](https://img.shields.io/badge/Node.js-v14%2B-green) ![License](https://img.shields.io/badge/License-MIT-blue)
 
 This README provides a clear guide to setting up, using, and contributing to the project. If you encounter any issues, please open an issue in the repository.
-
