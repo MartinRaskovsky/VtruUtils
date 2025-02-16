@@ -47,6 +47,7 @@ button {
     margin-top: 15px;
     padding: 10px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     color: white;
     border: none;
@@ -180,11 +181,13 @@ pre {
 }
 
 .diff-value.increase, .balance-cell.increase, .diff-cell.increase, .unclaimed {
-    color: green;
+    color: #3b6c3b;
+    font-weight: bold;
 }
 
 .diff-value.decrease, .balance-cell.decrease, .diff-cell.decrease {
-    color: red;
+    color: #b63c3c;
+    font-weight: bold;
 }
 
 /* Ensure decimal values are aligned properly */
@@ -364,7 +367,7 @@ input, textarea {
     background: rgba(255, 255, 255, 0.1);
 }
 
-button {
+button, .stake-btn {
   background-color: #6f42c1;
 }
 
@@ -390,10 +393,6 @@ th {
 
 pre {
     background: #1e1e1e; /* Dark background */
-}
-
-.stake-btn {
-    background-color: #6a0dad;
 }
 
 .stake-btn:hover {
