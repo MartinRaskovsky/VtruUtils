@@ -17,6 +17,10 @@ const SEC_SEVOX       = "SEVO-X Staked";
 const SEC_ETH         = "ETH";
 const SEC_BNB         = "BNB";
 
+const NET_VTRU  = "VTRU";
+const NET_ETH   = "ETH";
+const NET_BSC   = "BSC";
+
 // Section Mapping for Processing
 const detailType = {
     [SEC_VTRU_STAKED]: "stake",
@@ -40,6 +44,9 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
+        NET_VTRU,
+        NET_ETH,
+        NET_BSC,
         detailType,
         hasGroups
     };
@@ -56,8 +63,12 @@ if (typeof window !== "undefined") {
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
+        NET_VTRU,
+        NET_ETH,
+        NET_BSC,
         detailType,
         hasGroups
     };
+
 }
 

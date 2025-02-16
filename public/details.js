@@ -80,10 +80,10 @@ function closeDetailsModal() {
  */
 function renderStakeContent(type, grouping, data) {
     switch (type) {
-        case "bsc": return renderBscStakeContract(grouping, data);
-        case "vibe": return renderVibeContract(grouping, data);
-        case "vortex": return renderVortexContract(grouping, data);
-        default: return renderStakeContract(grouping, data);
+        case "bsc":     return renderBscStakeContract(grouping, data);
+        case "vibe":    return renderVibeContract(grouping, data);
+        case "vortex":  return renderVortexContract(grouping, data);
+        default:        return renderStakeContract(grouping, data);
     }
 }
 
@@ -142,7 +142,7 @@ function renderStakeContract(grouping, data) {
                 <tbody>
                     ${data.map(row => `
                         <tr>
-                            <td class="wallet-cell">${getLabel("vtru", grouping, row.wallet)}</td>
+                            <td class="wallet-cell">${getLabel(NET_VTRU, grouping, row.wallet)}</td>
                             <td class="decimal-align">${row.amount}</td>
                             <td class="decimal-align">${row.reward}</td>
                             <td class="decimal-align">${row.totalStaked}</td>
@@ -175,7 +175,7 @@ function renderBscStakeContract(grouping, data) {
                 <tbody>
                     ${data.map(row => `
                         <tr>
-                            <td class="wallet-cell">${getLabel("bsc", grouping, row.wallet)}</td>
+                            <td class="wallet-cell">${getLabel(NET_BSC, grouping, row.wallet)}</td>
                             <td>${row.date}</td>
                             <td class="decimal-align">${row.locked}</td>
                             <td class="decimal-align">${row.unlocked}</td>
@@ -207,7 +207,7 @@ function renderVibeContract(grouping, data) {
                 <tbody>
                     ${data.map(row => `
                         <tr>
-                            <td class="wallet-cell">${getLabel("vtru", grouping, row.wallet)}</td>
+                            <td class="wallet-cell">${getLabel(NET_VTRU, grouping, row.wallet)}</td>
                             <td class="decimal-align">${row.noTokens}</td>
                             <td class="decimal-align">${row.balance}</td>
                             <td class="decimal-align">${row.claimed}</td>
@@ -238,7 +238,7 @@ function renderVortexContract(grouping, data) {
                 <tbody>
                     ${data.map(row => `
                         <tr>
-                            <td class="wallet-cell">${getLabel("vtru", grouping, row.wallet)}</td>
+                            <td class="wallet-cell">${getLabel(NET_VTRU, grouping, row.wallet)}</td>
                             <td class="decimal-align">${row.kind}</td>
                             <td class="decimal-align">${row.count}</td>
                         </tr>

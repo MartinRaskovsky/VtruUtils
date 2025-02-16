@@ -1,7 +1,6 @@
 /* General Layout */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #4B0082; /* Purple background */
     color: white;
     max-width: 1200px;
     margin: auto;
@@ -18,7 +17,6 @@ body {
     max-width: 600px;
     margin: auto;
     padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
 }
 
@@ -34,7 +32,6 @@ input, textarea {
     max-width: 450px;
     font-family: monospace;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid #444;
     border-radius: 5px;
@@ -51,15 +48,10 @@ button {
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #6f42c1;
     color: white;
     border: none;
     border-radius: 6px;
     transition: 0.3s;
-}
-
-button:hover {
-    background-color: #5a34a3;
 }
 
 .table-container {
@@ -73,8 +65,7 @@ table {
     max-width: 90%;
     margin: auto;
     border-collapse: separate !important; /* Allow selective border removal */
-    background: white;
-    color: black;
+    color: white;
     font-size: 12px;
     overflow: hidden;
     border: solid black 1px;
@@ -92,7 +83,6 @@ td, th, .total-row  {
 }
 
 th {
-    background-color: #6a0dad;
     border-top: none;
     color: white;
     padding: 4px;
@@ -107,6 +97,7 @@ td:first-child, th:first-child, .section-header {
 .wallet-cell {
     font-family: "Courier New", monospace;
     text-align: left;
+    font-weight: bold;
     max-width: 300px; /* Constrain width */
     overflow-wrap: break-word; /* Wrap long addresses */
 }
@@ -120,21 +111,17 @@ td:first-child, th:first-child, .section-header {
 
 /* Section headers and totals styling */
 .section-header {
-    background-color: #ddd;
     font-weight: bold;
     text-align: left;
     padding: 2px;
 }
 
-/* Ensure the blank row fully blends with the background */
 .spacer-row td {
-    background-color: #4B0082; /* Match background */
-    height: 10px; /* Adds space without visible row */
+    height: 50px; /* Adds space without visible row */
     border: none !important; /* Remove any table gridlines */
 }
 
 pre {
-    background: #1e1e1e; /* Dark background */
     color: #dcdcdc;
     padding: 10px;
     border-radius: 5px;
@@ -238,7 +225,6 @@ pre {
 
 /* ✅ View Stakes Button - Move Slightly Up */
 .stake-btn {
-    background-color: #6a0dad;
     color: white;
     font-size: 12px;
     border: none;
@@ -251,10 +237,6 @@ pre {
     justify-content: center;
     line-height: 1;
     margin-top: -2px; /* ✅ Moves it up slightly */
-}
-
-.stake-btn:hover {
-    background-color: #5a0ca3;
 }
 
 /* ✅ Grouping Label - Move 1px Down */
@@ -290,7 +272,6 @@ pre {
 
 /* ✅ Total Row Minimized */
 .total-row {
-    background-color: #bbb;
     font-weight: bold;
     padding: 2px 5px;
     height: 22px;
@@ -298,7 +279,6 @@ pre {
 }
 
 .group-toggle {
-    background: #bbb;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
@@ -306,16 +286,10 @@ pre {
     border-radius: 4px;
 }
 
-.group-toggle:hover {
-    background: #999;
-}
-
 .group-toggle.active {
-    background: #6a0dad;
     color: white;
 }
 
-/* ✅ Ensure the right-side background matches other sides */
 .modal {
     display: none;
     position: fixed;
@@ -323,17 +297,15 @@ pre {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    /*padding-right: 10px; /* ✅ Add padding to extend background */
 }
 
 .modal-content {
-    background-color: #2a1f3a;
     color: white;
+    font-weight: bold;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     border: 1px solid white;
@@ -354,7 +326,6 @@ pre {
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
-    background: black;
     padding: 10px;
     border-radius: 5px;
     box-shadow: inset -10px 0px 0px #2a1f3a; /* ✅ Adds black area inside the modal */
@@ -364,9 +335,7 @@ pre {
 /* ✅ Ensure table fits correctly */
 .stake-table {
     width: 100%;
-    background: white;
-    color: black;
-    /*font-size: 16px;*/
+    color: white;
     border-collapse: collapse;
 }
 
@@ -378,13 +347,98 @@ pre {
     font-size: 20px;
     cursor: pointer;
     color: white;
-    background: rgba(255, 255, 255, 0.2);
     padding: 5px 8px;
     border-radius: 50%;
     transition: background 0.2s ease-in-out;
 }
 
+body, .spacer-row td {
+    background-color: #4B0082; /* Purple background */
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+input, textarea {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+button {
+  background-color: #6f42c1;
+}
+
+button:hover {
+    background-color: #5a34a3;
+}
+
+table {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+th {
+    background-color: #6a0dad;
+}
+
+.section-row {
+    background-color: #9472ac;
+}
+
+.section-header {
+    background-color: #482d5b;
+}
+
+pre {
+    background: #1e1e1e; /* Dark background */
+}
+
+.stake-btn {
+    background-color: #6a0dad;
+}
+
+.stake-btn:hover {
+    background-color: #5a0ca3;
+}
+
+.total-row, .stake-controls {
+    background-color: #b090c8;
+}
+
+.group-toggle {
+    background: #bbb;
+}
+
+.group-toggle:hover {
+    background: #999;
+}
+
+.group-toggle.active {
+    background: #6a0dad;
+}
+
+.modal {
+   background-color: rgba(0, 0, 0, 0.6);
+}
+
 .close:hover {
     background: rgba(255, 255, 255, 0.4);
 }
+
+.modal-content {
+    background-color: #2a1f3a;
+}
+
+.scrollable {
+    background: black;
+}
+
+.stake-table {
+   background: #9472ac;
+}
+
+.close {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
 

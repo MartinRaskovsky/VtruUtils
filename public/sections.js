@@ -52,17 +52,10 @@ window.runSections = runSections;
 function explorerURL(type, address, label = null) {
     if (label === null) label = address;
     switch (type) {
-        case 'bsc':
-        case 'SEVO-X':
-            return(`<A target=”_blank” href="https://bscscan.com/address/${address}">${label}</A>`);
-        case 'ETH':
-            return(`<A target=”_blank” href="https://etherscan.io/address/${address}">${label}</A>`);
-        case 'BNB':
-            return(`<A target=”_blank” href="https://bscscan.com//address/${address}">${label}</A>`);
-        case 'stake':
-        case 'VTRU':
-        default:
-            return(`<A target=”_blank” href="https://explorer.vitruveo.xyz/address/${address}">${label}</A>`);
+        case 'BSC':  return(`<A target=”_blank” href="https://bscscan.com/address/${address}">${label}</A>`);
+        case 'ETH':  return(`<A target=”_blank” href="https://etherscan.io/address/${address}">${label}</A>`);
+        case 'VTRU': return(`<A target=”_blank” href="https://explorer.vitruveo.xyz/address/${address}">${label}</A>`);
+        default:     return "";    
       } 
 }
 
@@ -177,25 +170,27 @@ function generateSections(modifiedData, vault) {
     const sectionTitles = modifiedData.sectionTitles;
     const sectionKeys = modifiedData.sectionKeys;
     const totalKeys = modifiedData.totalKeys;
+    const networkKeys =  modifiedData.networkKeys;
     let rows = sectionTitles.map((title, index) => {
         const sectionKey = sectionKeys[index];
+        const networkKey = networkKeys[index];
         const totalKey = totalKeys[index];
-        return generateSection(title, vault, modifiedData.wallets, modifiedData[sectionKey], modifiedData[totalKey]);
+        return generateSection(title, networkKey, vault, modifiedData.wallets, modifiedData[sectionKey], modifiedData[totalKey]);
     }).filter(row => row).join("");
     return rows;
 }         
 
-function generateSection(title, vault, wallets, values, total) {
+function generateSection(title, networkKey, vault, wallets, values, total) {
     if (!wallets || wallets.length === 0 || !values) return "";
     let rows = wallets.map((wallet, index) => {
         const balance = values[index];
         if (!balance || !balance.value || balance.value === "0.00" || balance.value === "0") return ""; // Skip empty rows
-        let address = explorerURL(title, wallet);
+        let address = explorerURL(networkKey, wallet);
         if (vault === wallet) {
             address = `<strong>${address}</strong>`;
         }
         return `
-            <tr>
+            <tr class="section-row">
                 <td class="wallet-cell">${address}</td>
                 ${formatScalarDiff(balance)}
                 <td class="balance-cell decimal-align">${balance.value}</td>
@@ -204,11 +199,11 @@ function generateSection(title, vault, wallets, values, total) {
     }).filter(row => row).join("");
 
     let stakeControls = "";
-    const type = constants.detailType[title];
+    const type = detailType[title];
     if (type) {
         groupControls = "";
         const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        if (constants.hasGroups[title]) {
+        if (hasGroups[title]) {
             groupControls = `
             <span class="group-label">Grouped by:</span>
                 <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
