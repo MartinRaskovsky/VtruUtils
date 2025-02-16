@@ -1,13 +1,15 @@
 /**
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
- * Description: Handles execution of backend scripts for Vault and Stake operations, 
+ * Description: Handles execution of backend scripts for Section and Details, 
  * managing logs and running JavaScript or Shell scripts as needed.
  */
 
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+
+const { SEC_VTRU_HELD, SEC_VTRU_STAKED, SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_SEVOX, SEC_ETH, SEC_BNB } = require('../shared/constants');
 
 const logsDir = path.join(__dirname, '../public/data');
 

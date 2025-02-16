@@ -15,6 +15,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { runScript, runGetSections, runGetDetails } = require('./scripts');
+const constants = require('../shared/constants');
 
 const app = express();
 const PORT = 3000;
@@ -23,12 +24,13 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve static files from `src/public/`
+// ✅ Serve shared constants to the client
+app.use('/shared', express.static(path.join(__dirname, '../shared')));
+
+// ✅ Serve static files (like HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, '../public')));
 
-/**
- * Default route to serve `index.html`
- */
+// 🔹 Route handlers start here
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
@@ -90,6 +92,16 @@ app.post('/api/details', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
+});
+
+/**
+ * API endpoint to retrieve constant values for client-side use.
+ * 
+ * @route GET /api/constants
+ * @returns {Object} { constants: Object }
+ */
+app.get('/api/constants', (req, res) => {
+    res.json({ success: true, constants });
 });
 
 // Start the server

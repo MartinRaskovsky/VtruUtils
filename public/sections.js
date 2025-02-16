@@ -8,47 +8,6 @@
  */
 
 /**
- * sections.js
- *
- * Handles the rendering and processing of sections.
- *
- * Author: Dr. Martín Raskovsky
- * Date: February 2025
- */
-
-/** 
- * Section Titles for Different Assets 
- */
-const SEC_VTRU_HELD   = "VTRU Held";
-const SEC_VTRU_STAKED = "VTRU Staked";
-const SEC_VERSE       = "VERSE";
-const SEC_VIBE        = "VIBE";
-const SEC_VORTEX      = "VORTEX";
-const SEC_SEVOX       = "SEVO-X Staked";
-const SEC_ETH         = "ETH";
-const SEC_BNB         = "BNB";         
-
-/**
- * Mapping of Sections to their Detail Types.
- * Determines which sections require additional detail modals.
- */
-const detailType = {
-    [SEC_VTRU_STAKED]: "stake",
-    [SEC_VIBE]: "vibe",
-    [SEC_VORTEX]: "vortex",
-    [SEC_SEVOX]: "bsc"
-};
-
-/**
- * Tracks which sections have group-based views.
- * Only relevant for sections that support grouped staking data.
- */
-const hasGroups = {
-    [SEC_VTRU_STAKED]: true
-};
-
-
-/**
  * Fetching data and updating the UI.
  */
 async function runSections() {
@@ -245,11 +204,11 @@ function generateSection(title, vault, wallets, values, total) {
     }).filter(row => row).join("");
 
     let stakeControls = "";
-    const type = detailType[title];
+    const type = constants.detailType[title];
     if (type) {
         groupControls = "";
         const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        if (hasGroups[title]) {
+        if (constants.hasGroups[title]) {
             groupControls = `
             <span class="group-label">Grouped by:</span>
                 <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>

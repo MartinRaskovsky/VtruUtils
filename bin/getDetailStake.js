@@ -12,8 +12,9 @@ const VtruVault = require('../lib/vtruVault');
 const TokenStakedVtru = require('../lib/tokenStakedVtru');
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
+const { SEC_VTRU_STAKED } = require('../shared/constants');
 
-const TITLE = "VTRU Staked";
+const TITLE = SEC_VTRU_STAKED;
 const KEYS = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
 
 function showUsage() {
