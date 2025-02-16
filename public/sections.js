@@ -1,12 +1,24 @@
 /**
- * vaultset.js
+ * sections.js
  *
- * Handles the rendering and processing of Vault and Wallet details.
+ * Handles the rendering and processing of sections.
  *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
 
+/**
+ * sections.js
+ *
+ * Handles the rendering and processing of sections.
+ *
+ * Author: Dr. Martín Raskovsky
+ * Date: February 2025
+ */
+
+/** 
+ * Section Titles for Different Assets 
+ */
 const SEC_VTRU_HELD   = "VTRU Held";
 const SEC_VTRU_STAKED = "VTRU Staked";
 const SEC_VERSE       = "VERSE";
@@ -15,6 +27,26 @@ const SEC_VORTEX      = "VORTEX";
 const SEC_SEVOX       = "SEVO-X Staked";
 const SEC_ETH         = "ETH";
 const SEC_BNB         = "BNB";         
+
+/**
+ * Mapping of Sections to their Detail Types.
+ * Determines which sections require additional detail modals.
+ */
+const detailType = {
+    [SEC_VTRU_STAKED]: "stake",
+    [SEC_VIBE]: "vibe",
+    [SEC_VORTEX]: "vortex",
+    [SEC_SEVOX]: "bsc"
+};
+
+/**
+ * Tracks which sections have group-based views.
+ * Only relevant for sections that support grouped staking data.
+ */
+const hasGroups = {
+    [SEC_VTRU_STAKED]: true
+};
+
 
 /**
  * Fetching data and updating the UI.
@@ -213,53 +245,27 @@ function generateSection(title, vault, wallets, values, total) {
     }).filter(row => row).join("");
 
     let stakeControls = "";
-    if (title === SEC_VTRU_STAKED) {
+    const type = detailType[title];
+    if (type) {
+        groupControls = "";
         const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        stakeControls = `
-        <tr class="total-row">
-          <td colspan="3">
-            <div class="stake-controls">
-                <button class="stake-btn" data-modal-type="stake" data-vault="${vault}" data-wallets="${encodedWallets}" onclick="openDetailsModal('stake', '${vault}', '${encodedWallets}', selectedGrouping, event)">View Stakes</button>
-                <span class="group-label">Grouped by:</span>
+        if (hasGroups[title]) {
+            groupControls = `
+            <span class="group-label">Grouped by:</span>
                 <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
                 <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
                 <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
                 <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+                `;
+        }
+        stakeControls = `
+        <tr class="total-row">
+          <td colspan="3">
+            <div class="stake-controls">
+                <button class="stake-btn" data-modal-type="${type}" data-vault="${vault}" data-wallets="${encodedWallets}" onclick="openDetailsModal('${type}', '${vault}', '${encodedWallets}', selectedGrouping, event)">View ${title} Details</button>
+                ${groupControls}
             </div>
           </td>
-        </tr>
-        `;
-    } else if (title === SEC_SEVOX) {
-        const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        stakeControls = `
-        <tr class="total-row">
-            <td colspan="3">
-                <div class="stake-controls">
-                    <button class="stake-btn" data-modal-type="bsc" data-vault="${vault}" data-wallets="${encodedWallets}" onclick="openDetailsModal('bsc', '${vault}', '${encodedWallets}', "none";, event)> View SEVO-X Stakes </button>
-                </div>
-            </td>
-        </tr>
-        `;
-    } else if (title === SEC_VIBE) {
-        const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        stakeControls = `
-        <tr class="total-row">
-            <td colspan="3">
-                <div class="stake-controls">
-                    <button class="stake-btn" data-modal-type="vibe" data-vault="${vault}" data-wallets="${encodedWallets}" onclick="openDetailsModal('vibe', '${vault}', '${encodedWallets}', "none";, event)> View Vibe Details</button>
-                </div>
-            </td>
-        </tr>
-        `;
-    } else if (title === SEC_VORTEX) {
-        const encodedWallets = encodeURIComponent(JSON.stringify(wallets));
-        stakeControls = `
-        <tr class="total-row">
-            <td colspan="3">
-                <div class="stake-controls">
-                    <button class="stake-btn" data-modal-type="vortex" data-vault="${vault}" data-wallets="${encodedWallets}" onclick="openDetailsModal('vortex', '${vault}', '${encodedWallets}', "none";, event)> View Vortex Details</button>
-                </div>
-            </td>
         </tr>
         `;
     }
