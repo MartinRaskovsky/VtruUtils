@@ -13,7 +13,7 @@ const { Network } = require("../lib/libNetwork");
 const VtruVault = require('../lib/vtruVault');
 const WalletSections = require('../lib/libWalletSections');
 const { mergeUnique } = require("../lib/vtruUtils");
-const { toConsole, prettyfier2 } = require("../lib/libPrettyfier");
+const { prettyfier2 } = require("../lib/libPrettyfier");
 
 const TITLE = "Top Level Sections";
 const KEYS = ['address', 'name', 'wallets'];
@@ -60,15 +60,10 @@ async function getSections(vaultAddress, wallets, formatOutput) {
 
         if (data) {
             if (formatOutput) {
-                const keys = ['wallet', 'balance'];
-                prettyfier2(data['wallets'], data['sectionVTRUHeld'], 'VTRU Held', keys);              
-                prettyfier2(data['wallets'], data['sectionVTRUStaked'], 'VTRU Staked', keys);
-                prettyfier2(data['wallets'], data['sectionVERSE'], 'VERSE', keys);
-                prettyfier2(data['wallets'], data['sectionVIBE'], 'VIBE', keys);
-                prettyfier2(data['wallets'], data['sectionVORTEX'], 'VORTEX', keys);
-                prettyfier2(data['wallets'], data['sectionSEVOXStaked'], 'SEVO-X Staked', keys);
-                prettyfier2(data['wallets'], data['sectionETH'], 'ETH', keys);
-                prettyfier2(data['wallets'], data['sectionBNB'], 'BNB', keys);
+                const columns = ['wallet', 'balance'];
+                const sectionTitles = walletSections.getSectionTitles();
+                const keys = walletSections.getSectionKeys();
+                keys.forEach((key,index) => { prettyfier2(data['wallets'], data[key], sectionTitles[index], columns); });
             } else {
                 data['address'] = vault ? vault.address : "";
                 data['name'] = vault? await vault.getName() : "";

@@ -12,8 +12,9 @@ const VtruVault = require("../lib/vtruVault");
 const TokenVibe = require("../lib/tokenVibe");
 const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
+const { SEC_VIBE } = require('../shared/constants');
 
-const TITLE = "VIBE Details";
+const TITLE = SEC_VIBE;
 const KEYS = ['wallet', 'noTokens', 'balance', 'claimed', 'unclaimed'];
 
 function showUsage() {

@@ -13,8 +13,9 @@ const VtruVault = require('../lib/vtruVault');
 const TokenStakedSevo = require('../lib/tokenStakedSevo');
 const { formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
+const { SEC_SEVOX } = require('../shared/constants');
 
-const TITLE = "SEVO-X Staked on BSC";
+const TITLE = SEC_SEVOX;
 const KEYS = ['wallet', 'unlocked', 'locked', 'date'];
 
 function showUsage() {

@@ -8,13 +8,13 @@
  */
 
 const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
 const TokenVortex = require("../lib/tokenVortex");
 const { groupByWalletAndKind, mergeUnique } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
+const { SEC_VORTEX } = require('../shared/constants');
 
-const TITLE = "Vortex Details";
+const TITLE = SEC_VORTEX;
 const KEYS = ['wallet', 'kind', 'count'];
 
 function showUsage() {
