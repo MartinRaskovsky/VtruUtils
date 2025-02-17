@@ -139,7 +139,6 @@ function computeDifferencesForDisplay(currentData, previousData) {
     // Process totals
     modifiedData.totalKeys.forEach((key, kindex) => {
         const decimals = modifiedData.decimals[kindex];
-        //const decimals = (key === "totalVERSE" || key === "totalVIBE" || key === "totalVORTEX")? 0: 2;
         modifiedData[key] = getDifference(currentData[key], previousData[key], decimals);
     });
 
