@@ -4,7 +4,7 @@
  * server.js
  * 
  * Express server handling API requests for running scripts, 
- * processing Vault and Stake Contract queries, and serving static files.
+ * processing Section and Detail queries, and serving static files.
  * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -74,7 +74,7 @@ app.post('/api/sections', async (req, res) => {
 });
 
 /**
- * API endpoint to process Stake Contract queries.
+ * API endpoint to process detail queries.
  * 
  * @route POST /api/details
  * @body { type: string, vault: string, wallets: string[], grouping: string }

@@ -1,5 +1,5 @@
 /**
- * stakecontract.js
+ * details.js
  *
  * Handles modal interactions for staking details across different networks.
  *
@@ -10,7 +10,7 @@
 /**
  * Opens the stake modal and fetches stake details.
  * 
- * @param {string} type - The type of stake contract (e.g., 'bsc', 'vibe', 'vortex', 'vtru').
+ * @param {string} type - The type of details (e.g., 'bsc', 'vibe', 'vortex', 'vtru').
  * @param {string} vault - The vault address.
  * @param {string} walletsEncoded - Encoded JSON string of wallet addresses.
  * @param {string} grouping - Grouping parameter.
@@ -39,7 +39,7 @@ async function openDetailsModal(type, vault, walletsEncoded, grouping) {
         const result = JSON.parse(textResult);
 
         if (result.success) {
-            modalContent.innerHTML = renderStakeContent(type, grouping, result.output);
+            modalContent.innerHTML = renderDetailContent(type, grouping, result.output);
             modal.style.display = "block";
             modal.style.opacity = "1";
 
@@ -71,19 +71,19 @@ function closeDetailsModal() {
 }
 
 /**
- * Generates the appropriate stake contract rendering based on type.
+ * Generates the appropriate details rendering based on type.
  * 
- * @param {string} type - The contract type (e.g., 'bsc', 'vibe', 'vortex', 'vtru').
+ * @param {string} type - The details type (e.g., 'bsc', 'vibe', 'vortex', 'vtru').
  * @param {string} grouping - The grouping type.
  * @param {Array} data - The stake data.
  * @returns {string} - Rendered HTML content.
  */
-function renderStakeContent(type, grouping, data) {
+function renderDetailContent(type, grouping, data) {
     switch (type) {
-        case "bsc":     return renderBscStakeContract(grouping, data);
-        case "vibe":    return renderVibeContract(grouping, data);
-        case "vortex":  return renderVortexContract(grouping, data);
-        default:        return renderStakeContract(grouping, data);
+        case "bsc":     return renderBscStakeDetails(grouping, data);
+        case "vibe":    return renderVibeDetails(grouping, data);
+        case "vortex":  return renderVortexDetails(grouping, data);
+        default:        return renderVtruStakeDetails(grouping, data);
     }
 }
 
@@ -122,9 +122,9 @@ function decorateUnclaimed(value) {
 }
 
 /**
- * Renders the generic VTRU stake contract details.
+ * Renders the generic VTRU stake details.
  */
-function renderStakeContract(grouping, data) {
+function renderVtruStakeDetails(grouping, data) {
     return `
         <h2>VTRU Staked Details</h2>
         <div class="scrollable">
@@ -157,9 +157,9 @@ function renderStakeContract(grouping, data) {
 }
 
 /**
- * Renders SEVO-X (BSC) stake contract details.
+ * Renders SEVO-X (BSC) stake details.
  */
-function renderBscStakeContract(grouping, data) {
+function renderBscStakeDetails(grouping, data) {
     return `
         <h2>SEVO-X Staked Details</h2>
         <div class="scrollable">
@@ -188,9 +188,9 @@ function renderBscStakeContract(grouping, data) {
 }
 
 /**
- * Renders Vibe contract details.
+ * Renders Vibe details.
  */
-function renderVibeContract(grouping, data) {
+function renderVibeDetails(grouping, data) {
     return `
         <h2>Vibe Details</h2>
         <div class="scrollable">
@@ -221,9 +221,9 @@ function renderVibeContract(grouping, data) {
 }
 
 /**
- * Renders Vortex contract details.
+ * Renders Vortex details.
  */
-function renderVortexContract(grouping, data) {
+function renderVortexDetails(grouping, data) {
     return `
         <h2>Vortex Details</h2>
         <div class="scrollable">

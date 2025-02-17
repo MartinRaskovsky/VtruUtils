@@ -118,7 +118,7 @@ function runScript(scriptName, args = []) {
 }
 
 /**
- * Runs the Vault Set script and logs data.
+ * Runs the Section script and logs data.
  * @param {string} vault - The Vault address.
  * @param {string[]} wallets - List of wallet addresses.
  * @returns {Promise<Object>} - Resolves with current and previous log data.
@@ -147,7 +147,7 @@ async function runGetSections(vault, wallets) {
 }
 
 /**
- * Runs the Stake Contract script.
+ * Runs the Details scripts.
  * @param {string} vault - The Vault address.
  * @param {string[]} wallets - List of wallet addresses.
  * @param {string} grouping - Grouping parameter.
