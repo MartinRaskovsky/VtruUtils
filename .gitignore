@@ -42,6 +42,9 @@ server/bak
 tests/bak/
 data/bak
 
+# Development tests
+dev/
+
 # Ignore system files
 .AppleDouble
 
