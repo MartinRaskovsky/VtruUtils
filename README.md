@@ -101,26 +101,102 @@ Execute scripts located in `src/bin`:
 node src/bin/yourScript.js
 ```
 
-### Example Script
+### Example Usage: `demo.js`
 
-Check the balances of a wallet:
-```bash
-node src/bin/getVaultDetails.js 0xYourVaultAddress
+The `demo.js` script illustrates the fundamental operation of the library by fetching wallet balances across multiple blockchain networks. Below, we break down its core functionality.
+
+#### Key Components
+
+- **Web3 Library (`libWeb3`)**: Provides blockchain connectivity and abstraction for different networks.
+- **Network Library (`libNetwork`)**: Manages multiple blockchain instances simultaneously.
+- **Token Wallet (`tokenWallet`)**: A class to handle token balances for specified wallet addresses.
+- **Utility Functions (`vtruUtils`)**: Includes functions for formatting and scaling numbers.
+
+#### Example Execution
+
+##### 1. Define Wallet Addresses
+
+The script defines a list of wallet addresses for which balances will be retrieved. In practice, these would be replaced by actual wallet addresses:
+
+```javascript
+const wallets = [
+    'WALLET_ADDRESS_1', 
+    'WALLET_ADDRESS_2'
+];
 ```
-Expected output:
-```
-{
-   ...
-  "name": "Owner's Vault",
-  "totalVTRUHeld": "vtru held",
-  "totalVTRUStaked": "vtru stacked",
-  "totalVERSE": "VERSE held",
-  "totalVIBE": "VIBE held"
-  ...
+
+##### 2. Fetch Wallet Balances
+
+The function `getWalletBalance` retrieves the balances for the given wallets on a specified network:
+
+```javascript
+async function getWalletBalance(web3) {
+    const id = web3.getId();
+    const tokenWallet = new TokenWallet(web3);
+    const balances = await tokenWallet.getBalances(wallets);
+    balances.map((balance, index) => {
+      console.log(`${wallets[index]}: ${Web3.currency[id]} ${formatRawNumber(balance,3)}`);
+    });
 }
-
-...
 ```
+
+- Uses the `TokenWallet` class to fetch balances.
+- Formats and prints the balance using `formatRawNumber(balance,3)`.
+- Retrieves the currency symbol dynamically based on the network.
+
+##### 3. Multi-Network and Single-Network Support
+
+The script initializes blockchain networks in two ways:
+
+- **Multiple Networks at Once**:
+
+```javascript
+const network = await new Network([Web3.VTRU, Web3.BSC]);
+const vtru = network.get(Web3.VTRU);
+const bsc = network.get(Web3.BSC);
+```
+
+- **Single Network Initialization**:
+
+```javascript
+const eth = Web3.create(Web3.ETH);
+```
+
+- This method is used when interacting with only one blockchain.
+
+##### 4. Execute Tests
+
+Finally, the script fetches balances for all wallets on all selected networks:
+
+```javascript
+await getWalletBalance(vtru);
+await getWalletBalance(bsc);
+await getWalletBalance(eth);
+```
+
+#### Sample Output
+
+Running `demo.js` produces the following output:
+
+```
+WALLET_ADDRESS_1: VTRU 41.115
+WALLET_ADDRESS_2: VTRU 1.651
+WALLET_ADDRESS_1: BNB 0.000
+WALLET_ADDRESS_2: BNB 0.011
+WALLET_ADDRESS_1: ETH 0.010
+WALLET_ADDRESS_2: ETH 0.031
+```
+
+- Balances are displayed per wallet address.
+- The correct currency is assigned based on the network.
+- The script demonstrates seamless interaction with multiple blockchains.
+
+#### Conclusion
+
+This example illustrates how the library abstracts blockchain interactions, allowing developers to query multiple networks without worrying about low-level implementation details. The modular approach ensures scalability, making it easy to extend support for additional networks in the future.
+
+It is important to note that this is only a basic example and the library provides a much broader range of capabilities beyond those demonstrated here.
+
 
 ### Running the Web Server
 
