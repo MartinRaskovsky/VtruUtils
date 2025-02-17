@@ -161,7 +161,7 @@ async function runGetDetails(type, vault, wallets, grouping) {
     let scriptName = "";
     switch (type) {
         case "bsc":
-            scriptName = "getDetailSevoStake.js";
+            scriptName = "getDetailSevoStaked.js";
             grouping = false;
             break;
         case "vibe":
@@ -174,7 +174,7 @@ async function runGetDetails(type, vault, wallets, grouping) {
             break;
         case "stake":
         default:
-            scriptName = "getDetailStake.js";
+            scriptName = "getDetailVtruStaked.js";
             break;
     }
     const args = grouping ? ["-g", grouping, ...wallets] : wallets;

@@ -47,13 +47,13 @@ async function getVortexDetails(wallets) {
  * Displays usage instructions.
  */
 function displayUsage() {
-    console.log(`Usage: showVortexDetails.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>
+    console.log(`Usage: showVortexDetails.js [options] <wallet1> <wallet2> ... <walletN>
 
 Options:
   -h              Display this usage information
 
 Arguments:
-  <walletAddress>  One or more wallet addresses to process (required)`);
+  <wallet>  One or more wallet addresses to process (required)`);
 }
 
 /**

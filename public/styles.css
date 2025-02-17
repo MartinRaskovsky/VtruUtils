@@ -94,13 +94,13 @@ td:first-child, th:first-child, .section-header {
     border-left: none;
 }
 
-/* Wallet column - Limit width to reduce white space */
 .wallet-cell {
-    font-family: "Courier New", monospace;
+    /*font-family: 'Poppins', sans-serif;*/
+    font-family: monospace; /* Standard JSON font */
     text-align: left;
     font-weight: bold;
-    max-width: 300px; /* Constrain width */
-    overflow-wrap: break-word; /* Wrap long addresses */
+    max-width: 300px;
+    overflow-wrap: break-word;
 }
 
 /* Balance column - Tight alignment */
@@ -204,14 +204,6 @@ pre {
     max-width: 600px;
     margin: auto;
     padding: 10px;
-}
-
-/* Wallet column - Ensures readability */
-.wallet-cell {
-    font-family: "Courier New", monospace;
-    text-align: left;
-    max-width: 300px;
-    overflow-wrap: break-word;
 }
 
 /* ✅ Perfectly Aligned Stake Controls */

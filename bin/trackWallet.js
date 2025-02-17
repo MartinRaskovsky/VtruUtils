@@ -34,7 +34,7 @@ function displayUsage() {
     console.log(`Usage: trackWallets.js [options]
 
 Options:
-  -w <walletAddress>  Address of the wallet to track (required)
+  -w <wallet>  Address of the wallet to track (required)
   -s <startBlock>     Starting block number (default: 0)
   -e <endBlock>       Ending block number (default: latest)
   -h                  Display this usage information`);

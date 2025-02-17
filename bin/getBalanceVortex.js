@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves JSON of VIBE details for given wallet addresses.
+ * Retrieves VORTEX Balance for given wallet addresses.
  * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -9,16 +9,16 @@
 
 const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenVibe = require("../lib/tokenVibe");
-const { formatNumber, formatRawNumber } = require("../lib/vtruUtils");
+const TokenVortex = require("../lib/tokenVortex");
+const { formatNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_VIBE } = require('../shared/constants');
+const { SEC_VORTEX } = require('../shared/constants');
 
-const TITLE = SEC_VIBE;
-const KEYS = ['wallet', 'noTokens', 'balance', 'claimed', 'unclaimed'];
+const TITLE = SEC_VORTEX;
+const KEYS = ['wallet', 'balance'];
 
 function showUsage() {
-    console.log("\nUsage: getDetailVibe.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceVortex.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -27,52 +27,41 @@ function showUsage() {
 }
 
 /**
- * Fetches and formats VIBE token details for the given wallets.
+ * Fetches and formats balance for the given wallets.
  * 
  * @param {string|null} vaultAddress - Vault address, if provided.
  * @param {Array<string>} wallets - Wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
-async function runDetails(vaultAddress, wallets, formatOutput) {
+async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
         const vtru = await Web3.create(Web3.VTRU);
-        const tokenVibe = new TokenVibe(vtru);
+        const token = new TokenVortex(vtru);
 
         // Retrieve associated wallets if vault address is provided
         const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
 
-        let rows = await tokenVibe.getDetails(merged);
+        let rows = await token.getBalances(merged);
 
         let totals = {
             wallet: "Total",
-            noTokens: 0n,
             balance: 0n,
-            claimed: 0n,
-            unclaimed: 0n,
         };
 
-        let formattedData = rows.map(row => {
-            totals.noTokens += row.noTokens;
-            totals.balance += row.balance;
-            totals.claimed += row.claimed;
-            totals.unclaimed += row.unclaimed;
+        let formattedData = [];
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i] && rows[i] !== 0n) {
+                totals.balance += rows[i];
+                formattedData.push({
+                    wallet: merged[i],
+                    balance: formatNumber(rows[i], 0),
+                });
+            }
+        }
 
-            return {
-                wallet: row.wallet,
-                noTokens: formatNumber(row.noTokens, 0),
-                balance: formatNumber(row.balance),
-                claimed: formatRawNumber(row.claimed),
-                unclaimed: formatRawNumber(row.unclaimed),
-            };
-        });
-
-        // Append totals row
         formattedData.push({
             wallet: "Total",
-            noTokens: formatNumber(totals.noTokens, 0),
-            balance: formatNumber(totals.balance),
-            claimed: formatRawNumber(totals.claimed),
-            unclaimed: formatRawNumber(totals.unclaimed),
+            balance: formatNumber(totals.balance, 0),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
@@ -83,7 +72,7 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 }
 
 /**
- * Parses command-line arguments and initiates VIBE details retrieval.
+ * Parses command-line arguments and initiates retrieval.
  */
 function main() {
     const args = process.argv.slice(2);
@@ -94,8 +83,9 @@ function main() {
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
-                vaultAddress = args[i + 1];
-                i++;
+                if (i + 1 < args.length) {
+                    vaultAddress = args[++i];
+                }
                 break;
             case "-f":
                 formatOutput = true;
@@ -109,9 +99,10 @@ function main() {
         }
     }
 
-    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
+    runBalances(vaultAddress, walletAddresses, formatOutput).catch(error => {
         console.error("❌ Error:", error.message);
     });
 }
 
 main();
+

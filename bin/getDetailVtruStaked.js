@@ -10,7 +10,7 @@
 const { Web3 } = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const TokenStakedVtru = require('../lib/tokenStakedVtru');
-const { formatNumber, formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { formatNumber, formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_VTRU_STAKED } = require('../shared/constants');
 
@@ -18,7 +18,7 @@ const TITLE = SEC_VTRU_STAKED;
 const KEYS = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimatedMaturity'];
 
 function showUsage() {
-    console.log(`\nUsage: getDetailStake.js [options] <address1> <address2> ... <walletAddressN>\n`);
+    console.log(`\nUsage: getDetailVtruStaked.js [options] <wallet1> <wallet2> ... <walletN>\n`);
     console.log(`Options:`);
     console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
     console.log(`  -b                  Use balance instead of staking details.`);
@@ -46,24 +46,18 @@ function getGroupKey(date, groupBy) {
  * 
  * @param {string|null} vaultAddress - Vault address, if provided.
  * @param {Array<string>} wallets - Wallet addresses.
- * @param {boolean} useBalance - Whether to use balance instead of staking details.
  * @param {boolean} formatOutput - Whether to format output as a table.
  * @param {string|null} groupBy - Grouping option.
  */
-async function getDetailStake(vaultAddress, wallets, useBalance, formatOutput, groupBy) {
+async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
     try {
-        const web3 = await Web3.create(Web3.VTRU);
-        const tokenStakedVtru = new TokenStakedVtru(web3);
+        const vtru = await Web3.create(Web3.VTRU);
+        const tokenStakedVtru = new TokenStakedVtru(vtru);
 
         // Retrieve associated wallets if vault address is provided
-        if (vaultAddress) {
-            const vault = new VtruVault(vaultAddress, web3);
-            wallets = mergeUnique([vault.getAddress()], await vault.getVaultWallets(), wallets);
-        }
+        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
 
-        let result = wallets.length === 1
-            ? await (useBalance ? tokenStakedVtru.getStakedBalance(wallets[0]) : tokenStakedVtru.getStakedDetail(wallets[0]))
-            : await (useBalance ? tokenStakedVtru.getStakedBalances(wallets) : tokenStakedVtru.getStakedDetails(wallets));
+        let result = await tokenStakedVtru.getDetails(merged);
 
         if (!Array.isArray(result)) {
             result = [result];
@@ -167,13 +161,11 @@ function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
     let walletAddresses = [];
-    let useBalance = false;
     let formatOutput = false;
     let groupBy = null;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
-            case '-b': useBalance = true; break;
             case '-f': formatOutput = true; break;
             case '-g': groupBy = ['day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null; i++; break;
             case '-v': vaultAddress = args[i + 1]; i++; break;
@@ -182,7 +174,7 @@ function main() {
         }
     }
 
-    getDetailStake(vaultAddress, walletAddresses, useBalance, formatOutput, groupBy).catch(error => {
+    runDetails(vaultAddress, walletAddresses, formatOutput, groupBy).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }

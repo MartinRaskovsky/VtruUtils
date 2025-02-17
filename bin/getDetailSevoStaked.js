@@ -9,9 +9,10 @@
 
 const { Web3 } = require('../lib/libWeb3');
 const { Network } = require("../lib/libNetwork");
-const VtruVault = require('../lib/vtruVault');
+const VtruVault = require("../lib/vtruVault");
+
 const TokenStakedSevo = require('../lib/tokenStakedSevo');
-const { formatRawNumber, mergeUnique } = require("../lib/vtruUtils");
+const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_SEVOX } = require('../shared/constants');
 
@@ -19,7 +20,7 @@ const TITLE = SEC_SEVOX;
 const KEYS = ['wallet', 'unlocked', 'locked', 'date'];
 
 function showUsage() {
-    console.log(`\nUsage: getDetailSevoStake.js [options] <walletAddress1> <walletAddress2> ... <walletAddressN>\n`);
+    console.log(`\nUsage: getDetailSevoStaked.js [options] <wallet1> <wallet2> ... <walletN>\n`);
     console.log(`Options:`);
     console.log(`  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.`);
     console.log(`  -b                  Use balance instead of staking details.`);
@@ -48,22 +49,18 @@ async function formatStamp(bsc, stamp) {
  * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
-async function runBscStakedContract(vaultAddress, wallets, formatOutput) {
+async function runDetails(vaultAddress, wallets, formatOutput) {
     try {
         const network = await new Network([Web3.VTRU, Web3.BSC]);
         const vtru = network.get(Web3.VTRU);
         const bsc = network.get(Web3.BSC);
+
+        // Retrieve associated wallets if vault address is provided
+        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+
         const tokenStakedSevo = new TokenStakedSevo(bsc);
 
-        // Retrieve associated wallets if vaultAddress is provided
-        if (vaultAddress) {
-            const vault = new VtruVault(vaultAddress, vtru);
-            let vaultWallets = await vault.getVaultWallets();
-            vaultWallets = mergeUnique([vault.getAddress()], vaultWallets);
-            wallets = mergeUnique(vaultWallets, wallets);
-        }
-
-        let result = await tokenStakedSevo.getStakedDetails(wallets);
+        let result = await tokenStakedSevo.getDetails( merged);
         if (!result) {
             console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);
@@ -127,7 +124,7 @@ function main() {
         }
     }
 
-    runBscStakedContract(vaultAddress, walletAddresses, formatOutput).catch(error => {
+    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
         console.error('❌ Error:', error.message);
     });
 }

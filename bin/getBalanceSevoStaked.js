@@ -1,24 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves JSON of Vortex details for given wallet addresses.
+ * Retrieves SEVOX Stake Balance for given wallet addresses.
  * 
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const { Web3 } = require('../lib/libWeb3');
+const { Network } = require("../lib/libNetwork");
 const VtruVault = require("../lib/vtruVault");
-const TokenVortex = require("../lib/tokenVortex");
-const { groupByWalletAndKind } = require("../lib/vtruUtils");
+const TokenStakedSevo = require("../lib/tokenStakedSevo");
+const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_VORTEX } = require('../shared/constants');
+const { SEC_SEVOX } = require('../shared/constants');
 
-const TITLE = SEC_VORTEX;
-const KEYS = ['wallet', 'kind', 'count'];
+const TITLE = SEC_SEVOX;
+const KEYS = ['wallet', 'balance'];
 
 function showUsage() {
-    console.log("\nUsage: getDetailVortex.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceSevoStake.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -27,39 +28,44 @@ function showUsage() {
 }
 
 /**
- * Fetches and formats Vortex details for the given wallets.
+ * Fetches and formats balance for the given wallets.
  * 
  * @param {string|null} vaultAddress - Vault address, if provided.
  * @param {Array<string>} wallets - Wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
-async function runDetails(vaultAddress, wallets, formatOutput) {
+async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
-        const tokenVortex = new TokenVortex(vtru);
-
+        const network = await new Network([Web3.VTRU, Web3.BSC]);
+        const vtru = network.get(Web3.VTRU);
+        const bsc = network.get(Web3.BSC);
+        const token = new TokenStakedSevo(bsc);
+   
         // Retrieve associated wallets if vault address is provided
         const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
 
-        let rows = await tokenVortex.getDetails(merged);
-        let groups = groupByWalletAndKind(rows);
+        let rows = await token.getBalances(merged);
 
-        let totals = { wallet: "Total", kind: "", count: 0 };
+        let totals = {
+            wallet: "Total",
+            balance: 0n,
+        };
 
-        let formattedData = groups.map(group => {
-            totals.count += group.ids.length;
-            return {
-                wallet: group.wallet,
-                kind: group.kind,
-                count: group.ids.length,
-            };
-        });
+        let formattedData = [];
+        for (let i = 0; i < rows.length; i++) {
+            const balanceFormatted = rows[i] ? formatRawNumber(rows[i]): "";
+            if (rows[i] && balanceFormatted !== "0.00") {
+                totals.balance += rows[i];
+                formattedData.push({
+                    wallet: merged[i],
+                    balance: balanceFormatted,
+                });
+            }
+        }
 
-        // Append totals row
         formattedData.push({
             wallet: "Total",
-            kind: "",
-            count: totals.count,
+            balance: formatRawNumber(totals.balance),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
@@ -70,7 +76,7 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 }
 
 /**
- * Parses command-line arguments and initiates Vortex details retrieval.
+ * Parses command-line arguments and initiates retrieval.
  */
 function main() {
     const args = process.argv.slice(2);
@@ -81,8 +87,9 @@ function main() {
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
-                vaultAddress = args[i + 1];
-                i++;
+                if (i + 1 < args.length) {
+                    vaultAddress = args[++i];
+                }
                 break;
             case "-f":
                 formatOutput = true;
@@ -96,9 +103,10 @@ function main() {
         }
     }
 
-    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
+    runBalances(vaultAddress, walletAddresses, formatOutput).catch(error => {
         console.error("❌ Error:", error.message);
     });
 }
 
 main();
+

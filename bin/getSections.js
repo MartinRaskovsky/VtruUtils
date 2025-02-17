@@ -12,7 +12,6 @@ const { Network } = require("../lib/libNetwork");
 
 const VtruVault = require('../lib/vtruVault');
 const WalletSections = require('../lib/libWalletSections');
-const { mergeUnique } = require("../lib/vtruUtils");
 const { prettyfier2 } = require("../lib/libPrettyfier");
 
 const TITLE = "Top Level Sections";
@@ -35,9 +34,6 @@ async function getSections(vaultAddress, wallets, formatOutput) {
         const network = await new Network(Web3.networkIds);
         const vtru = network.get(Web3.VTRU);
 
-        let vaultWallets = [];
-        let vault = null;
-
         if ((wallets.length === 0) && (vaultAddress.length === 0)) {
             vaultAddress = vtru.getConfig().get('VAULT_ADDRESS');
             wallets = vtru.getConfig().get('WALLETS');
@@ -46,24 +42,19 @@ async function getSections(vaultAddress, wallets, formatOutput) {
                 : [];
         }
 
-       if (vaultAddress && vaultAddress.length > 0) {
-        vaultAddress = vaultAddress.toLowerCase();
-        vault = new VtruVault(vaultAddress, vtru);
-        vaultWallets = await vault.getVaultWallets();
-       }
-       
-       vaultWallets = [vaultAddress, ...vaultWallets]; 
-       const merged = mergeUnique(vaultWallets, wallets);
+       const { merged, vault }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
 
         const walletSections = new WalletSections(network);
         const data = await walletSections.get(merged);
-
         if (data) {
             if (formatOutput) {
                 const columns = ['wallet', 'balance'];
                 const sectionTitles = walletSections.getSectionTitles();
+                const totalKeys = walletSections.getTotalKeys();
                 const keys = walletSections.getSectionKeys();
-                keys.forEach((key,index) => { prettyfier2(data['wallets'], data[key], sectionTitles[index], columns); });
+                keys.forEach((key,index) => { 
+                    prettyfier2(data['wallets'], data[key], data[totalKeys[index]], sectionTitles[index], columns);
+                });
             } else {
                 data['address'] = vault ? vault.address : "";
                 data['name'] = vault? await vault.getName() : "";
