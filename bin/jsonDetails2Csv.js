@@ -17,7 +17,7 @@ function stripDecimal(numberStr) {
 }
 
 // Converts JSON data to CSV format
-function jsonToCsv(jsonData) {
+function jsonToCsv(jsonData, full) {
     const rows = [];
     let indexCounter = 0;
 
@@ -27,9 +27,12 @@ function jsonToCsv(jsonData) {
     }, 0);
 
     // Create CSV header
-    let header = 'INDEX,HELD,STAKED,NAME,VAULT,BALANCE,HAS STAKES';
+    let header = 'INDEX,HELD,STAKED';
+    if (full) header += ',VERSE,VIBE,VORTEX';
+    header += ',NAME,VAULT,BALANCE';
     for (let i = 0; i < maxWallets; i++) {
         header += `,WALLET/${i},BALANCE/${i},STAKED/${i}`;
+        if (full) header += `,VERSE/${i},VIBE/${i},VORTEX/${i}`;
     }
     rows.push(header);
 
@@ -37,22 +40,38 @@ function jsonToCsv(jsonData) {
     jsonData.forEach((data) => {
         indexCounter++;
 
-        let { count, address, name, balance, hasStakes, wallets, sectionVTRUHeld, sectionVTRUStaked, totalVTRUHeld, totalVTRUStaked } = data;
+        let { count, address, name, balance, wallets, 
+            sectionVTRUHeld, 
+            sectionVTRUStaked, 
+            sectionVERSE, 
+            sectionVIBE, 
+            sectionVORTEX,
+            totalVTRUHeld,  
+            totalVTRUStaked,
+            totalVERSE,
+            totalVIBE,
+            totalVORTEX
+        } = data;
         totalVTRUHeld = stripDecimal(totalVTRUHeld);
         totalVTRUStaked = stripDecimal(totalVTRUStaked);
 
         if (balance !== undefined) {
-            let row = `${indexCounter},"${totalVTRUHeld}","${totalVTRUStaked}","${name}","${address}","${balance}","${hasStakes}"`;
+            let row = `${indexCounter},"${totalVTRUHeld}","${totalVTRUStaked}"`;
+            if (full) row += `,"${totalVERSE}","${totalVIBE}","${totalVORTEX}"`;
+            row += `,"${name}","${address}","${balance}"`;
 
             if (wallets && wallets.length > 0) {
                 wallets.forEach((wallet, j) => {
                     row += `,"${wallet}","${sectionVTRUHeld[j]}","${sectionVTRUStaked[j]}"`;
+                    if (full) row += `,"${sectionVERSE[j]}","${sectionVIBE[j]}","${sectionVORTEX[j]}"`;
                 });
             }
 
             rows.push(row);
         } else {
-            rows.push(`${count},"${totalVTRUHeld}","${totalVTRUStaked}"`);
+            let row = `${count},"${totalVTRUHeld}","${totalVTRUStaked}"`;
+            if (full) row += `,"${totalVERSE}","${totalVIBE}","${totalVORTEX}"`;
+            rows.push(row);
         }
     });
 
@@ -67,6 +86,7 @@ Options:
   -f <fileName>     Base file name for input/output (default: details-YYMMDD-minBalance.json/.csv)
   -m <minBalance>   Minimum balance to include in file name (default: 4000)
   -d <date>         Specify a custom YYMMDD date string
+  -F                Full ( includes tokens VERSE, VIBE, VORTEX )
   -h                Display this usage information`);
 }
 
@@ -75,6 +95,7 @@ function main() {
     const options = {
         contractName: "CreatorVaultFactory",
         minBalance: 4000,
+        full: false,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -95,6 +116,9 @@ function main() {
                 options.date = args[i + 1];
                 i++;
                 break;
+            case '-F':
+                options.full = true;
+                break;
             case '-h':
                 displayUsage();
                 process.exit(0);
@@ -111,7 +135,7 @@ function main() {
 
     try {
         const jsonData = JSON.parse(fs.readFileSync(inputFilePath, 'utf-8'));
-        const csvData = jsonToCsv(jsonData);
+        const csvData = jsonToCsv(jsonData, options.full);
 
         fs.writeFileSync(outputFilePath, csvData);
         console.log(`Written: ${outputFilePath}`);

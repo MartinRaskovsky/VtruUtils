@@ -19,14 +19,14 @@ const VtruResultAggregator = require('../lib/vtruResultAggregator');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 const fse = require('fs-extra');
 
-async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", verbose = 1) {
+async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", full = false, verbose = 1) {
     try {
         const network = await new Network([Web3.VTRU]);
         const vtru = await Web3.create(Web3.VTRU);
  
         const vaultFactory = new VtruVaultFactory(vtru, contractName);
         const aggregator = new VtruResultAggregator();
-        const vaultDetails = new VtruVaultDetails(network, minBalance, false);
+        const vaultDetails = new VtruVaultDetails(network, minBalance, full);
 
         await vaultFactory.processVaults(limit, async (vault, index) => {
             if (!(await vault.isBlocked())) {
@@ -39,11 +39,13 @@ async function getVaultDetails(minBalance, outputFilePath, limit, contractName =
 
         // Summarize results and sort by "totalVTRUHeld" amount
         const summary = vaultDetails.getSummary();
+        const totals = vaultDetails.getTotals(summary);
+        const totalSep = vaultDetails.getTotalSep(summary);
+        const finals = vaultDetails.getFinals(summary);
         aggregator.sort("totalVTRUHeld");
-
-        aggregator.add({ count: '', totalVTRUHeld: summary.totalVTRUHeld, totalVTRUStaked: summary.totalVTRUStaked });
-        aggregator.add({ count: '', totalVTRUHeld: "...", totalVTRUStaked: "..." });
-        aggregator.add({ count: summary.analyzedVaultCount, totalVTRUHeld: summary.totalHeld, totalVTRUStaked: summary.totalStaked });
+        aggregator.add(totals);
+        aggregator.add(totalSep);
+        aggregator.add(finals);
 
         if (outputFilePath) {
             fse.writeJSONSync(outputFilePath, aggregator.get(), { spaces: 2 });
@@ -65,6 +67,7 @@ Options:
   -m <minBalance>   Minimum balance to filter vaults (default: 4000)
   -d <date>         Specify a custom YYMMDD date string
   -l <limit>        Limit the number of vaults to process (default: no limit)
+  -F                Full tokens ( includes VERSE, VIBE, VORTEX )
   -h                Display this usage information`);
 }
 
@@ -75,6 +78,7 @@ function main() {
         minBalance: 4000,
         limit: Infinity,
         verbose: 1,
+        full: false,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -99,6 +103,9 @@ function main() {
                 options.limit = parseInt(args[i + 1], 10) || Infinity;
                 i++;
                 break;
+            case '-F':
+                options.full = true;
+                break;
             case '-q':
                 options.verbose = 0;
                 break;
@@ -113,7 +120,7 @@ function main() {
 
     const outputFilePath = options.verbose?getFileName(options, 'json'): null;
 
-    getVaultDetails(options.minBalance, outputFilePath, options.limit, options.contractName, options.verbose)
+    getVaultDetails(options.minBalance, outputFilePath, options.limit, options.contractName, options.full, options.verbose)
         .catch(error => console.error('Error:', error.message));
 }
 

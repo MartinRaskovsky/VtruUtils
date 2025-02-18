@@ -4,9 +4,10 @@
 # Usage: ./script.sh [-m min_balance] [-c contract_name] [-l limit]
 # Defaults: min_balance = 4000, contract_name = CreatorVaultFactory, no limit
 
-MIN_BALANCE=3000
+MIN_BALANCE=1000
 CONTRACT="CreatorVaultFactory"
 LIMIT=""
+FULL="-F"
 
 # Parse command-line arguments
 while [ $# -gt 0 ]; do
@@ -23,6 +24,10 @@ while [ $# -gt 0 ]; do
             LIMIT="-l $2"
             shift 2
             ;;
+        -F)
+            FULL="-F"
+            shift 1
+            ;;
         -h|--help)
             echo "Usage: $0 [-m min_balance] [-c contract_name] [-l limit]"
             exit 0
@@ -38,8 +43,8 @@ done
 #ARGS="-m $MIN_BALANCE -c $CONTRACT"
 ARGS="-m $MIN_BALANCE"
 
-echo "Running with arguments: $ARGS $LIMIT"
+echo "Running with arguments: $ARGS $LIMIT $FULL"
 
-getVaultsDetails.js $ARGS $LIMIT
-jsonDetails2Csv.js $ARGS
+getVaultsDetails.js $ARGS $LIMIT $FULL
+jsonDetails2Csv.js $ARGS $FULL
 
