@@ -98,7 +98,7 @@ td:first-child, th:first-child, .section-header {
     /*font-family: 'Poppins', sans-serif;*/
     font-family: monospace; /* Standard JSON font */
     text-align: left;
-    font-weight: bold;
+    /*font-weight: bold;*/
     max-width: 300px;
     overflow-wrap: break-word;
 }

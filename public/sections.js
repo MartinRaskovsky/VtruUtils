@@ -185,7 +185,7 @@ function generateSection(title, networkKey, vault, wallets, values, total) {
         const balance = values[index];
         if (!balance || !balance.value || balance.value === "0.00" || balance.value === "0") return ""; // Skip empty rows
         let address = explorerURL(networkKey, wallet);
-        if (vault === wallet) {
+        if (vault.toLowerCase() === wallet) {
             address = `<strong>${address}</strong>`;
         }
         return `
