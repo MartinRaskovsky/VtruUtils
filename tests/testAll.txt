@@ -141,7 +141,7 @@ Running unit tests for VtruVault.js...
 testVaultDetails.js
 
 Running unit tests for VtruVaultDetails.js...
-FakeGenericDetails.get called with wallets: [ '0xwallet1', '0xwallet2' ]
+❌ Error retrieving vault details for 0xVaultAddress: vault.getAddress is not a function
 ✅ testGetBelowThreshold passed.
 🎉 All VtruVaultDetails tests passed successfully!
 ===========================================================

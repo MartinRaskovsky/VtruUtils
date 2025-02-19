@@ -9,15 +9,37 @@
  * Supports customizable file names and filtering options via command-line arguments.
  **/
 
+const { Web3 } = require("../lib/libWeb3");
+const { Network } = require("../lib/libNetwork");
+const Sections  = require("../lib/libSections");
+
 const fs = require('fs');
 const { getFileName } = require('../lib/vtruUtils');
+
+const explorer = "https://explorer.vitruveo.xyz/address";
 
 function stripDecimal(numberStr) {
     return numberStr.split('.')[0];
 }
 
+function escapeCSVField(field) {
+    if (field.includes(',') || field.includes('"')) {
+      field = field.replace(/"/g, '""');
+      return `"${field}"`;
+    }
+    return field;
+  }
+  
+function truncateAddress(address) {
+    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
+}
+
 // Converts JSON data to CSV format
 function jsonToCsv(jsonData, full) {
+
+    const network =  new Network([Web3.VTRU, Web3.BSC]);
+    const sections = new Sections(network, full);
+
     const rows = [];
     let indexCounter = 0;
 
@@ -27,50 +49,53 @@ function jsonToCsv(jsonData, full) {
     }, 0);
 
     // Create CSV header
-    let header = 'INDEX,HELD,STAKED';
-    if (full) header += ',VERSE,VIBE,VORTEX';
-    header += ',NAME,VAULT,BALANCE';
-    for (let i = 0; i < maxWallets; i++) {
-        header += `,WALLET/${i},BALANCE/${i},STAKED/${i}`;
-        if (full) header += `,VERSE/${i},VIBE/${i},VORTEX/${i}`;
-    }
+
+    const headerTitles = sections.getSectionTitles(jsonData[0]).map((s) => s.toUpperCase());
+    const sectionKeys = sections.getSectionKeys(jsonData[0]);
+    const totalKeys = sections.getTotalKeys(jsonData[0]);
+
+    let header = 'INDEX,' + headerTitles.join(',') ;
+    header += ',VAULT,';
+    for (let i = 1; i < maxWallets; i++) {
+        const sep = (maxWallets>2)? `${i},` : ",";
+        header += `WALLET${sep}`;
+    }   
+    header = header.slice(0, -1).replace(/VTRU /g, '').replace(/-X STAKED/g, 'X');
+
     rows.push(header);
 
-    // Convert each JSON entry into a CSV row
     jsonData.forEach((data) => {
         indexCounter++;
 
-        let { count, address, name, balance, wallets, 
-            sectionVTRUHeld, 
-            sectionVTRUStaked, 
-            sectionVERSE, 
-            sectionVIBE, 
-            sectionVORTEX,
-            totalVTRUHeld,  
-            totalVTRUStaked,
-            totalVERSE,
-            totalVIBE,
-            totalVORTEX
-        } = data;
-        totalVTRUHeld = stripDecimal(totalVTRUHeld);
-        totalVTRUStaked = stripDecimal(totalVTRUStaked);
-
-        if (balance !== undefined) {
-            let row = `${indexCounter},"${totalVTRUHeld}","${totalVTRUStaked}"`;
-            if (full) row += `,"${totalVERSE}","${totalVIBE}","${totalVORTEX}"`;
-            row += `,"${name}","${address}","${balance}"`;
-
-            if (wallets && wallets.length > 0) {
-                wallets.forEach((wallet, j) => {
-                    row += `,"${wallet}","${sectionVTRUHeld[j]}","${sectionVTRUStaked[j]}"`;
-                    if (full) row += `,"${sectionVERSE[j]}","${sectionVIBE[j]}","${sectionVORTEX[j]}"`;
-                });
-            }
-
+        if (data[sectionKeys[0]] !== undefined) {
+            let row = `${indexCounter},${totalKeys.map((key) => { 
+                let v = data[key]; 
+                v = v? stripDecimal(v) : "0"; 
+                return `"${v}"`;
+            })}`;
+            {
+               const formula = `=HYPERLINK("${explorer}/${data.wallets[0]}", "${data['name']}")`;
+               const vault = escapeCSVField(formula); 
+               row += `,${vault}`; 
+            }     
+            for (let i = 1; i < maxWallets; i++) {
+                let wallet = data.wallets[i];
+                if (wallet) {
+                    const mini = truncateAddress(wallet);
+                    const formula = `=HYPERLINK("${explorer}/${wallet}", "${mini}")`;
+                    wallet = escapeCSVField(formula);
+                } else {
+                    wallet = "";
+                }
+                row += `,${wallet}`;
+            }          
             rows.push(row);
         } else {
-            let row = `${count},"${totalVTRUHeld}","${totalVTRUStaked}"`;
-            if (full) row += `,"${totalVERSE}","${totalVIBE}","${totalVORTEX}"`;
+            let row = `${data['count']},${totalKeys.map((key) => { 
+                let v = data[key]; 
+                v = (v && v !== '...') ? stripDecimal(v) : v; 
+                return `"${v}"`;
+            })}`;
             rows.push(row);
         }
     });

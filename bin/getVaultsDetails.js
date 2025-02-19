@@ -21,7 +21,7 @@ const fse = require('fs-extra');
 
 async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", full = false, verbose = 1) {
     try {
-        const network = await new Network([Web3.VTRU]);
+        const network = await new Network([Web3.VTRU, Web3.BSC]);
         const vtru = await Web3.create(Web3.VTRU);
  
         const vaultFactory = new VtruVaultFactory(vtru, contractName);
