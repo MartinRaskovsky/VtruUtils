@@ -35,10 +35,13 @@ function truncateAddress(address) {
 }
 
 // Converts JSON data to CSV format
-function jsonToCsv(jsonData, full) {
+function jsonToCsv(jsonData, options) {
 
-    const network =  new Network([Web3.VTRU, Web3.BSC]);
-    const sections = new Sections(network, full);
+    const web3s = [Web3.VTRU];
+    if (options.bsc) web3s.push(Web3.BSC);
+    if (options.eth) web3s.push(Web3.ETH);
+    const network =  new Network(web3s);
+    const sections = new Sections(network, options.full);
 
     const rows = [];
     let indexCounter = 0;
@@ -121,6 +124,8 @@ function main() {
         contractName: "CreatorVaultFactory",
         minBalance: 4000,
         full: false,
+        bsc: false,
+        eth: false,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -144,6 +149,12 @@ function main() {
             case '-F':
                 options.full = true;
                 break;
+            case '-bsc':
+                options.bsc = true;
+                break;
+            case '-eth':
+                options.eth = true;
+                break;
             case '-h':
                 displayUsage();
                 process.exit(0);
@@ -160,7 +171,7 @@ function main() {
 
     try {
         const jsonData = JSON.parse(fs.readFileSync(inputFilePath, 'utf-8'));
-        const csvData = jsonToCsv(jsonData, options.full);
+        const csvData = jsonToCsv(jsonData, options);
 
         fs.writeFileSync(outputFilePath, csvData);
         console.log(`Written: ${outputFilePath}`);

@@ -19,20 +19,23 @@ const VtruResultAggregator = require('../lib/vtruResultAggregator');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 const fse = require('fs-extra');
 
-async function getVaultDetails(minBalance, outputFilePath, limit, contractName = "CreatorVaultFactory", full = false, verbose = 1) {
+async function getVaultDetails(options, outputFilePath) {
     try {
-        const network = await new Network([Web3.VTRU, Web3.BSC]);
+        let web3s = [Web3.VTRU];
+        if (options.bsc) web3s.push(Web3.BSC);
+        if (options.eth) web3s.push(Web3.ETH);
+        const network = await new Network(web3s);
         const vtru = await Web3.create(Web3.VTRU);
  
-        const vaultFactory = new VtruVaultFactory(vtru, contractName);
+        const vaultFactory = new VtruVaultFactory(vtru, options.contractName);
         const aggregator = new VtruResultAggregator();
-        const vaultDetails = new VtruVaultDetails(network, minBalance, full);
+        const vaultDetails = new VtruVaultDetails(network, options.minBalance, options.full);
 
-        await vaultFactory.processVaults(limit, async (vault, index) => {
+        await vaultFactory.processVaults(options.limit, async (vault, index) => {
             if (!(await vault.isBlocked())) {
                 const vaultDetailsData = await vaultDetails.get(vault, index);
                 if (vaultDetailsData) {
-                    aggregator.add(vaultDetailsData, verbose);
+                    aggregator.add(vaultDetailsData, options.verbose);
                 }
             }
         });
@@ -79,6 +82,8 @@ function main() {
         limit: Infinity,
         verbose: 1,
         full: false,
+        bsc: false,
+        etc: false,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -106,6 +111,12 @@ function main() {
             case '-F':
                 options.full = true;
                 break;
+            case '-bsc':
+                options.bsc = true;
+                break;
+            case '-eth':
+                options.eth = true;
+                break;
             case '-q':
                 options.verbose = 0;
                 break;
@@ -120,7 +131,7 @@ function main() {
 
     const outputFilePath = options.verbose?getFileName(options, 'json'): null;
 
-    getVaultDetails(options.minBalance, outputFilePath, options.limit, options.contractName, options.full, options.verbose)
+    getVaultDetails(options, outputFilePath)
         .catch(error => console.error('Error:', error.message));
 }
 

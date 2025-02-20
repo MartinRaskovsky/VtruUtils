@@ -8,6 +8,8 @@ MIN_BALANCE=1000
 CONTRACT="CreatorVaultFactory"
 LIMIT=""
 FULL="-F"
+BSC="-bsc"
+ETH=""
 
 # Parse command-line arguments
 while [ $# -gt 0 ]; do
@@ -28,6 +30,14 @@ while [ $# -gt 0 ]; do
             FULL="-F"
             shift 1
             ;;
+        -bsc)
+            BSC="$1"
+            shift 1
+            ;;
+        -eth)
+            ETH="$1"
+            shift 1
+            ;;
         -h|--help)
             echo "Usage: $0 [-m min_balance] [-c contract_name] [-l limit]"
             exit 0
@@ -43,8 +53,8 @@ done
 #ARGS="-m $MIN_BALANCE -c $CONTRACT"
 ARGS="-m $MIN_BALANCE"
 
-echo "Running with arguments: $ARGS $LIMIT $FULL"
+echo "Running with arguments: $ARGS $FULL $BSC $ETH $LIMIT"
 
-getVaultsDetails.js $ARGS $LIMIT $FULL
-jsonDetails2Csv.js $ARGS $FULL
+getVaultsDetails.js $ARGS $FULL $BSC $ETH $LIMIT
+jsonDetails2Csv.js  $ARGS $FULL $BSC $ETH
 
