@@ -18,8 +18,8 @@ const { getFileName } = require('../lib/vtruUtils');
 
 const explorer = "https://explorer.vitruveo.xyz/address";
 
-function stripDecimal(numberStr) {
-    return numberStr.split('.')[0];
+function stripDecimal(strip, numberStr) {
+    return strip ? numberStr.split('.')[0] : numberStr;
 }
 
 function escapeCSVField(field) {
@@ -73,7 +73,7 @@ function jsonToCsv(jsonData, options) {
         if (data[sectionKeys[0]] !== undefined) {
             let row = `${indexCounter},${totalKeys.map((key) => { 
                 let v = data[key]; 
-                v = v? stripDecimal(v) : "0"; 
+                v = v? stripDecimal(options.decimals, v) : "0"; 
                 return `"${v}"`;
             })}`;
             {
@@ -96,7 +96,7 @@ function jsonToCsv(jsonData, options) {
         } else {
             let row = `${data['count']},${totalKeys.map((key) => { 
                 let v = data[key]; 
-                v = (v && v !== '...') ? stripDecimal(v) : v; 
+                v = (v && v !== '...') ? stripDecimal(options.decimals, v) : v; 
                 return `"${v}"`;
             })}`;
             rows.push(row);
@@ -126,6 +126,7 @@ function main() {
         full: false,
         bsc: false,
         eth: false,
+        decimals: true,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -154,6 +155,9 @@ function main() {
                 break;
             case '-eth':
                 options.eth = true;
+                break;
+            case '-D':
+                options.decimals = false;
                 break;
             case '-h':
                 displayUsage();

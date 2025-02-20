@@ -9,7 +9,8 @@ CONTRACT="CreatorVaultFactory"
 LIMIT=""
 FULL="-F"
 BSC="-bsc"
-ETH=""
+ETH="-eth"
+DECIMALS="-D"
 
 # Parse command-line arguments
 while [ $# -gt 0 ]; do
@@ -21,6 +22,10 @@ while [ $# -gt 0 ]; do
         -c)
             CONTRACT=$2
             shift 2
+            ;;
+        -D)
+            DECIMALS=$1
+            shift 1
             ;;
         -l)
             LIMIT="-l $2"
@@ -53,8 +58,9 @@ done
 #ARGS="-m $MIN_BALANCE -c $CONTRACT"
 ARGS="-m $MIN_BALANCE"
 
-echo "Running with arguments: $ARGS $FULL $BSC $ETH $LIMIT"
-
+echo "getVaultsDetails.js $ARGS $FULL $BSC $ETH $LIMIT"
 getVaultsDetails.js $ARGS $FULL $BSC $ETH $LIMIT
-jsonDetails2Csv.js  $ARGS $FULL $BSC $ETH
+
+echo "jsonDetails2Csv.js  $ARGS $FULL $BSC $ETH $DECIMALS"
+jsonDetails2Csv.js  $ARGS $FULL $BSC $ETH $DECIMALS
 
