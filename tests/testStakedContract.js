@@ -11,7 +11,7 @@
 const assert = require("assert");
 const sinon = require("sinon");
 const VtruConfig = require("../lib/vtruConfig");
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const TokenStakedVtru = require("../lib/tokenStakedVtru");
 const { getAddress } = require("ethers"); // Import getAddress for checksum matching
 

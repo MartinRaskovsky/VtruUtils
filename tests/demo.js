@@ -7,8 +7,8 @@
  *
  */
 
-const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
 const TokenWallet = require("../lib/tokenWallet");
 const { scaleDown, formatNumber, formatRawNumber } = require("../lib/vtruUtils");
 

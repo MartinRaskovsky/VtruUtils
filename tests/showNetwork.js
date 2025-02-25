@@ -7,8 +7,8 @@
  * Active test for the Network class.
  */
 
-const { Web3 } = require('../lib/libWeb3');
-const { Network } = require("../lib/libNetwork");
+const Web3 = require('../lib/libWeb3');
+const Network = require("../lib/libNetwork");
 
 async function ident(net) {
   if (net) {

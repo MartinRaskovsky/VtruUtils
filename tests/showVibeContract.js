@@ -7,7 +7,7 @@
  * Active test for the VtruVaultDetails class.
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const TokenVibe = require("../lib/tokenVibe");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 

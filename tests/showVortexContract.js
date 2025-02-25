@@ -10,7 +10,7 @@
  * Date: January 2025
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const { groupByWalletAndKind } = require("../lib/vtruUtils");
 
 const TokenVortex = require("../lib/tokenVortex");

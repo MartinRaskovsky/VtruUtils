@@ -7,7 +7,7 @@
  * Date: February 2025
  */
 
-const { Web3 } = require('../lib/libWeb3');
+const Web3 = require('../lib/libWeb3');
 const TokenStakedSevo = require("../lib/tokenStakedSevo");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");

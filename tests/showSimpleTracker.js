@@ -9,7 +9,7 @@
 */
 
 const VtruConfig = require('../lib/vtruConfig');
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruTracker = require("../lib/vtruSimpleTracker");
 

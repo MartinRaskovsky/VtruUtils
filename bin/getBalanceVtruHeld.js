@@ -7,7 +7,7 @@
  * Date: February 2025
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
 const TokenWallet = require("../lib/tokenWallet");
 const { formatRawNumber } = require("../lib/vtruUtils");

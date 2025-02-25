@@ -39,8 +39,8 @@ contractModules.forEach((modPath) => {
 // -----------------------------------------------------------------------------
 // 2. Import Dependencies
 // -----------------------------------------------------------------------------
-const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
 
 // -----------------------------------------------------------------------------
 // 3. Import Classes Under Test

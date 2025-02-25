@@ -8,7 +8,7 @@
 * These tests use the actual class and do not rely on mocks.
 */
 const VtruConfig = require('../lib/vtruConfig');
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 

@@ -9,7 +9,7 @@
  */
 
 const { formatRawNumber } = require('../lib/vtruUtils');
-const { Web3 } = require('../lib/libWeb3');
+const Web3 = require('../lib/libWeb3');
 
 /**
  * Prints the usage message.

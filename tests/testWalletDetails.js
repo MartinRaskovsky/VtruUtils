@@ -12,8 +12,8 @@ const assert = require("assert");
 const sinon = require("sinon");
 
 // Import dependencies
-const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
 const GenericDetails = require("../lib/libGenericDetails");
 
 // Import the class under test.

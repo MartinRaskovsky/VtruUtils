@@ -8,7 +8,7 @@
  * Date: February 2025
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const VtruConfig = require("../lib/vtruConfig");
 const VtruTracker = require("../lib/vtruTracker");
 const { ethers } = require("ethers");

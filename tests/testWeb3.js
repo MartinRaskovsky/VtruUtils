@@ -23,7 +23,7 @@ sinon.stub(ethers.JsonRpcProvider.prototype, "getBlockNumber").resolves(1234);
 sinon.stub(ethers.JsonRpcProvider.prototype, "getBalance").resolves(1000000000000000000n);
 
 // Now import the Web3 class.
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 
 console.log("Running unit tests for Web3.js...");
 

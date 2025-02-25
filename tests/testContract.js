@@ -10,7 +10,7 @@
 
 const assert = require("assert");
 const VtruConfig = require("../lib/vtruConfig");
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const VtruContract = require("../lib/vtruContract");
 
 async function runTests() {

@@ -10,8 +10,8 @@
 
 const assert = require("assert");
 const sinon = require("sinon");
-const { Network } = require("../lib/libNetwork");
-const { Web3 } = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
 
 // ----------------------------------------------------------------------------
 // Create mock Web3 instances

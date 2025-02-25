@@ -9,8 +9,8 @@
  * Date: February 2025
  */
 
-const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
 const Sections = require("../lib/libSections");
 const fs = require("fs");
 const { getFileName } = require("../lib/vtruUtils");

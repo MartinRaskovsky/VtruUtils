@@ -10,7 +10,7 @@
  * retrieves latest block numbers, and checks wallet balances.
  */
 
-const { Web3 } = require("../lib/libWeb3");
+const Web3 = require("../lib/libWeb3");
 const { scaleDown, formatNumber, formatRawNumber, logJson } = require("../lib/vtruUtils");
 
 const TokenStakedSevo = require("../lib/tokenStakedSevo");

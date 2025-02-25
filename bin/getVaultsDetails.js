@@ -10,8 +10,8 @@
  */
 
 const { getFileName } = require('../lib/vtruUtils');
-const { Web3 } = require("../lib/libWeb3");
-const { Network } = require("../lib/libNetwork");
+const Web3 = require("../lib/libWeb3");
+const Network = require("../lib/libNetwork");
 const VtruVaultFactory = require('../lib/vtruVaultFactory');
 const VtruResultAggregator = require('../lib/vtruResultAggregator');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
