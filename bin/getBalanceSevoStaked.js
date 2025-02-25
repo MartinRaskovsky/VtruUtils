@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves SEVOX Stake Balance for given wallet addresses.
- * 
+ * Retrieves SEVOX stake balance for given wallet addresses.
+ *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
 
 const { Web3 } = require('../lib/libWeb3');
-const { Network } = require("../lib/libNetwork");
-const VtruVault = require("../lib/vtruVault");
 const TokenStakedSevo = require("../lib/tokenStakedSevo");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
@@ -18,65 +16,58 @@ const { SEC_SEVOX } = require('../shared/constants');
 const TITLE = SEC_SEVOX;
 const KEYS = ['wallet', 'balance'];
 
+/**
+ * Displays usage instructions.
+ */
 function showUsage() {
-    console.log("\nUsage: getBalanceSevoStake.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceSevoStaked.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
-    console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
+    console.log("  -v <vaultAddress>   (Ignored)");
     console.log("  -f                  Format output as an aligned table.");
     console.log("  -h                  Show this usage information.");
     process.exit(0);
 }
 
 /**
- * Fetches and formats balance for the given wallets.
- * 
- * @param {string|null} vaultAddress - Vault address, if provided.
- * @param {Array<string>} wallets - Wallet addresses.
+ * Fetches and formats staking balances for the given wallets.
+ *
+ * @param {string|null} vaultAddress - Vault address, if specified.
+ * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const network = await new Network([Web3.VTRU, Web3.BSC]);
-        const vtru = network.get(Web3.VTRU);
-        const bsc = network.get(Web3.BSC);
-        const token = new TokenStakedSevo(bsc);
-   
-        // Retrieve associated wallets if vault address is provided
-        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const bsc = new Web3(Web3.BSC);
+        const tokenStakedSevo = new TokenStakedSevo(bsc);
 
-        let rows = await token.getBalances(merged);
+        const balances = await tokenStakedSevo.getBalances(wallets);
+        let totalBalance = 0n;
+        const formattedData = [];
 
-        let totals = {
-            wallet: "Total",
-            balance: 0n,
-        };
-
-        let formattedData = [];
-        for (let i = 0; i < rows.length; i++) {
-            const balanceFormatted = rows[i] ? formatRawNumber(rows[i]): "";
-            if (rows[i] && balanceFormatted !== "0.00") {
-                totals.balance += rows[i];
-                formattedData.push({
-                    wallet: merged[i],
-                    balance: balanceFormatted,
-                });
+        wallets.forEach((wallet, index) => {
+            const balance = balances[index];
+            if (balance) {
+                const formattedBalance = formatRawNumber(balance);
+                if (formattedBalance !== "0.00") {
+                    formattedData.push({ wallet, balance: formattedBalance });
+                    totalBalance += balance;
+                }
             }
-        }
+        });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totals.balance),
+            balance: formatRawNumber(totalBalance),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
-
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Error retrieving SEVOX stake balances:", error.message);
     }
 }
 
 /**
- * Parses command-line arguments and initiates retrieval.
+ * Parses command-line arguments and initiates balance retrieval.
  */
 function main() {
     const args = process.argv.slice(2);
@@ -89,6 +80,9 @@ function main() {
             case "-v":
                 if (i + 1 < args.length) {
                     vaultAddress = args[++i];
+                } else {
+                    console.error("❌ Error: Missing vault address after '-v'.");
+                    process.exit(1);
                 }
                 break;
             case "-f":
@@ -103,10 +97,14 @@ function main() {
         }
     }
 
+    if (walletAddresses.length === 0) {
+        console.error("❌ Error: No wallet addresses provided.");
+        showUsage();
+    }
+
     runBalances(vaultAddress, walletAddresses, formatOutput).catch(error => {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Unexpected error:", error.message);
     });
 }
 
 main();
-

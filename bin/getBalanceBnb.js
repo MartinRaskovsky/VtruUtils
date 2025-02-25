@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves BNB Balance for given wallet addresses.
- * 
+ * Retrieves BNB balance for given wallet addresses.
+ *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
@@ -16,72 +16,73 @@ const { SEC_BNB } = require('../shared/constants');
 const TITLE = SEC_BNB;
 const KEYS = ['wallet', 'balance'];
 
+/**
+ * Displays usage instructions.
+ */
 function showUsage() {
     console.log("\nUsage: getBalanceBnb.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
-    console.log("  -v <vaultAddress>   Ignored.");
+    console.log("  -v <vaultAddress>   (Ignored)");
     console.log("  -f                  Format output as an aligned table.");
     console.log("  -h                  Show this usage information.");
     process.exit(0);
 }
 
 /**
- * Fetches and formats balance for the given wallets.
- * 
- * @param {string|null} vaultAddress - Vault address, if provided.
- * @param {Array<string>} wallets - Wallet addresses.
+ * Fetches and formats balances for the given wallet addresses.
+ *
+ * @param {string|null} vaultAddress - Vault address (ignored).
+ * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const bsc = await new Web3(Web3.BSC);
+        const bsc = new Web3(Web3.BSC);
         const token = new TokenWallet(bsc);
 
-        let rows = await token.getBalances(wallets);
+        const balances = await token.getBalances(wallets);
+        let totalBalance = 0n;
+        const formattedData = [];
 
-        let totals = {
-            wallet: "Total",
-            balance: 0n,
-        };
-
-        let formattedData = [];
-        for (let i = 0; i < rows.length; i++) {
-            const balanceFormatted = rows[i] ? formatRawNumber(rows[i]): "";
-            if (rows[i] && balanceFormatted !== "0.00") {
-                totals.balance += rows[i];
-                formattedData.push({
-                    wallet: wallets[i],
-                    balance: balanceFormatted,
-                });
+        wallets.forEach((wallet, index) => {
+            const balance = balances[index];
+            if (balance) {
+                const formattedBalance = formatRawNumber(balance);
+                if (formattedBalance !== "0.00") {
+                    formattedData.push({ wallet, balance: formattedBalance });
+                    totalBalance += balance;
+                }
             }
-        }
+        });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totals.balance),
+            balance: formatRawNumber(totalBalance),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
-
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Error retrieving BNB balances:", error.message);
     }
 }
 
 /**
- * Parses command-line arguments and initiates retrieval.
+ * Parses command-line arguments and initiates balance retrieval.
  */
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
-    let walletAddresses = [];
+    let wallets = [];
     let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
                 if (i + 1 < args.length) {
-                    vaultAddress = args[++i];
+                    vaultAddress = args[++i]; // Ignored, but accepting input
+                } else {
+                    console.error("❌ Error: Missing vault address after '-v'.");
+                    process.exit(1);
                 }
                 break;
             case "-f":
@@ -91,15 +92,19 @@ function main() {
                 showUsage();
                 break;
             default:
-                walletAddresses.push(args[i]);
+                wallets.push(args[i]);
                 break;
         }
     }
 
-    runBalances(vaultAddress, walletAddresses, formatOutput).catch(error => {
-        console.error("❌ Error:", error.message);
+    if (wallets.length === 0) {
+        console.error("❌ Error: No wallet addresses provided.");
+        showUsage();
+    }
+
+    runBalances(vaultAddress, wallets, formatOutput).catch(error => {
+        console.error("❌ Unexpected error:", error.message);
     });
 }
 
 main();
-

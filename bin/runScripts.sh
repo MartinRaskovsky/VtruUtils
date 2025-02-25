@@ -9,9 +9,14 @@ for script in \
     getBalanceSevoStaked \
     getDetailVtruStaked getDetailVibe getDetailVortex getDetailSevoStaked getSections
 do
+    GROUP=""
+    if test $script = "getDetailVtruStaked"
+    then
+	GROUP="-g month"
+    fi
     echo "---------------------------------------------------"
-    echo "$script.js -f -v \$VAULT_ADDRESS \$WALLETS"
+    echo "$script.js -f -v \$VAULT_ADDRESS \$WALLETS \$GROUP"
     echo "---------------------------------------------------"
-    eval $script.js -f -v $VAULT_ADDRESS $WALLETS
+    eval $script.js -f -v $VAULT_ADDRESS $WALLETS $GROUP
     echo
 done

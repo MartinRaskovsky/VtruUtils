@@ -37,10 +37,16 @@ src/
 
 ## Setup Instructions
 
-### Prerequisites
-
-- Node.js (v14 or higher recommended)
+### Requirements
+- Node.js (v22.4.0)
 - npm or yarn
+- Required packages:
+  - express
+  - ethers
+  - cors
+  - dotenv
+  - fs-extra
+  - body-parser
 
 ### Installation
 

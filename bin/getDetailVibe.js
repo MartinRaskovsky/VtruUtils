@@ -2,7 +2,7 @@
 
 /**
  * Retrieves JSON of VIBE details for given wallet addresses.
- * 
+ *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
@@ -17,8 +17,11 @@ const { SEC_VIBE } = require('../shared/constants');
 const TITLE = SEC_VIBE;
 const KEYS = ['wallet', 'noTokens', 'balance', 'claimed', 'unclaimed'];
 
+/**
+ * Displays usage instructions.
+ */
 function showUsage() {
-    console.log("\nUsage: getDetailVibe.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getDetailVive.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -28,34 +31,30 @@ function showUsage() {
 
 /**
  * Fetches and formats VIBE token details for the given wallets.
- * 
- * @param {string|null} vaultAddress - Vault address, if provided.
- * @param {Array<string>} wallets - Wallet addresses.
+ *
+ * @param {string|null} vaultAddress - Vault address, if specified.
+ * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
 async function runDetails(vaultAddress, wallets, formatOutput) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
+        const vtru = new Web3(Web3.VTRU);
         const tokenVibe = new TokenVibe(vtru);
 
         // Retrieve associated wallets if vault address is provided
-        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const details = await tokenVibe.getDetails(merged);
 
-        let rows = await tokenVibe.getDetails(merged);
+        let totalNoTokens = 0n;
+        let totalBalance = 0n;
+        let totalClaimed = 0n;
+        let totalUnclaimed = 0n;
 
-        let totals = {
-            wallet: "Total",
-            noTokens: 0n,
-            balance: 0n,
-            claimed: 0n,
-            unclaimed: 0n,
-        };
-
-        let formattedData = rows.map(row => {
-            totals.noTokens += row.noTokens;
-            totals.balance += row.balance;
-            totals.claimed += row.claimed;
-            totals.unclaimed += row.unclaimed;
+        const formattedData = details.map(row => {
+            totalNoTokens += row.noTokens;
+            totalBalance += row.balance;
+            totalClaimed += row.claimed;
+            totalUnclaimed += row.unclaimed;
 
             return {
                 wallet: row.wallet,
@@ -69,16 +68,15 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
         // Append totals row
         formattedData.push({
             wallet: "Total",
-            noTokens: formatNumber(totals.noTokens, 0),
-            balance: formatNumber(totals.balance),
-            claimed: formatRawNumber(totals.claimed),
-            unclaimed: formatRawNumber(totals.unclaimed),
+            noTokens: formatNumber(totalNoTokens, 0),
+            balance: formatNumber(totalBalance),
+            claimed: formatRawNumber(totalClaimed),
+            unclaimed: formatRawNumber(totalUnclaimed),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
-
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Error retrieving VIBE details:", error.message);
     }
 }
 
@@ -88,14 +86,18 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
-    let walletAddresses = [];
+    let wallets = [];
     let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
-                vaultAddress = args[i + 1];
-                i++;
+                if (i + 1 < args.length) {
+                    vaultAddress = args[++i];
+                } else {
+                    console.error("❌ Error: Missing vault address after '-v'.");
+                    process.exit(1);
+                }
                 break;
             case "-f":
                 formatOutput = true;
@@ -104,13 +106,13 @@ function main() {
                 showUsage();
                 break;
             default:
-                walletAddresses.push(args[i]);
+                wallets.push(args[i]);
                 break;
         }
     }
 
-    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
-        console.error("❌ Error:", error.message);
+    runDetails(vaultAddress, wallets, formatOutput).catch(error => {
+        console.error("❌ Unexpected error:", error.message);
     });
 }
 

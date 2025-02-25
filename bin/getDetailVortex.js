@@ -2,7 +2,7 @@
 
 /**
  * Retrieves JSON of Vortex details for given wallet addresses.
- * 
+ *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
@@ -17,6 +17,9 @@ const { SEC_VORTEX } = require('../shared/constants');
 const TITLE = SEC_VORTEX;
 const KEYS = ['wallet', 'kind', 'count'];
 
+/**
+ * Displays usage instructions.
+ */
 function showUsage() {
     console.log("\nUsage: getDetailVortex.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
@@ -28,26 +31,24 @@ function showUsage() {
 
 /**
  * Fetches and formats Vortex details for the given wallets.
- * 
- * @param {string|null} vaultAddress - Vault address, if provided.
- * @param {Array<string>} wallets - Wallet addresses.
+ *
+ * @param {string|null} vaultAddress - Vault address, if specified.
+ * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
 async function runDetails(vaultAddress, wallets, formatOutput) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
+        const vtru = new Web3(Web3.VTRU);
         const tokenVortex = new TokenVortex(vtru);
 
         // Retrieve associated wallets if vault address is provided
-        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const details = await tokenVortex.getDetails(merged);
+        const groups = groupByWalletAndKind(details);
 
-        let rows = await tokenVortex.getDetails(merged);
-        let groups = groupByWalletAndKind(rows);
-
-        let totals = { wallet: "Total", kind: "", count: 0 };
-
-        let formattedData = groups.map(group => {
-            totals.count += group.ids.length;
+        let totalCount = 0;
+        const formattedData = groups.map(group => {
+            totalCount += group.ids.length;
             return {
                 wallet: group.wallet,
                 kind: group.kind,
@@ -59,13 +60,12 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
         formattedData.push({
             wallet: "Total",
             kind: "",
-            count: totals.count,
+            count: totalCount,
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
-
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Error retrieving Vortex details:", error.message);
     }
 }
 
@@ -75,14 +75,18 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
-    let walletAddresses = [];
+    let wallets = [];
     let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case "-v":
-                vaultAddress = args[i + 1];
-                i++;
+                if (i + 1 < args.length) {
+                    vaultAddress = args[++i];
+                } else {
+                    console.error("❌ Error: Missing vault address after '-v'.");
+                    process.exit(1);
+                }
                 break;
             case "-f":
                 formatOutput = true;
@@ -91,13 +95,13 @@ function main() {
                 showUsage();
                 break;
             default:
-                walletAddresses.push(args[i]);
+                wallets.push(args[i]);
                 break;
         }
     }
 
-    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
-        console.error("❌ Error:", error.message);
+    runDetails(vaultAddress, wallets, formatOutput).catch(error => {
+        console.error("❌ Unexpected error:", error.message);
     });
 }
 

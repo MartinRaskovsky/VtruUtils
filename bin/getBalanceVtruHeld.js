@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves VTRU Held Balance for given wallet addresses.
- * 
+ * Retrieves VTRU held balance for given wallet addresses.
+ *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
  */
@@ -17,6 +17,9 @@ const { SEC_VTRU_HELD } = require('../shared/constants');
 const TITLE = SEC_VTRU_HELD;
 const KEYS = ['wallet', 'balance'];
 
+/**
+ * Displays usage instructions.
+ */
 function showUsage() {
     console.log("\nUsage: getBalanceVtruHeld.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
@@ -27,58 +30,49 @@ function showUsage() {
 }
 
 /**
- * Fetches and formats balance for the given wallets.
- * 
- * @param {string|null} vaultAddress - Vault address, if provided.
- * @param {Array<string>} wallets - Wallet addresses.
+ * Fetches and formats balances for the given wallet addresses.
+ *
+ * @param {string|null} vaultAddress - Vault address, if specified.
+ * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const vtru = await Web3.create(Web3.VTRU);
+        const vtru = new Web3(Web3.VTRU);
         const token = new TokenWallet(vtru);
-   
+
         // Retrieve associated wallets if vault address is provided
-        const { merged }  = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const balances = await token.getBalances(merged);
+        let totalBalance = 0n;
+        const formattedData = [];
 
-        let rows = await token.getBalances(merged);
-
-        let totals = {
-            wallet: "Total",
-            balance: 0n,
-        };
-
-        let formattedData = [];
-        for (let i = 0; i < rows.length; i++) {
-            const balanceFormatted = rows[i] ? formatRawNumber(rows[i]): "";
-            if (rows[i] && balanceFormatted !== "0.00") {
-                totals.balance += rows[i];
-                formattedData.push({
-                    wallet: merged[i],
-                    balance: balanceFormatted,
-                });
+        merged.forEach((wallet, index) => {
+            const balance = balances[index];
+            if (balance && balance !== 0n) {
+                formattedData.push({ wallet, balance: formatRawNumber(balance, 4) });
+                totalBalance += balance;
             }
-        }
+        });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totals.balance),
+            balance: formatRawNumber(totalBalance, 4),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
-
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("❌ Error retrieving VTRU held balances:", error.message);
     }
 }
 
 /**
- * Parses command-line arguments and initiates retrieval.
+ * Parses command-line arguments and initiates balance retrieval.
  */
 function main() {
     const args = process.argv.slice(2);
     let vaultAddress = null;
-    let walletAddresses = [];
+    let wallets = [];
     let formatOutput = false;
 
     for (let i = 0; i < args.length; i++) {
@@ -86,6 +80,9 @@ function main() {
             case "-v":
                 if (i + 1 < args.length) {
                     vaultAddress = args[++i];
+                } else {
+                    console.error("❌ Error: Missing vault address after '-v'.");
+                    process.exit(1);
                 }
                 break;
             case "-f":
@@ -95,15 +92,14 @@ function main() {
                 showUsage();
                 break;
             default:
-                walletAddresses.push(args[i]);
+                wallets.push(args[i]);
                 break;
         }
     }
 
-    runBalances(vaultAddress, walletAddresses, formatOutput).catch(error => {
-        console.error("❌ Error:", error.message);
+    runBalances(vaultAddress, wallets, formatOutput).catch(error => {
+        console.error("❌ Unexpected error:", error.message);
     });
 }
 
 main();
-

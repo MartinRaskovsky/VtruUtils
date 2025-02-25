@@ -1,32 +1,37 @@
 #!/usr/bin/env node
 
 /**
- * Author: Dr Martín Raskovsky
- * Date: January 2025
- * 
- * Retrieves and processes details of multiple vaults, filtering by minimum balance 
- * and writing results to a JSON file. Supports optional contract name, output file naming, 
+ * Retrieves and processes details of multiple vaults, filtering by minimum balance
+ * and writing results to a JSON file. Supports optional contract name, output file naming,
  * and processing limits via command-line arguments.
- **/
+ *
+ * Author: Dr. Martín Raskovsky
+ * Date: February 2025
+ */
 
 const { getFileName } = require('../lib/vtruUtils');
-
 const { Web3 } = require("../lib/libWeb3");
 const { Network } = require("../lib/libNetwork");
-
 const VtruVaultFactory = require('../lib/vtruVaultFactory');
 const VtruResultAggregator = require('../lib/vtruResultAggregator');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
 const fse = require('fs-extra');
 
+/**
+ * Fetches and processes vault details.
+ *
+ * @param {Object} options - Command-line options.
+ * @param {string|null} outputFilePath - File path for output (if specified).
+ */
 async function getVaultDetails(options, outputFilePath) {
     try {
         let web3s = [Web3.VTRU];
         if (options.bsc) web3s.push(Web3.BSC);
         if (options.eth) web3s.push(Web3.ETH);
-        const network = await new Network(web3s);
-        const vtru = await Web3.create(Web3.VTRU);
- 
+        
+        const network = new Network(web3s);
+        const vtru = new Web3(Web3.VTRU);
+
         const vaultFactory = new VtruVaultFactory(vtru, options.contractName);
         const aggregator = new VtruResultAggregator();
         const vaultDetails = new VtruVaultDetails(network, options.minBalance, options.full);
@@ -45,24 +50,28 @@ async function getVaultDetails(options, outputFilePath) {
         const totals = vaultDetails.getTotals(summary);
         const totalSep = vaultDetails.getTotalSep(summary);
         const finals = vaultDetails.getFinals(summary);
-        aggregator.sort("totalVTRUHeld");
+        aggregator.sort("totalVTRUHeld"); // before adding totals
         aggregator.add(totals);
         aggregator.add(totalSep);
         aggregator.add(finals);
 
         if (outputFilePath) {
             fse.writeJSONSync(outputFilePath, aggregator.get(), { spaces: 2 });
-            console.log(`Written: ${outputFilePath}`);
+            console.log(`✅ Written: ${outputFilePath}`);
         } else {
-            console.log(aggregator.get());
+            console.log(JSON.stringify(aggregator.get(), null, 2));
         }
     } catch (error) {
-        console.error('Error:', error.message);
+        console.error("❌ Error retrieving vault details:", error.message);
     }
 }
 
+/**
+ * Displays usage instructions.
+ */
 function displayUsage() {
-    console.log(`Usage: getVaultsDetails.js [options]
+    console.log(`
+Usage: getVaultsDetails.js [options]
 
 Options:
   -c <contractName> Contract name (default: CreatorVaultFactory)
@@ -70,10 +79,17 @@ Options:
   -m <minBalance>   Minimum balance to filter vaults (default: 4000)
   -d <date>         Specify a custom YYMMDD date string
   -l <limit>        Limit the number of vaults to process (default: no limit)
-  -F                Full tokens ( includes VERSE, VIBE, VORTEX )
-  -h                Display this usage information`);
+  -F                Include full tokens (VERSE, VIBE, VORTEX)
+  -bsc              Include Binance Smart Chain vaults
+  -eth              Include Ethereum vaults
+  -q                Quiet mode (reduce verbosity)
+  -h                Display this usage information
+`);
 }
 
+/**
+ * Parses command-line arguments and initiates vault details retrieval.
+ */
 function main() {
     const args = process.argv.slice(2);
     const options = {
@@ -83,30 +99,36 @@ function main() {
         verbose: 1,
         full: false,
         bsc: false,
-        etc: false,
+        eth: false, // Fixed typo ('etc' to 'eth')
+        fileName: null,
+        date: null
     };
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
             case '-c':
-                options.contractName = args[i + 1];
-                i++;
+                if (i + 1 < args.length) options.contractName = args[++i];
+                else return displayUsage();
                 break;
             case '-f':
-                options.fileName = args[i + 1];
-                i++;
+                if (i + 1 < args.length) options.fileName = args[++i];
+                else return displayUsage();
                 break;
             case '-m':
-                options.minBalance = parseInt(args[i + 1], 10) || 4000;
-                i++;
+                if (i + 1 < args.length) {
+                    const minBalance = parseInt(args[++i], 10);
+                    if (!isNaN(minBalance)) options.minBalance = minBalance;
+                } else return displayUsage();
                 break;
             case '-d':
-                options.date = args[i + 1];
-                i++;
+                if (i + 1 < args.length) options.date = args[++i];
+                else return displayUsage();
                 break;
             case '-l':
-                options.limit = parseInt(args[i + 1], 10) || Infinity;
-                i++;
+                if (i + 1 < args.length) {
+                    const limit = parseInt(args[++i], 10);
+                    if (!isNaN(limit)) options.limit = limit;
+                } else return displayUsage();
                 break;
             case '-F':
                 options.full = true;
@@ -129,11 +151,10 @@ function main() {
         }
     }
 
-    const outputFilePath = options.verbose?getFileName(options, 'json'): null;
+    const outputFilePath = options.verbose ? getFileName(options, 'json') : null;
 
     getVaultDetails(options, outputFilePath)
-        .catch(error => console.error('Error:', error.message));
+        .catch(error => console.error("❌ Unexpected error:", error.message));
 }
 
 main();
-

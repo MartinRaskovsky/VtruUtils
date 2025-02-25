@@ -195,7 +195,7 @@ Running unit tests for Web3.js...
 ✅ testGettersAndConnection passed.
 ✅ testGetWalletRawBalance passed.
 ✅ testGetWalletRawBalances passed.
-❌ Not valid wallet 0xWalletError
+❌ Error fetching balance for wallet 0xWalletError: Simulated provider error
 ✅ testGetWalletRawBalanceError passed.
 🎉 All Web3 tests passed successfully!
 ===========================================================
