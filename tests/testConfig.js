@@ -4,17 +4,17 @@
  * Author: Dr Martín Raskovsky
  * Date: January 2025
  *
- * Unit tests for the VtruConfig class.
+ * Unit tests for the Config class.
  * These tests use the actual class and do not rely on mocks.
  */
 
 const assert = require("assert");
-const VtruConfig = require("../lib/vtruConfig");
+const Config = require("../lib/libConfig");
 
-// Initialize the VtruConfig instance
-const config = new VtruConfig();
+// Initialize the Config instance
+const config = new Config();
 
-console.log("Running unit tests for VtruConfig.js...");
+console.log("Running unit tests for Config.js...");
 
 /**
  * Test get method
@@ -117,5 +117,5 @@ testGetContractAddress();
 testSetWallets();
 testSetVaultAddress();
 
-console.log("🎉 All VtruConfig tests passed successfully!");
+console.log("🎉 All Config tests passed successfully!");
 

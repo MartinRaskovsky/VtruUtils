@@ -3,13 +3,24 @@ use strict;
 use warnings;
 use CGI;
 use JSON;
-use lib '.';
-use Defs qw(get_script_for_type get_render_function);
+
+use lib '../perl-lib';
+use Conf;
+use Defs qw(get_script_for_type get_render_function get_detail_type get_explorer_url);
 use Logs qw(find_latest_log write_current_log compute_differences);
 use Render qw(render_page);
 use Execute qw(run_script);
 use Utils qw(debug_log process_wallets print_error_response);
-use Defs qw(get_script_for_type get_detail_type get_explorer_url);
+
+# Logs debug information to a file
+sub debug_error {
+    my ($message) = @_;
+    my $log_file = Conf::get('LOG_FILE');
+
+    open my $fh, '>>', $log_file or warn "Could not open log file: $!";
+    print $fh scalar(localtime) . " - DEBUG: $message\n";
+    close $fh;
+}
 
 my $cgi = CGI->new;
 
@@ -28,7 +39,7 @@ my @wallets_list = process_wallets($wallets);
 
 # Determine script based on type
 my $script_name = get_script_for_type($type);
-my $script_path = "../bin/$script_name";
+my $script_path = Conf::get('BIN_PATH') . "/$script_name";
 
 #debug_log("script_path: $script_path");
 

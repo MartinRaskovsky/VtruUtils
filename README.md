@@ -24,6 +24,7 @@ src/
 ├── lib/         # Reusable JavaScript classes
 ├── public/      # Client-side code (HTML, JS, CSS)
 ├── server/      # Express-based API server
+├── cgi-bin/     # Apache Perl server side
 ├── shared/      # Shared modules (e.g., constants.js)
 ├── tests/       # Automated test scripts
 └── README.md    # Project documentation
@@ -217,10 +218,10 @@ Then, open `http://localhost:3000` in a browser.
 ### Adding New Environment Variables
 
 1. Update the `src/data/.env` file with the new variables.
-2. Use the `VtruConfig` class to access them in your code:
+2. Use the `Config` class to access them in your code:
    ```javascript
-   const VtruConfig = require('../lib/vtruConfig');
-   const config = new VtruConfig();
+   const Config = require('../lib/libConfig');
+   const config = new Config();
    console.log(config.get("VAULT_ADDRESS"));
    ```
 

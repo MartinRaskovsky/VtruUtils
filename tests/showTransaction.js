@@ -8,7 +8,7 @@
 * These tests use the actual class and do not rely on mocks.
 */
 
-const VtruConfig = require('../lib/vtruConfig');
+const Config = require('../lib/libConfig');
 const vtruTransaction = require('../lib/vtruTransaction');
 const VtruTransaction = require("../lib/vtruTransaction");
 
@@ -17,7 +17,7 @@ const { format } = require('date-fns'); // Add date-fns for formatting
 
 async function main() {
     try {
-        const config  = new VtruConfig('CONFIG_JSON_FILE_PATH', 'mainnet');
+        const config  = new Config('CONFIG_JSON_FILE_PATH', 'mainnet');
    
         const wallet  = config.get('WALLET_ADDRESS');
 

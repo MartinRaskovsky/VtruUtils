@@ -9,7 +9,7 @@
  */
 
 const Web3 = require("../lib/libWeb3");
-const VtruConfig = require("../lib/vtruConfig");
+const Config = require("../lib/libConfig");
 const VtruTracker = require("../lib/vtruTracker");
 const { ethers } = require("ethers");
 
@@ -138,7 +138,7 @@ async function main() {
 
     // Load default wallet from config if not provided
     if (!walletAddress) {
-        const config = new VtruConfig();
+        const config = new Config();
         walletAddress = config.get("WALLET_ADDRESS");
         if (!walletAddress) {
             console.error("❌ Error: Wallet address is required.");

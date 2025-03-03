@@ -4,11 +4,11 @@
 * Author: Dr Martín Raskovsky
 * Date: January 2025
 * 
-* Shows configuration as implemented by vtruConfig.
+* Shows configuration as implemented by libConfig.
 */
 
-const VtruConfig = require('../lib/vtruConfig');
-const config = new VtruConfig();
+const Config = require('../lib/libConfig');
+const config = new Config();
 
 function show(name) {
     const value=config.get(name);

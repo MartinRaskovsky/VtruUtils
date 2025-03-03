@@ -7,7 +7,7 @@
 * Unit tests for the VtruVaultDetails class.
 * These tests use the actual class and do not rely on mocks.
 */
-const VtruConfig = require('../lib/vtruConfig');
+const Config = require('../lib/libConfig');
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 const VtruVaultDetails = require('../lib/vtruVaultDetails');
@@ -41,7 +41,7 @@ async function getVaultDetails(vaultAddress, summaryMode) {
 }
 
 function main() {
-    const config = new VtruConfig();
+    const config = new Config();
     let vaultAddress = config.get('VAULT_ADDRESS');
 
     if (!vaultAddress) {

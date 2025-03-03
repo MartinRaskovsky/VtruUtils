@@ -1,6 +1,6 @@
 testConfig.js
 
-Running unit tests for VtruConfig.js...
+Running unit tests for Config.js...
 ❌ "NON_EXISTENT_KEY" not found in .env file.
 ✅ testGet passed.
 ❌ Wallets not found in .env file.
@@ -13,7 +13,7 @@ Running unit tests for VtruConfig.js...
 ✅ testGetContractAddress passed.
 ⚠️ Skipping setWallets test to prevent modifying .env file.
 ⚠️ Skipping setVaultAddress test to prevent modifying .env file.
-🎉 All VtruConfig tests passed successfully!
+🎉 All Config tests passed successfully!
 ===========================================================
 
 testContract.js

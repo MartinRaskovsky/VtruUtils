@@ -9,7 +9,7 @@
 */
 
 const { formatRawNumber, formatRawNumbers } = require('../lib/vtruUtils');
-const VtruConfig = require('../lib/vtruConfig');
+const Config = require('../lib/libConfig');
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require('../lib/vtruVault');
 

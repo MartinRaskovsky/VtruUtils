@@ -4,7 +4,7 @@ for a in test*.js
 do
   echo $a
   echo
-  $a
+  ./$a
   echo '==========================================================='
   echo
 done > testAll.txt 2>&1
