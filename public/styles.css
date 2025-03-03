@@ -4,9 +4,10 @@ body {
     color: white;
     max-width: 1200px;
     margin: auto;
-    padding: 20px;
+    padding: 0;
     text-align: center;
     font-size: 14px;
+    padding-bottom: 40px;
 }
 
 /* Form Styling */
@@ -285,66 +286,11 @@ pre {
     color: white;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    color: white;
-    font-weight: bold;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    border: 1px solid white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 26px 15px 6px;
-    width: auto;
-    max-width: 80vw;
-    max-height: 80vh;
-    overflow: hidden;
-}
-
-/* ✅ Fix for missing right-side black area */
-.scrollable {
-    max-height: 60vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: inset -10px 0px 0px #2a1f3a; /* ✅ Adds black area inside the modal */
-}
-
-
 /* ✅ Ensure table fits correctly */
 .stake-table {
     width: 100%;
     color: white;
     border-collapse: collapse;
-}
-
-/* ✅ Fix Close Button Position */
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: white;
-    padding: 5px 8px;
-    border-radius: 50%;
-    transition: background 0.2s ease-in-out;
 }
 
 body, .spacer-row td {
@@ -391,6 +337,12 @@ pre {
     background-color: #5a0ca3;
 }
 
+button:active, .stake-btn:active {
+    background-color: #4a2a91; /* A slightly darker shade to indicate pressing */
+    transform: scale(0.98); /* Slightly reduce the size for a pressed effect */
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.3); /* Add an inset shadow for depth */
+}
+
 .total-row, .stake-controls {
     background-color: #b090c8;
 }
@@ -411,10 +363,6 @@ pre {
    background-color: rgba(0, 0, 0, 0.6);
 }
 
-.close:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
 .modal-content {
     background-color: #2a1f3a;
 }
@@ -432,4 +380,101 @@ pre {
 }
 
 
+/* Modal related */
 
+.modal {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: 80vw;
+    max-height: 80vh;
+    padding: 0px;
+    border-radius: 10px;
+    border: 2px solid white;
+}
+
+.modal-content {
+    background-color: black;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 80vw;
+    max-height: 80vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.modal.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* ✅ TABLE HEADER BACKGROUND */
+.modal-content table thead th {
+    background-color: #6a0dad !important;  /* ✅ Force correct background */
+    color: white !important; /* ✅ Ensure contrast */
+    padding: 6px;
+    text-align: left;
+}
+
+.scrollable {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: inset -10px 0px 0px #2a1f3a;
+    scrollbar-width: thin; /* For Firefox */
+}
+
+/* Hides scrollbar track when not needed */
+.scrollable::-webkit-scrollbar {
+    width: 8px; /* Ensures thin scrollbar */
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.4); /* Styled scrollbar thumb */
+}
+
+.scrollable::-webkit-scrollbar-track {
+    background-color: transparent; /* Ensures track is fully hidden */
+}
+
+
+/* ✅ CLOSE BUTTON POSITION */
+.close {
+    position: absolute;
+    top: 8px; /* ✅ Adjusted for better placement */
+    right: 12px; /* ✅ Slightly closer to the edge */
+    font-size: 18px; /* ✅ Slightly smaller */
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 50%;
+    transition: background 0.2s ease-in-out;
+}
+
+.close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}

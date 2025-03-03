@@ -42,6 +42,8 @@ async function openDetailsModal(type, vault, walletsEncoded, grouping) {
             modalContent.innerHTML = renderDetailContent(type, grouping, result.output);
             modal.style.display = "block";
             modal.style.opacity = "1";
+            modal.classList.add("active"); // ✅ Only activate when content is ready
+            modal.style.visibility = "visible"; // ✅ Now make it visible
 
             // Ensuring the modal stays centered
             Object.assign(modal.style, {
@@ -106,9 +108,9 @@ function truncateAddress(address) {
  * @returns {string} - Explorer URL formatted as an HTML link.
  */
 function getLabel(type, grouping, data) {
-    return grouping === 'none' && data === 'Total'
-        ? data
-        : explorerURL(type, data, grouping === 'none' ? truncateAddress(data) : data);
+    if (grouping !== 'none') return data;
+    if (grouping === 'none' && data === 'Total') return data;
+    return explorerURL(type, data, truncateAddress(data));
 }
 
 /**
