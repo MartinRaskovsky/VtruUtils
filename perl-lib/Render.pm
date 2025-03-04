@@ -5,7 +5,7 @@ use JSON;
 
 use lib '.';
 use Defs qw ( get_detail_type );
-use Utils qw( log_error getLabel explorerURL decorate_unclaimed );
+use Utils qw( log_error getLabel explorerURL decorate_unclaimed truncateAddress);
 
 use Exporter 'import';
 our @EXPORT_OK = qw(render_page render_sections_html render_details_html);
@@ -115,7 +115,7 @@ END_HTML
             my $balance = $result->{$section_key}[$wallet_index] || "0.00";
             my $diff_section = "diff_$section_key"; 
             my $diff_display = $result->{$diff_section}[$wallet_index] // '';
-            my $address = explorerURL('VTRU', $wallet);
+            my $address = explorerURL('VTRU', $wallet, truncateAddress($wallet));
             if (lc($vault) eq $wallet) {
                 $address = "<strong>$address</strong>";
             }

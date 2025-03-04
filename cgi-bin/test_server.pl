@@ -5,9 +5,31 @@ use HTTP::Server::Simple::CGI;
 use base qw(HTTP::Server::Simple::CGI);
 use File::Basename qw(dirname);
 use Cwd qw(abs_path);
+use Socket;
+use Sys::Hostname;
 
 # Define the root folder for static files (styles, scripts)
 my $web_root = dirname(abs_path($0)) . "/../public";
+
+# Get the local network IP (Wi-Fi or Ethernet)
+sub get_local_ip {
+    my $ip;
+    my @interfaces = ("en0", "en1", "eth0");  # Common interfaces (Wi-Fi, Ethernet)
+    foreach my $iface (@interfaces) {
+        $ip = `ipconfig getifaddr $iface` if $^O eq 'darwin';  # macOS
+        $ip = `hostname -I | awk '{print \$1}'` if $^O eq 'linux';  # Linux
+        chomp $ip;
+        last if $ip;
+    }
+    return $ip || "127.0.0.1";  # Fallback if not found
+}
+
+# Override the default banner message
+sub print_banner {
+    my $self = shift;
+    my $local_ip = get_local_ip();
+    print "✅ Server is running! Access it at: http://$local_ip:8080/\n";
+}
 
 sub handle_request {
     my ($self, $cgi) = @_;
@@ -63,6 +85,11 @@ sub get_content_type {
     return "text/plain";
 }
 
+#$server = __PACKAGE__->new(inet_aton("0.0.0.0"), 8080);
+#my $server = __PACKAGE__->new('192.168.68.119', 8080);
+#my $server = __PACKAGE__->new('0.0.0.0', 8080);
+#my $server = __PACKAGE__->new(8080);
+
+# Start the server
 my $server = __PACKAGE__->new(8080);
 $server->run();
-

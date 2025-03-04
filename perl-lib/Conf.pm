@@ -49,12 +49,8 @@ sub init {
 # Method to retrieve configuration values
 sub get {
     my ($key) = @_;
+    
     init();
-
-    #my $log_file = $config{LOG_FILE};
-    #open my $fh, '>>', $log_file or warn "Could not open $log_file: $!";
-    #print $fh scalar(localtime) . " - DEBUG: $key => $config{$key}\n";
-    #close $fh;
 
     return $config{$key};
 }
