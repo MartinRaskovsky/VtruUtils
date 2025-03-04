@@ -10,17 +10,6 @@ body {
     padding-bottom: 40px;
 }
 
-/* Form Styling */
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 600px;
-    margin: auto;
-    padding: 15px;
-    border-radius: 8px;
-}
-
 label {
     font-weight: bold;
     margin-top: 15px;
@@ -42,18 +31,6 @@ textarea {
     resize: vertical;
     overflow-y: auto;
     min-height: 80px;
-}
-
-button {
-    margin-top: 15px;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    transition: 0.3s;
 }
 
 .table-container {
@@ -197,42 +174,64 @@ pre {
     padding-right: 8px;
 }
 
-/* Consistent form layout */
+/* Form Styling */
 .form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 600px;
     margin: auto;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 90%;
     padding: 10px;
 }
 
-/* ✅ Perfectly Aligned Stake Controls */
-.stake-controls {
+.stake-btn-container {
     display: flex;
-    align-items: center; /* Ensure everything is vertically aligned */
-    justify-content: flex-start; /* Align everything to the left */
-    gap: 10px; /* Space between elements */
-    font-size: 12px;
-    padding: 0; /* Remove unnecessary padding */
-    margin: 0;
-    height: 22px; /* Match row height */
+    justify-content: center; /* ✅ Ensures full horizontal centering */
+    width: 100%;
 }
 
-/* ✅ View Stakes Button - Move Slightly Up */
-.stake-btn {
-    color: white;
-    font-size: 12px;
-    border: none;
-    padding: 4px 10px; /* Adjust padding */
+button {
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    border-radius: 4px;
-    height: 22px; /* ✅ Matches radio button height */
-    display: flex;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.stake-btn {
+    display: inline-block;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    margin-top: -2px; /* ✅ Moves it up slightly */
+    width: 100%;
+    min-width: 200px;
+    max-width: 90%;
+    text-align: center;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    /*height: 10px; /* ✅ Matches radio button height */
+    /*padding: 10px 10px 10px 10px;*/
+    /*line-height: normal;*/
+    font-size: 12px;
+}
+
+/* ✅ Radio Buttons - Uniform Alignment */
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    height: 10px; /* ✅ Matches button / stake-btn */
+    margin: 0;
 }
 
 /* ✅ Grouping Label - Move 1px Down */
@@ -243,17 +242,6 @@ pre {
     line-height: 24px; /* Ensures alignment */
     position: relative;
     /*top: 1px; /* ✅ Moves it 1px down */
-}
-
-/* ✅ Radio Buttons - Uniform Alignment */
-.radio-label {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    cursor: pointer;
-    height: 22px; /* ✅ Matches button */
-    margin: 0;
 }
 
 /* ✅ Compact Radio Buttons */
@@ -479,8 +467,95 @@ button:active, .stake-btn:active {
     background: rgba(255, 255, 255, 0.4);
 }
 
-/* ✅ Mobile Optimization */
+/* ==== */
+
+/* Ensure the table container does not overflow */
+.table-container {
+    width: 100%;
+    max-width: 100%; /* Prevent extra space from appearing */
+    overflow-x: auto; /* Enable scrolling only when necessary */
+    display: block;
+}
+
+/* Make table fully responsive */
+table {
+    width: auto; /* Let the table size itself properly */
+    max-width: 100%; /* Prevents overflow */
+    table-layout: auto; /* Allow columns to resize based on content */
+    border-collapse: collapse;
+}
+
+/* Adjust column widths dynamically */
+th, td {
+    padding: 4px; /* Reduce padding for better fit */
+    font-size: 12px; /* Reduce text size */
+    word-wrap: break-word;
+    white-space: normal; /* Allow wrapping */
+}
+
+/* Prevent long wallet addresses from breaking layout */
+.wallet-cell {
+    max-width: 120px; /* Reduce width on small screens */
+    overflow-wrap: break-word;
+    font-size: 12px;
+}
+
+/* Fix the right band issue */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto; /* Allow scrolling only when necessary */
+    display: block;
+    padding-right: 0; /* Ensure no unwanted space */
+}
+
+/* ✅ Ensure radio buttons remain aligned */
+.radio-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Wrap only when necessary */
+    gap: 10px;
+}
+
+/* ✅ Ensure button appears below "Grouped by" and is fully centered */
+.stake-controls {
+    flex-direction: column; /* Stack elements */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.group-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* ✅ Larger Tablets (max-width: 768px) */
 @media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+        max-width: 100%;
+        padding-right: 0;
+    }
+
+    table {
+        font-size: 12px;
+        table-layout: auto;
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 3px;
+        font-size: 11px;
+    }
+
     body {
         font-size: 12px;
         padding: 10px;
@@ -504,20 +579,8 @@ button:active, .stake-btn:active {
         width: 100%;
     }
 
-    table {
-        font-size: 10px;
-        max-width: 100%;
-        overflow-x: auto;
-        display: block;
-    }
-
-    th, td {
-        padding: 3px;
-        font-size: 10px;
-    }
-
     .wallet-cell {
-        max-width: 200px;
+        max-width: 90px;
         word-wrap: break-word;
         font-size: 11px;
     }
@@ -525,6 +588,7 @@ button:active, .stake-btn:active {
     .balance-cell {
         min-width: 60px;
         font-size: 11px;
+        text-align: right;
     }
 
     .modal-content {
@@ -538,6 +602,30 @@ button:active, .stake-btn:active {
         right: 8px;
         font-size: 16px;
     }
+
+}
+
+/* ✅ Small Screens (Mobile) */
+@media (max-width: 600px) {
+    .Xstake-controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .Xgroup-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .Xradio-group {
+        justify-content: center;
+        width: 100%;
+    }
+
 }
 
 /* ✅ Ultra-Small Screens (Phones) */
@@ -582,57 +670,34 @@ button:active, .stake-btn:active {
     .modal-content {
         padding: 8px;
     }
+
+    /* ✅ Ensure stake controls remain centered */
+    .stake-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .group-container {
+        width: 100%;
+        text-align: center;
+        gap: 5px;
+    }
+
 }
 
-/* ==== */
+/* Debug colors */ 
+/*
+.stake-btn { background: red;}
 
-/* Ensure the table scales dynamically */
-.table-container {
-    width: 100%;
-    overflow-x: auto; /* Allow scrolling only if necessary */
-    display: block;
-}
-
-/* Make table fully responsive */
-table {
-    width: 100%; /* Let the table fit within the available space */
-    table-layout: auto; /* Allow columns to adjust dynamically */
-    border-collapse: collapse;
-}
-
-/* Ensure long wallet addresses wrap properly */
-.wallet-cell {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal; /* Allow text wrapping */
-    max-width: 120px; /* Limit width to prevent excessive wrapping */
-    font-size: 12px; /* Adjust font size for smaller screens */
-}
-
-/* Adjust column spacing dynamically */
-th, td {
-    padding: 4px; /* Reduce padding for better fit */
-    font-size: 12px; /* Reduce text size */
-}
-
-/* Ensure text fits properly on mobile */
 @media (max-width: 768px) {
-    table {
-        font-size: 12px; /* Reduce font size on smaller screens */
-        table-layout: auto; /* Allow columns to resize */
-    }
-
-    .wallet-cell {
-        max-width: 90px; /* Adjust width for smaller screens */
-        font-size: 11px;
-    }
-
-    .balance-cell {
-        text-align: right;
-        font-size: 12px;
-    }
-
-    th, td {
-        padding: 3px; /* Reduce padding to fit content */
-    }
+    .stake-btn { background: green;}
 }
+
+@media (max-width: 600px) {
+    .stake-btn { background: blue;}
+}
+
+@media (max-width: 480px) {
+    .stake-btn { background: black;}
+}
+*/

@@ -100,11 +100,15 @@ END_HTML
 
         if ($section eq "VTRU Staked") {
             $controls = <<"END_HTML";
-            <span class="group-label">Grouped by:</span>
-            <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
-            <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
-            <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
-            <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+      <div class="group-container">
+        <span class="group-label">Grouped by:</span>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
+          <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
+          <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
+          <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+        </div>
+      </div>
 END_HTML
         }
 
@@ -136,10 +140,12 @@ END_HTML
             <tr class='total-row'>
               <td colspan='3'>
                 <div class='stake-controls'>
+$controls
+              </div>
+              <div class="stake-btn-container">
                   <button onclick="parent.openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
                     View $section Details
                   </button>
-                  $controls
                 </div>
               </td>
             </tr>
