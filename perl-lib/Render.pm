@@ -5,7 +5,7 @@ use JSON;
 
 use lib '.';
 use Defs qw ( get_detail_type );
-use Utils qw( debug_log getLabel explorerURL decorate_unclaimed );
+use Utils qw( log_error getLabel explorerURL decorate_unclaimed );
 
 use Exporter 'import';
 our @EXPORT_OK = qw(render_page render_sections_html render_details_html);
@@ -128,11 +128,15 @@ END_HTML
         if ($type ne "") {
 
             my $wallets_str = join(" ", @$wallets);
+            my $group = "'none'";
+            if ($type eq "stake") {
+                $group = "document.querySelector('input[name=grouping]:checked')?.value";
+            }
             $html .= <<END_HTML;
             <tr class='total-row'>
               <td colspan='3'>
                 <div class='stake-controls'>
-                  <button onclick="parent.openModal('$type', document.querySelector('input[name=grouping]:checked')?.value, '$vault', '$wallets_str')" class="stake-btn">
+                  <button onclick="parent.openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
                     View $section Details
                   </button>
                   $controls

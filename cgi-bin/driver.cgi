@@ -10,17 +10,7 @@ use Defs qw(get_script_for_type get_render_function get_detail_type get_explorer
 use Logs qw(find_latest_log write_current_log compute_differences);
 use Render qw(render_page);
 use Execute qw(run_script);
-use Utils qw(debug_log process_wallets print_error_response);
-
-# Logs debug information to a file
-sub debug_error {
-    my ($message) = @_;
-    my $log_file = Conf::get('LOG_FILE');
-
-    open my $fh, '>>', $log_file or warn "Could not open log file: $!";
-    print $fh scalar(localtime) . " - DEBUG: $message\n";
-    close $fh;
-}
+use Utils qw(log_error process_wallets print_error_response);
 
 my $cgi = CGI->new;
 
@@ -31,8 +21,8 @@ my $wallets  = $cgi->param('wallets')  || '';
 my $grouping = $cgi->param('grouping') || 'none';
 my $format   = $cgi->param('format')   || 'html';
 
-#debug_log("Type: $type");
-#debug_log("Grouping: $grouping");
+#log_error("Type: $type");
+#log_error("Grouping: $grouping");
 
 # Convert wallets to an array
 my @wallets_list = process_wallets($wallets);
@@ -41,7 +31,7 @@ my @wallets_list = process_wallets($wallets);
 my $script_name = get_script_for_type($type);
 my $script_path = Conf::get('BIN_PATH') . "/$script_name";
 
-#debug_log("script_path: $script_path");
+#log_error("script_path: $script_path");
 
 # Construct command
 my @cmd = ($vault ? ('-v', $vault) : ());
@@ -58,21 +48,21 @@ if ($type ne "sections" && $grouping && $grouping ne "none") {
 
 #$N = @cmd;
 #for ($i=0; $i<$N; $i++) {
-#    debug_log("cmd[$i]: $cmd[$i]");
+#    log_error("cmd[$i]: $cmd[$i]");
 #}
 
 # Execute the script
 my ($output, $error) = run_script($script_path, @cmd);
 
 if ($error) {
-    debug_error("Script error: $error");
+    log_error("Script ($script_name) error: $error");
 }
 
 # Parse JSON output
 my $result;
 eval { $result = decode_json($output) };
 if ($@) {
-    debug_error("JSON Parsing Error: $@");
+    log_error("JSON Parsing Error: $@");
     print_error_response($cgi, { success => 0, error => "Invalid JSON format received" });
 }
 

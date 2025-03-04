@@ -41,8 +41,8 @@ sub handle_request {
             print $output;  # CGI script handles headers itself
         } else {
             print "HTTP/1.1 500 Internal Server Error\r\n";
-            print "Content-Type: text/plain\r\n\r\n";
-            print "Error: CGI script did not return a valid HTTP response.\n";
+            print "Content-Type: text/html\r\n\r\n";
+            print "<font color='red'>Error: CGI script did not return a valid HTTP response.</font>\n";
         }
         return;
     }

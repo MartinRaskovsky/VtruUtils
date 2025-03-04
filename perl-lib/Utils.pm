@@ -3,16 +3,19 @@ use strict;
 use warnings;
 use Exporter 'import';
 use JSON;
-our @EXPORT_OK = qw(debug_log explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
 
-sub debug_log {
+use Conf;
+
+our @EXPORT_OK = qw(log_error explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
+
+sub log_error {
     my ($message) = @_;
-    my $debug_file = "/tmp/query_debug.log";
+    my $log_file = Conf::get('LOG_FILE');
     
-    open my $log_fh, '>>', $debug_file or return;
-    print $log_fh scalar(localtime) . " - $message\n";
-    close $log_fh;
-}
+    open my $fh, '>>', $log_file or warn "Could not open $log_file: $!";
+    print $fh scalar(localtime) . " - DEBUG: $message\n";
+    close $fh;
+}  
 
 sub explorerURL {
     my ($type, $address, $label) = @_;

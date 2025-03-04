@@ -8,7 +8,7 @@ use File::Spec;
 use Time::HiRes qw(gettimeofday);
 
 use lib '.';
-use Utils qw( debug_log );
+use Utils qw( log_error );
 
 our @EXPORT_OK = qw(find_latest_log write_current_log compute_differences);
 
