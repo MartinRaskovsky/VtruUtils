@@ -195,17 +195,9 @@ pre {
 
 button {
     margin-top: 15px;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    transition: 0.3s;
 }
 
-.stake-btn {
+button, .stake-btn {
     display: inline-block;
     align-items: center;
     justify-content: center;
@@ -216,11 +208,11 @@ button {
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 4px;
-    /*height: 10px; /* ✅ Matches radio button height */
-    /*padding: 10px 10px 10px 10px;*/
-    /*line-height: normal;*/
+    border-radius: 6px;
     font-size: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+    padding: 8px;
 }
 
 /* ✅ Radio Buttons - Uniform Alignment */
@@ -687,17 +679,17 @@ th, td {
 
 /* Debug colors */ 
 /*
-.stake-btn { background: red;}
+button, .stake-btn{ background: red;}
 
 @media (max-width: 768px) {
-    .stake-btn { background: green;}
+    button, .stake-btn { background: green;}
 }
 
 @media (max-width: 600px) {
-    .stake-btn { background: blue;}
+    button, .stake-btn { background: blue;}
 }
 
 @media (max-width: 480px) {
-    .stake-btn { background: black;}
+    button, .stake-btn { background: black;}
 }
 */
