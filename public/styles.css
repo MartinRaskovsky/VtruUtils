@@ -677,6 +677,23 @@ th, td {
 
 }
 
+/* ✅ Ensure scrollbar does not overlap */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    max-width: calc(100% - 10px); /* ✅ Adjust width to prevent overlap */
+    padding-right: 10px; /* ✅ Creates space for the scrollbar */
+    box-sizing: border-box; /* ✅ Ensures padding doesn’t affect size */
+}
+
+/* ✅ Ensure table adjusts within container */
+table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
 /* Debug colors */ 
 /*
 button, .stake-btn{ background: red;}
