@@ -6,8 +6,8 @@ use IPC::Open3;
 use Symbol 'gensym';
 use JSON;
 
-use Conf;
-use Utils qw ( log_error );
+use lib ".";
+use Utils qw( log_error );
 
 our @EXPORT_OK = qw(run_script);
 

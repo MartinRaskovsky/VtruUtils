@@ -4,18 +4,20 @@ use warnings;
 use Exporter 'import';
 use JSON;
 
+use lib "../perl-lib";
 use Conf;
 
-our @EXPORT_OK = qw(log_error explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
+our @EXPORT_OK = qw(log_error debug_log explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
 
 sub log_error {
     my ($message) = @_;
-    my $log_file = Conf::get('LOG_FILE');
-    
-    open my $fh, '>>', $log_file or warn "Could not open $log_file: $!";
-    print $fh scalar(localtime) . " - DEBUG: $message\n";
-    close $fh;
-}  
+    Conf::log_message("ERROR: " . $message);
+}
+
+sub debug_log {
+    my ($message) = @_;
+    Conf::log_message("DEBUG: " . $message);
+}
 
 sub explorerURL {
     my ($type, $address, $label) = @_;

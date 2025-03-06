@@ -8,6 +8,9 @@ use Cwd qw(abs_path);
 use Socket;
 use Sys::Hostname;
 
+use lib "../perl-lib";
+use Utils qw(debug_log);
+
 # Define the root folder for static files (styles, scripts)
 my $web_root = dirname(abs_path($0)) . "/../public";
 
@@ -55,6 +58,7 @@ sub handle_request {
     # Handle CGI script execution correctly (without adding an extra Content-Type)
     if ($path =~ /\.cgi$/ && -x "." . $path) {
         # Open a pipe to execute the CGI script and capture output
+        debug_log("SERVER running $path");
         my $output = `."$path" 2>&1`;
 
         # Ensure CGI script correctly handles headers

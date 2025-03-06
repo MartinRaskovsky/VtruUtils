@@ -60,6 +60,7 @@ echo "Detected Apache group: $WEB_GROUP"
 echo "🔑 Setting permissions for Apache..."
 find "$CGI_BIN" "$PUBLIC_HTML" -exec chown martin:$WEB_GROUP {} \; 2>/dev/null
 find "$CGI_BIN" "$PUBLIC_HTML" -exec chmod 755 {} \; 2>/dev/null
+chmod 600 $PROJECT_ROOT/public/DBConnect.pm
 
 # Adjust .env path in JavaScript configuration
 if [ -f "$PROJECT_ROOT/lib/libConfig.js" ]; then
@@ -74,6 +75,7 @@ if [ -f "$PROJECT_ROOT/public/index.html" ]; then
     echo "🌐 Adjusting Apache paths in HTML files..."
     sed -i "s|action=\"driver.cgi\"|action=\"/cgi-bin/driver.cgi\"|g" "$PROJECT_ROOT/public/index.html"
     sed -i "s|fetch(\"driver.cgi?\"|fetch(\"/cgi-bin/driver.cgi?\"|g" "$PROJECT_ROOT/public/index.html"
+    sed -i "s|src=\"login.cgi\"|src=\"/cgi-bin/login.cgi\"|g" "$PROJECT_ROOT/public/index.html"
 else
     echo "⚠️ Warning: index.html not found, skipping update"
 fi

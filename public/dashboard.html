@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault & Wallet Details</title>
+    <link rel="stylesheet" href="/public/styles.css">
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            min-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        body {
+            overflow-y: scroll;
+            padding-right: var(--scrollbar-width, 0px);
+            background-color: rgb(75, 0, 130) !important;
+        }
+
+        #main-wrapper {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        #outputFrame {
+            width: 100%;
+            border: none;
+            background-color: transparent;
+            min-height: 600px;
+            height: auto;
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-wrapper">
+        <h1>Vault & Wallet Details</h1>
+        <form action="driver.cgi" method="GET" target="outputFrame">
+            <div class="form-container">
+                <label for="vaultAddress">Vault:</label>
+                <input type="text" id="vaultAddress" placeholder="Enter Vault Address">
+            
+                <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
+                <textarea id="walletAddresses" rows="5" placeholder="Enter Wallet Addresses, one per line"></textarea>
+            
+                <button type="submit">Get Details</button>
+            </div>
+        </form>
+
+        <iframe id="outputFrame" name="outputFrame" src="about:blank"></iframe>
+    </div>
+
+    <div id="modalOverlay"></div>
+    
+    <!-- ✅ Authentication Modals -->
+    <div id="loginModal" class="modal">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <button type="submit">Login / Sign Up</button>
+        </form>
+    </div>
+
+    <div id="codeModal" class="modal">
+        <h2>Enter Confirmation Code</h2>
+        <form id="codeForm">
+            <label for="code">Code:</label>
+            <input type="text" id="code" name="code" required pattern="\d{6}">
+            <button type="submit">Confirm</button>
+        </form>
+    </div>
+
+    <!-- ✅ Vault Details Modal (Original functionality) -->
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Loading...</h3>
+            <button onclick="closeModal()" class="stake-btn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            checkLoginStatus();
+
+            // Existing iframe resizing logic
+            let iframe = document.getElementById("outputFrame");
+            function adjustIframeHeight() {
+                if (!iframe || !iframe.contentWindow.document.body) return;
+                requestAnimationFrame(() => {
+                    let contentHeight = iframe.contentWindow.document.body.scrollHeight;
+                    let maxHeight = window.innerHeight - 100;
+                    iframe.style.height = Math.min(contentHeight, maxHeight) + "px";
+                });
+            }
+
+            iframe.onload = function () {
+                setTimeout(adjustIframeHeight, 200);
+                observeIframeChanges();
+            };
+
+            function observeIframeChanges() {
+                if (!iframe || !iframe.contentWindow.document.body) return;
+                let observer = new MutationObserver(adjustIframeHeight);
+                observer.observe(iframe.contentWindow.document.body, { childList: true, subtree: true });
+            }
+
+            window.onresize = adjustIframeHeight;
+
+            // Login Modal Handling
+            document.getElementById("loginForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                let email = document.getElementById("email").value;
+
+                fetch("login.cgi?email=" + encodeURIComponent(email))
+                    .then(response => response.text())
+                    .then(data => {
+                        closeAuthModal("loginModal");
+                        openAuthModal("codeModal");
+                    })
+                    .catch(error => console.error("Login Error:", error));
+            });
+
+            document.getElementById("codeForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                let code = document.getElementById("code").value;
+
+                fetch("confirm.cgi?code=" + encodeURIComponent(code))
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data.includes("Success")) {
+                            closeAuthModal("codeModal");
+                            //document.cookie = "authenticated=true; path=/;";
+                            //window.location.reload();
+                        } else {
+                            alert(`Invalid code ${code}/${data}. Try again.`);
+                        }
+                    })
+                    .catch(error => console.error("Code Verification Error:", error));
+            });
+        });
+
+        function checkLoginStatus() {
+            console.log("✅ Running checkLoginStatus()...");
+            let isAuthenticated = document.cookie.includes("authenticated=true");
+            if (!isAuthenticated) {
+                openAuthModal("loginModal");
+            } else {
+                console.log(`✅ logged in OK`);
+            }
+        }
+
+        // Authentication modals (Login & Code Entry)
+        window.openAuthModal = function (id) {
+            let modal = document.getElementById(id);
+            let overlay = document.getElementById("modalOverlay");
+
+            if (modal) {
+                modal.style.display = "block";
+                modal.style.visibility = "visible";
+                modal.style.opacity = "1";
+
+                overlay.style.display = "block"; // Show background overlay
+                console.log(`✅ Modal ${id} opened`);
+            } else {
+                console.error(`❌ Modal ${id} not found`);
+            }
+        };
+
+        window.closeAuthModal = function (id) {
+            let modal = document.getElementById(id);
+            let overlay = document.getElementById("modalOverlay");
+
+            if (modal) {
+                modal.style.display = "none";
+                overlay.style.display = "none"; // Hide background overlay
+            }
+        };
+
+        // Vault Details Modal (Original functionality)
+        window.openModal = function (type, grouping, vault, wallets) {
+            let modal = document.getElementById("modal");
+            let modalContent = modal.querySelector(".modal-content");
+
+            if (!modal || !modalContent) return console.error("❌ Modal not found");
+
+            modalContent.innerHTML = "<h3>Loading...</h3>";
+
+            let params = new URLSearchParams({ type, grouping, vault, wallets });
+
+            fetch("driver.cgi?" + params.toString())
+                .then(response => response.text())
+                .then(html => {
+                    modalContent.innerHTML = html;
+                    modal.style.display = "block";
+                    modal.classList.add("active");
+                })
+                .catch(error => {
+                    modalContent.innerHTML = "<h3>Error loading content</h3>";
+                    modal.style.display = "block";
+                    console.error("Fetch error:", error);
+                });
+        };
+
+        window.closeModal = function () {
+            let modal = document.getElementById("modal");
+            if (!modal) return;
+
+            modal.classList.remove("active");
+
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 200);
+        };
+    </script
+
+</body>
+</html>

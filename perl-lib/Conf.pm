@@ -5,13 +5,12 @@ use File::Basename;
 use File::Spec;
 use Cwd 'abs_path';
 
-use Utils qw ( log_error );
-
-my $IS_APACHE = 0;
+my %config = (
+    IS_APACHE => 0,
+    USE_EMAIL => 0,
+);
 
 my $init_done = 0;
-my %config;
-
 sub init {
     if ($init_done) { return; }
     $init_done = 1;
@@ -32,10 +31,10 @@ sub init {
         }
         close $fh;
     } else {
-        log_error("Failed to find .env file in $base_dir/data");
+        log_message("ERROR: Failed to find .env file in $base_dir/data");
     }
 
-    if ($IS_APACHE) {
+    if ($config{IS_APACHE}) {
         $config{NODE_PATH} = '/opt/cpanel/ea-nodejs16/bin/node';
         $config{BIN_PATH} = "$base_dir/bin";
         $config{LOG_FILE} = "$base_dir/logs/cgi-debug.log";
@@ -53,6 +52,15 @@ sub get {
     init();
 
     return $config{$key};
+}
+
+sub log_message {
+    my ($message) = @_;
+    my $log_file = get('LOG_FILE');
+    
+    open my $fh, '>>', $log_file or warn "Could not open $log_file: $!";
+    print $fh scalar(localtime) . " - $message\n";
+    close $fh;
 }
 
 1;
