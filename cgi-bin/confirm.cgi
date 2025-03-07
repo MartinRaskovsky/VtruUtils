@@ -18,8 +18,8 @@ my $cgi = CGI->new;
 
 sub invalidCode {
     my ($who, $confirmation_code) = @_;
-    debug_log2($MODULE, "invalidCode($who, $confirmation_code)");
     $confirmation_code = $confirmation_code || "";
+    debug_log2($MODULE, "invalidCode($who, $confirmation_code)");
     my $message = "Invalid confirmation_code on $who \"$confirmation_code\"";
     print $message;
 }

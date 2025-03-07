@@ -22,7 +22,7 @@ sub get_wallets_html {
         <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" value="$vault">
                 
         <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-        <textarea id="walletAddresses" name="wallets" rows="5" placeholder="Enter Wallet Addresses, one per line">$wallets</textarea>
+        <textarea id="walletAddresses" name="wallets" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line">$wallets</textarea>
                   
         <button type="submit">Get Details</button>
 END_HTML
