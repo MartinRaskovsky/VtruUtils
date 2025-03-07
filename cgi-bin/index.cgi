@@ -2,40 +2,28 @@
 use strict;
 use warnings;
 use CGI;
-use CGI::Cookie;
 use DBI;
-use lib '../perl-lib';
-use DBConnect qw(get_dbh);
-use Utils qw(debug_log log_error print_error_response);
 
-debug_log('index.cgi entered');
+use lib '../perl-lib';
+use DBUtils qw(get_user_by_session);
+use Dashboard qw(load_dashboard);
+use Utils qw(debug_log2 log_error print_error_response);
+use Cookies qw(get_session_cookie);
+
+my $MODULE = "index.cgi";
+
+debug_log2($MODULE, "Entered");
 
 my $cgi = CGI->new;
 print $cgi->header('text/html');
 
-
 # Read confirmation_code from cookies
 
 eval {
-    my %cookies = CGI::Cookie->fetch;
+    my $session_id = get_session_cookie();
+    my $user = get_user_by_session($session_id);
 
-    debug_log('Getting confirmation_code');
-    my $confirmation_code = $cookies{'confirmation_code'} ? $cookies{'confirmation_code'}->value : '';
-
-    debug_log("confirmation_code=\"$confirmation_code\" for session.");
-
-    # Connect to MySQL
-    my $dbh = get_dbh();
-    my $sth = $dbh->prepare("SELECT email FROM users WHERE confirmation_code = ?");
-    $sth->execute($confirmation_code);
-    my $user = $sth->fetchrow_hashref;
-
-    # Load dashboard.html
-    open my $fh, '<', '../public/dashboard.html' or die "Cannot open dashboard.html: $!";
-    my $dashboard = do { local $/; <$fh> };
-    close $fh;
-
-    print $dashboard;
+    load_dashboard($user);
 
     # If no confirmation_code, trigger login modal
     if (!$user) {
@@ -54,4 +42,3 @@ if ($@) {
     log_error("index.cgi Error: $@");
     print_error_response($cgi, { success => 0, error => "Invalid Request format received" });
 }
-

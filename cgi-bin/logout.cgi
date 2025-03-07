@@ -2,13 +2,20 @@
 use strict;
 use warnings;
 use CGI;
-use CGI::Cookie;
+
+use lib "../perl-lib";
+use Cookies qw(remove_session_cookie);
+
+my $MODULE = "logout";
 
 my $cgi = CGI->new;
-print $cgi->header(
-    -type => 'text/html',
-    -cookie => CGI::Cookie->new(-name => 'session_token', -value => '', -expires => '-1d', -path => '/')
-);
 
+# ✅ Remove session cookie before sending headers
+remove_session_cookie();
+
+# ✅ Now send headers
+print $cgi->header('text/html');
+
+# ✅ Redirect or show logout message
 print "<script>window.location.href = '/index.html';</script>";
 

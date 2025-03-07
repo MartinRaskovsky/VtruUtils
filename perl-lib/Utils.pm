@@ -7,11 +7,16 @@ use JSON;
 use lib "../perl-lib";
 use Conf;
 
-our @EXPORT_OK = qw(log_error debug_log explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
+our @EXPORT_OK = qw(log_error debug_log debug_log2 explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
 
 sub log_error {
     my ($message) = @_;
     Conf::log_message("ERROR: " . $message);
+}
+
+sub debug_log2 {
+    my ($module, $message) = @_;
+    Conf::log_message("DEBUG: " . $module . ":\t" . $message);
 }
 
 sub debug_log {

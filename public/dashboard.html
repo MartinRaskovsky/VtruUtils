@@ -60,13 +60,15 @@
         <h1>Vault & Wallet Details</h1>
         <form action="driver.cgi" method="GET" target="outputFrame">
             <div class="form-container">
+<!--main-input-BEGIN-->
                 <label for="vaultAddress">Vault:</label>
                 <input type="text" id="vaultAddress" placeholder="Enter Vault Address">
             
                 <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
                 <textarea id="walletAddresses" rows="5" placeholder="Enter Wallet Addresses, one per line"></textarea>
-            
+          
                 <button type="submit">Get Details</button>
+<!--main-input-END-->
             </div>
         </form>
 
@@ -150,11 +152,15 @@
 
                 fetch("confirm.cgi?code=" + encodeURIComponent(code))
                     .then(response => response.text())
-                    .then(data => {
-                        if (data.includes("Success")) {
+                    .then(html => {
+                        if (html.includes("Success")) {
                             closeAuthModal("codeModal");
-                            //document.cookie = "authenticated=true; path=/;";
-                            //window.location.reload();
+                            let formContainer = document.querySelector(".form-container");
+                            if (formContainer) {
+                                formContainer.innerHTML = html; // Replace only inner content
+                            } else {
+                                console.error("❌ .form-container not found!");
+                            }
                         } else {
                             alert(`Invalid code ${code}/${data}. Try again.`);
                         }

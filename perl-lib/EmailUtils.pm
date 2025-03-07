@@ -6,9 +6,11 @@ use Exporter 'import';
 
 use lib '../perl-lib';
 use Conf;
-use Utils qw(debug_log log_error);
+use Utils qw(debug_log2 log_error);
 
 our @EXPORT_OK = qw(send_email send_confirmation_email);
+
+my $MODULE = "EmailUtils";
 
 my $USE_EMAIL = Conf::get('USE_EMAIL');
 
@@ -31,9 +33,10 @@ if ($USE_EMAIL) {
 
 sub send_email {
     my ($email, $subject, $body) = @_;
+    debug_log2($MODULE, "send_email($email, $subject, $body)");
 
     if (!$USE_EMAIL) {
-        debug_log("Skipping email sending (USE_EMAIL disabled). To: $email, Subject: $subject");
+        debug_log2($MODULE, "Skipped");
         return 1;
     }
 
@@ -58,7 +61,7 @@ sub send_email {
         $mailer->datasend("$body\n");
         $mailer->dataend();
         $mailer->quit;
-        debug_log("Email sent successfully to $email.");
+        debug_log2($MODULE, "Success");
     };
     
     if ($@) {

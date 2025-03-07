@@ -11,7 +11,7 @@ use Exporter 'import';
 our @EXPORT_OK = qw(render_page render_sections_html render_details_html);
 
 sub render_page {
-    my ($body_content, $type) = @_; 
+    my ($header, $body_content, $type) = @_; 
     
     if ($type eq 'sections') {
         # ✅ Full page rendering
@@ -25,6 +25,7 @@ sub render_page {
     <link rel="stylesheet" href="/public/styles.css">
 </head>
 <body>
+$header
 $body_content
 </body>
 </html>

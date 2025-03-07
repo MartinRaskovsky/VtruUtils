@@ -9,7 +9,9 @@ use Socket;
 use Sys::Hostname;
 
 use lib "../perl-lib";
-use Utils qw(debug_log);
+use Utils qw(debug_log2);
+
+my $MODULE = "server";
 
 # Define the root folder for static files (styles, scripts)
 my $web_root = dirname(abs_path($0)) . "/../public";
@@ -57,21 +59,42 @@ sub handle_request {
 
     # Handle CGI script execution correctly (without adding an extra Content-Type)
     if ($path =~ /\.cgi$/ && -x "." . $path) {
-        # Open a pipe to execute the CGI script and capture output
-        debug_log("SERVER running $path");
-        my $output = `."$path" 2>&1`;
+        debug_log2($MODULE, "running $path");
 
-        # Ensure CGI script correctly handles headers
-        if ($output =~ /^Content-Type:/m) {
-            print "HTTP/1.1 200 OK\r\n";  # Send HTTP response status only
-            print $output;  # CGI script handles headers itself
-        } else {
+        # Open a pipe to execute the CGI script
+        open(my $fh, "-|", ".$path") or do {
             print "HTTP/1.1 500 Internal Server Error\r\n";
             print "Content-Type: text/html\r\n\r\n";
-            print "<font color='red'>Error: CGI script did not return a valid HTTP response.</font>\n";
+            print "<font color='red'>Error: Failed to execute CGI script.</font>\n";
+            return;
+        };
+
+        my $headers = "";
+        my $body = "";
+        my $in_headers = 1;
+
+        # Read output line by line, separating headers from body
+        while (my $line = <$fh>) {
+            if ($in_headers) {
+                if ($line =~ /^\s*$/) { 
+                    $in_headers = 0; 
+                    next;
+                }
+                $headers .= $line;
+            } else {
+                $body .= $line;
+            }
         }
+        close($fh);
+
+        # Ensure HTTP/1.1 200 OK is sent before headers
+        print "HTTP/1.1 200 OK\r\n";
+        print $headers;
+        print "\r\n";  # Separate headers from body
+        print $body;
         return;
     }
+
 
     # If nothing matches, return a 404 error
     print "HTTP/1.1 404 Not Found\r\n";

@@ -2,89 +2,56 @@
 use strict;
 use warnings;
 use CGI;
-use CGI::Cookie;
 use Digest::SHA qw(sha256_hex);
 
 use lib '../perl-lib';
-use Utils qw (debug_log);
-use DBConnect qw(get_dbh);
+use Utils qw (debug_log2);
+use DBUtils qw(get_user_by_code update_session_id);
+use Dashboard qw(get_main_wrapper);
+use Cookies qw(set_session_cookie);
+
+my $MODULE = "confirm.cgi";
+
+debug_log2($MODULE, "Entered");
 
 my $cgi = CGI->new;
-print $cgi->header('text/html');
-debug_log("confirm.cgi entered");
 
 sub invalidCode {
     my ($who, $confirmation_code) = @_;
+    debug_log2($MODULE, "invalidCode($who, $confirmation_code)");
     $confirmation_code = $confirmation_code || "";
     my $message = "Invalid confirmation_code on $who \"$confirmation_code\"";
-    debug_log($message);
     print $message;
 }
 
 my $confirmation_code = $cgi->param('code');
 if (!$confirmation_code || $confirmation_code !~ /^\d{6}$/) {
+    print $cgi->header('text/html');
     invalidCode("entry", $confirmation_code);
     exit;
 }
 
-# Get database handle
-my $dbh = get_dbh();
-
-# Verify confirmation confirmation_code
-my $sth = $dbh->prepare("SELECT email FROM users WHERE confirmation_code = ?");
-$sth->execute($confirmation_code);
-my $user = $sth->fetchrow_hashref;
-debug_log("got $user->{email} for $confirmation_code") if $user;
-
+my $session_id = undef;
+my $user = get_user_by_code($confirmation_code);
 if ($user) {
     # Generate session_id
-    my $session_id = sha256_hex(time() . rand());
-    debug_log("session_id = $session_id");
+    $session_id = sha256_hex(time() . rand());
+    set_session_cookie($session_id);    # before header
+}
+print $cgi->header('text/html');         # no prints before this line
 
-    # Store session_id in a cookie
-    my $cookie = CGI::Cookie->new(
-        -name    => 'session_id',
-        -value   => $session_id,
-        -expires => '+1M'  # Cookie lasts one month
-    );
-    debug_log("cookie=$cookie");
-    
-    # Store session_id in the database
-    eval {
-        my $sth_update = $dbh->prepare("UPDATE users SET session_id = ? WHERE email = ?");
-        debug_log("Storing session_id in DB for $user->{email}");
-        $sth_update->execute($session_id, $user->{email});
-        $dbh->commit();
-        debug_log("session_id stored in DB");
-
-        # No need to validate immediately after storing the session_id in DB
-        # my $sth = $dbh->prepare("SELECT email FROM users WHERE session_id = ?");
-        # $sth->execute($session_id);
-        # my $user = $sth->fetchrow_hashref;
-        # if (!$user) { ... } # this validation happens on future requests
-        #debug_log("Session verified for user $user->{email}");
-    };
-    if ($@) {
-        debug_log("CGI Script Error: $@");
-    }
-
-
-    print "Success";
+if ($user) {
+    debug_log2($MODULE, "session_id=$session_id");
+    update_session_id($user->{email}, $session_id);
+    print "<!--Success-->";
+    print get_main_wrapper($user);
 } else {
     invalidCode('exit', $confirmation_code);
 }
 
-  # Load dashboard.html
-    open my $fh, '<', '../public/dashboard.html' or die "Cannot open dashboard.html: $!";
-    my $dashboard = do { local $/; <$fh> };
-    close $fh;
-
-    debug_log("responding with dashboard");
-    print $dashboard;
-
     # If no confirmation_code, trigger login modal
     if ($user) {
-        debug_log("no modal");
+        debug_log2($MODULE, "Active");
         #print <<'HTML';
         #<script>
         #    window.onload = function () {
@@ -93,7 +60,7 @@ if ($user) {
         #</script>
 #HTML
     } else {
-        debug_log("loginModald");
+        debug_log2($MODULE, "loginModald");
         print <<'HTML';
         <script>
             window.onload = function () {

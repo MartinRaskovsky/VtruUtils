@@ -60,7 +60,7 @@ echo "Detected Apache group: $WEB_GROUP"
 echo "🔑 Setting permissions for Apache..."
 find "$CGI_BIN" "$PUBLIC_HTML" -exec chown martin:$WEB_GROUP {} \; 2>/dev/null
 find "$CGI_BIN" "$PUBLIC_HTML" -exec chmod 755 {} \; 2>/dev/null
-chmod 600 $PROJECT_ROOT/public/DBConnect.pm
+chmod 600 $PROJECT_ROOT/perl-lib/DBConnect.pm
 
 # Adjust .env path in JavaScript configuration
 if [ -f "$PROJECT_ROOT/lib/libConfig.js" ]; then

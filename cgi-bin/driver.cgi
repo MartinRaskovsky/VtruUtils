@@ -10,7 +10,10 @@ use Defs qw(get_script_for_type get_render_function get_detail_type get_explorer
 use Logs qw(find_latest_log write_current_log compute_differences);
 use Render qw(render_page);
 use Execute qw(run_script);
+use Dashboard qw(get_wallets_html);
 use Utils qw(log_error process_wallets print_error_response);
+use Cookies qw(get_session_cookie);
+use DBUtils qw(get_user_by_session set_vault_and_wallets);
 
 my $cgi = CGI->new;
 
@@ -68,10 +71,18 @@ if ($@) {
 
 # Determine rendering function
 my $body;
+my $header = "$type";
 my $render_function = get_render_function($type);
 if ($type eq 'sections') {
     $vault = $result->{address};
-    $wallets = $result->{wallets}; 
+    $wallets = $result->{wallets};
+    #my $joined = join(" ", @{$result->{wallets} // []});  # Ensure wallets are formatted correctly, avoid warnings if undefined
+
+    my $session_id = get_session_cookie();
+    my $user = get_user_by_session($session_id);
+    set_vault_and_wallets($user->{email}, $vault, $wallets);
+    #$header = get_wallets_html($vault, $joined);
+
     # Compute differences if applicable
     my $previous_log = find_latest_log($vault);
     write_current_log($vault, $result, $previous_log);
@@ -83,7 +94,7 @@ if ($type eq 'sections') {
 
 # Render and output final page
 print $cgi->header(-type => 'text/html', -charset => 'UTF-8');
-print render_page($body, $type);
+print render_page($header, $body, $type);
 
 exit;
 
