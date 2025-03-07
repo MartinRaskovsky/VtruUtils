@@ -73,9 +73,17 @@ fi
 # Ensure correct Apache paths in HTML
 if [ -f "$PROJECT_ROOT/public/index.html" ]; then
     echo "🌐 Adjusting Apache paths in HTML files..."
-    sed -i "s|action=\"driver.cgi\"|action=\"/cgi-bin/driver.cgi\"|g" "$PROJECT_ROOT/public/index.html"
-    sed -i "s|fetch(\"driver.cgi?\"|fetch(\"/cgi-bin/driver.cgi?\"|g" "$PROJECT_ROOT/public/index.html"
-    sed -i "s|src=\"login.cgi\"|src=\"/cgi-bin/login.cgi\"|g" "$PROJECT_ROOT/public/index.html"
+
+    # Modify action attributes in forms
+    sed -i '' 's|action="driver.cgi"|action="/cgi-bin/driver.cgi"|g' "$PROJECT_ROOT/public/dashboard.html"
+
+    # Modify fetch() calls for CGI scripts
+    sed -i '' 's|fetch("login.cgi?|fetch("/cgi-bin/login.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
+    sed -i '' 's|fetch("confirm.cgi?|fetch("/cgi-bin/confirm.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
+    sed -i '' 's|fetch("driver.cgi?|fetch("/cgi-bin/driver.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
+
+    # Modify redirection in JavaScript
+    sed -i '' 's|window.location.href="index.cgi"|window.location.href="/cgi-bin/index.cgi"|g' "$PROJECT_ROOT/public/index.html"
 else
     echo "⚠️ Warning: index.html not found, skipping update"
 fi
