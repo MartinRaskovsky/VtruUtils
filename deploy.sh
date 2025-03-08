@@ -91,7 +91,7 @@ fi
 # Configure the Perl configuration
 if [ -f "$PROJECT_ROOT/perl-lib/Conf.pm" ]; then
     echo "🌐 Adjusting Perl configuration for Apache..."
-    sed -i "s|\$IS_APACHE => 0;|\$IS_APACHE => 1;|g" "$PROJECT_ROOT/perl-lib/Conf.pm"
+    sed -i "s|IS_APACHE => 0,|IS_APACHE => 1,|g" "$PROJECT_ROOT/perl-lib/Conf.pm"
 else
     echo "⚠️ Warning: Conf.pm not found, skipping update"
 fi

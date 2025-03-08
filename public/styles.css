@@ -2,12 +2,15 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: white;
-    max-width: 1200px;
     margin: auto;
     padding: 0;
     text-align: center;
     font-size: 14px;
     padding-bottom: 40px;
+}
+
+html, body {
+    max-width: 900px;
 }
 
 label {
@@ -48,6 +51,7 @@ textarea {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    /*max-width: 900px;*/
 }
 
 table {
@@ -194,8 +198,9 @@ pre {
     padding: 10px;
     border-radius: 8px;
     width: 100%;
-    max-width: 90%;
     padding: 10px;
+    max-width: 90%;
+    /*max-width: 500px;*/
 }
 
 .stake-btn-container {
@@ -360,7 +365,7 @@ button:active, .stake-btn:active {
 }
 
 .scrollable {
-    background: black;
+    background: #6a0dad;
 }
 
 .stake-table {
@@ -395,8 +400,19 @@ button:active, .stake-btn:active {
     border: 2px solid white;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 0px;
+    border: 1px solid #ccc;
+}
+
 .modal-content {
-    background: rgba(255, 255, 255, 0.1);/* same as textarea*/
+    background-color: #6a0dad !important;
     color: white !important;
     padding: 20px;
     border-radius: 8px;
@@ -418,12 +434,13 @@ button:active, .stake-btn:active {
 .modal.active {
     visibility: visible;
     opacity: 1;
+    background: rgb(53, 6, 82);
 }
 
 
 /* ✅ TABLE HEADER BACKGROUND */
 .modal-content table thead th {
-    background-color: #6a0dad !important;  /* ✅ Force correct background */
+    background-color: #6a0dad !important;
     color: white !important; /* ✅ Ensure contrast */
     padding: 6px;
     text-align: left;
@@ -434,9 +451,9 @@ button:active, .stake-btn:active {
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
-    padding: 10px;
+    /*padding: 32px;*/
     border-radius: 5px;
-    box-shadow: inset -10px 0px 0px #2a1f3a;
+    /*box-shadow: inset -10px 0px 0px #2a1f3a;
     scrollbar-width: thin; /* For Firefox */
 }
 
@@ -477,7 +494,9 @@ button:active, .stake-btn:active {
 /* Ensure the table container does not overflow */
 .table-container {
     width: 100%;
-    max-width: 100%; /* Prevent extra space from appearing */
+    padding: 10px;
+    max-width: 90%; /* Prevent extra space from appearing */
+    /*max-width: 500px;
     overflow-x: auto; /* Enable scrolling only when necessary */
     display: block;
 }
@@ -572,11 +591,6 @@ th, td {
         padding: 10px;
     }
 
-    input#vaultAddress, textarea#walletAddresses {
-        /*width: 80%;  /* Adjust width to fit smaller screens */
-        min-width: unset;
-    }
-
     button {
         font-size: 14px;
         padding: 8px;
@@ -609,12 +623,10 @@ th, td {
 
 }
 
-/* ✅ Small Screens (Mobile) */
-@media (max-width: 600px) {
+@media (min-width: 600px) {
     input#vaultAddress, textarea#walletAddresses {
-        width: 90%;  /* Almost full width */
+        width: 42ch; /* Exactly 42 characters */;
     }
-
 }
 
 /* ✅ Ultra-Small Screens (Phones) */
@@ -624,11 +636,7 @@ th, td {
     }
 
     .form-container {
-        padding: 5px;
-    }
-
-    input#vaultAddress, textarea#walletAddresses {
-        width: 100%; /* Take full width */
+        padding: 16px;
     }
 
     button {
@@ -697,7 +705,7 @@ table {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.1);/* same as textarea*/
+    background: #6a0dad;/*rgba(255, 255, 255, 0.1);/* same as textarea*/
     padding: 20px;
     border: 2px solid #ccc;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -723,6 +731,10 @@ table {
             /*justify-content: center; /* Keep title centered */
             position: relative;
             padding: 10px 20px;
+        }
+
+        #header H1 {
+            transform: translate(10px, 0px);
         }
         
         #logoutBtn {
@@ -756,7 +768,7 @@ table {
         }
 
         #logoutBtn { 
-            transform: translate(50px, -30px)
+            transform: translate(-10px, -30px);
         }
 
     /* Force autofill styling to match the input field */
@@ -778,6 +790,10 @@ table {
 /* Debug colors */ 
 /*
 button, .stake-btn{ background: red;}
+
+body {
+    max-width: 768px;
+}
 
 @media (max-width: 768px) {
     button, .stake-btn { background: green;}

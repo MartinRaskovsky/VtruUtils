@@ -57,22 +57,25 @@ sub set_vault_and_wallets {
     return unless $dbh;
     
     eval {
-        my $sth_vault = $dbh->prepare("INSERT INTO vaults (email, vault_address) VALUES (?, ?) 
-                                       ON DUPLICATE KEY UPDATE vault_address = ?");
+        # 1️⃣ Insert or update the vault
+        my $sth_vault = $dbh->prepare("INSERT INTO vaults (email, vault_address) 
+                                       VALUES (?, ?) ON DUPLICATE KEY UPDATE vault_address = ?");
         $sth_vault->execute($email, $vault, $vault);
         
+        # 2️⃣ DELETE all old wallets for this email
         my $sth_delete_wallets = $dbh->prepare("DELETE FROM wallets WHERE email = ?");
         $sth_delete_wallets->execute($email);
         
-        my $sth_wallet = $dbh->prepare("INSERT INTO wallets (email, wallet_address) VALUES (?, ?)");
+        # 3️⃣ INSERT IGNORE to add only new wallets, preventing duplicates
+        my $sth_wallet = $dbh->prepare("INSERT IGNORE INTO wallets (email, wallet_address) VALUES (?, ?)");
         foreach my $wallet (@$wallets_ref) {
             $sth_wallet->execute($email, $wallet);
         }
         
-        $dbh->commit();
+        #$dbh->commit();
         debug_log2($MODULE, "Vault and wallets updated successfully for $email");
     };
-    
+
     if ($@) {
         log_error("DB Error in set_vault_and_wallets: $@");
         $dbh->rollback();
@@ -128,8 +131,6 @@ sub get_wallets {
     my $email = $user? $user->{email}: "";
     debug_log2($MODULE, "get_wallets($email)");
     if (!$user) { return (0, 0); }
-    #my ($vault) = '0x9e6e23761499590d5026c608124467c3587336c8';
-    #my ($wallets) = '0x9970c734daf5949125794b971f5872fd87ecafaf 0xd07d220d7e43eca35973760f8951c79deebe0dcc';
     my ($vault, $wallets) = get_vault_and_wallets($email);
     if (!defined $vault) { return (0, 0); }
     my $wallets_str = join(" ", @$wallets);

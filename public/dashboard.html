@@ -13,6 +13,7 @@
             padding: 0;
             width: 100vw;
             min-width: 100vw;
+            max-width: 768px;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -28,7 +29,7 @@
 
         #main-wrapper {
             width: 80%;
-            max-width: 1200px;
+            max-width: 768px;
             margin: 0 auto;
             min-height: 100vh;
         }
@@ -42,16 +43,6 @@
             display: block;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border: 1px solid #ccc;
-        }
     </style>
 </head>
 <body>
@@ -162,6 +153,7 @@
                     .then(html => {
                         if (html.includes("Success")) {
                             closeAuthModal("codeModal");
+                            toggleLogoutButton(true);
                             let formContainer = document.querySelector(".form-container");
                             if (formContainer) {
                                 formContainer.innerHTML = html; // Replace only inner content
@@ -177,12 +169,11 @@
         });
 
         function checkLoginStatus() {
-            console.log("✅ Running checkLoginStatus()...");
             let isAuthenticated = document.cookie.includes("authenticated=true");
             if (!isAuthenticated) {
                 openAuthModal("loginModal");
             } else {
-                console.log(`✅ logged in OK`);
+                //console.log(`✅ logged in OK`);
             }
         }
 
@@ -197,7 +188,7 @@
                 modal.style.opacity = "1";
 
                 overlay.style.display = "block"; // Show background overlay
-                console.log(`✅ Modal ${id} opened`);
+                //console.log(`✅ Modal ${id} opened`);
             } else {
                 console.error(`❌ Modal ${id} not found`);
             }
@@ -267,7 +258,7 @@
         }
 
         // Show logout button only if the session cookie exists
-        function checkSession() {
+        window.checkSession = function () {
             if (document.cookie.includes('session_id=')) {
                 toggleLogoutButton(true);
             }
@@ -293,10 +284,11 @@
             document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
         }
 
-        function checkSession() {
+        window.checkSession = function() {
             // Client-side cookie check (only works if session_id is NOT HttpOnly)
             let cookies = document.cookie.split(';').map(cookie => cookie.trim());
             let hasSession = cookies.some(cookie => /^session_id=/.test(cookie));
+            hasSession = hasSession || (typeof sessionExists !== "undefined" && sessionExists);
 
             if (hasSession) {
                 toggleLogoutButton(true);
@@ -311,7 +303,6 @@
             toggleLogoutButton(true);
         }
     </script>
-
 
 </body>
 </html>

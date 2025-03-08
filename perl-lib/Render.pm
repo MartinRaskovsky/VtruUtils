@@ -5,13 +5,16 @@ use JSON;
 
 use lib '.';
 use Defs qw ( get_detail_type );
-use Utils qw( log_error getLabel explorerURL decorate_unclaimed truncateAddress);
+use Utils qw( debug_log2 log_error getLabel explorerURL decorate_unclaimed truncateAddress);
 
 use Exporter 'import';
 our @EXPORT_OK = qw(render_page render_sections_html render_details_html);
 
+my $MODULE = "Render";
+
 sub render_page {
-    my ($header, $body_content, $type) = @_; 
+    my ($header, $body_content, $type) = @_;
+    debug_log2($MODULE, "render_page(..., $type)");
     
     if ($type eq 'sections') {
         # ✅ Full page rendering

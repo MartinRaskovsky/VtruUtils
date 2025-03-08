@@ -52,17 +52,6 @@ if ($user) {
     # If no confirmation_code, trigger login modal
     if ($user) {
         debug_log2($MODULE, "Active");
-        print <<'HTML';
-        <script>
-            window.onload = function () {
-                closeAuthModal("loginModa");
-                toggleLogoutButton(true);
-                sessionExists = true;
-            };
-            toggleLogoutButton(true);
-            sessionExists = true;
-        </script>
-HTML
     } else {
         debug_log2($MODULE, "loginModald");
         print <<'HTML';
