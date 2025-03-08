@@ -4,14 +4,14 @@ use warnings;
 use CGI;
 
 use lib "../perl-lib";
-use Cookies qw(remove_session_cookie);
+use Cookies qw(deleteDessionCookie);
 
 my $MODULE = "logout";
 
 my $cgi = CGI->new;
 
 # ✅ Remove session cookie before sending headers
-remove_session_cookie();
+deleteDessionCookie();
 
 # ✅ Now send headers
 print $cgi->header('text/html');

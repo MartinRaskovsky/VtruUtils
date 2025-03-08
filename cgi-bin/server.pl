@@ -9,7 +9,7 @@ use Socket;
 use Sys::Hostname;
 
 use lib "../perl-lib";
-use Utils qw(debug_log2);
+use Utils qw(debugLog);
 
 my $MODULE = "server";
 
@@ -59,7 +59,7 @@ sub handle_request {
 
     # Handle CGI script execution correctly (without adding an extra Content-Type)
     if ($path =~ /\.cgi$/ && -x "." . $path) {
-        debug_log2($MODULE, "running $path");
+        debugLog($MODULE, "running $path");
 
         # Open a pipe to execute the CGI script
         open(my $fh, "-|", ".$path") or do {

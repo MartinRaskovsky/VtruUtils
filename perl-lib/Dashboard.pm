@@ -4,20 +4,20 @@ use strict;
 use warnings;
 
 use lib "../perl-lib";
-use DBUtils qw(get_wallets);
-use Utils qw(debug_log2);
+use DBUtils qw(getWallets);
+use Utils qw(debugLog);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(load_dashboard get_wallets_html get_main_wrapper);
+our @EXPORT_OK = qw(loadDashboard getWalletsHtml getMainWrapper);
 
 my $MODULE = "Dashboard";
 
-sub get_wallets_html {
+sub getWalletsHtml {
     my ($vault, $wallets) = @_;
     if (!defined $vault   || $vault   eq "0") { $vault = '' ; }
     if (!defined $wallets || $wallets eq "0") { $wallets = '' ; }
     my ($N);
-    debug_log2($MODULE, "get_wallets_html($vault)");
+    debugLog($MODULE, "getWalletsHtml($vault)");
     my $html =<<END_HTML;
         <label for="vaultAddress">Vault:</label>
         <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" value="$vault">
@@ -27,28 +27,28 @@ sub get_wallets_html {
                   
         <button type="submit">Get Details</button>
 END_HTML
-    #debug_log2($MODULE, "get_wallets_html=$html");
+    #debugLog($MODULE, "getWalletsHtml=$html");
     return $html;
 }
 
-sub get_main_wrapper {
-    my ($user) = @_;
-    my $email = $user? $user->{email}: "";
-    debug_log2($MODULE, "get_main_wrapper($email)");
-    if (!$user) {return "";}
-    my ($vault, $wallets) = get_wallets($user);
-    return get_wallets_html($vault, $wallets);
+sub getMainWrapper {
+    my ($email) = @_;
+    $email = $email // "";
+    debugLog($MODULE, "getMainWrapper($email)");
+    if ($email eq "") {return "";}
+    my ($vault, $wallets) = getWallets($email);
+    return getWalletsHtml($vault, $wallets);
 }
 
-sub load_dashboard {
-    my ($user) = @_;
-    my $email = $user? $user->{email}: "";
-    debug_log2($MODULE, "load_dashboard($email)");
+sub loadDashboard {
+    my ($email) = @_;
+    $email = $email // "";
+    debugLog($MODULE, "loadDashboard($email)");
 
-    my $wrapper = get_main_wrapper($user);
+    my $wrapper = getMainWrapper($email);
 
     open my $fh, '<', '../public/dashboard.html' or do {
-        debug_log2($MODULE, "Failed to open dashboard.html");
+        debugLog($MODULE, "Failed to open dashboard.html");
         print "<h3 style='color:red;'>Error: Unable to load dashboard.</h3>";
         return;
     };

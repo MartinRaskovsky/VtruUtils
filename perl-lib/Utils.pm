@@ -7,21 +7,23 @@ use JSON;
 use lib "../perl-lib";
 use Conf;
 
-our @EXPORT_OK = qw(log_error debug_log debug_log2 explorerURL getLabel truncateAddress print_error_response process_wallets decorate_unclaimed );
+our @EXPORT_OK = qw(logError debugLog explorerURL trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed );
 
-sub log_error {
+sub logError {
     my ($message) = @_;
     Conf::log_message("ERROR: " . $message);
 }
 
-sub debug_log2 {
+sub debugLog {
     my ($module, $message) = @_;
     Conf::log_message("DEBUG: " . $module . ":\t" . $message);
 }
 
-sub debug_log {
-    my ($message) = @_;
-    Conf::log_message("DEBUG: " . $message);
+sub trimSpaces {
+    my ($str) = @_;
+    return undef unless defined $str;
+    $str =~ s/^\s+|\s+$//g;
+    return $str;
 }
 
 sub explorerURL {
@@ -39,7 +41,7 @@ sub explorerURL {
         : "";
 }
 
-sub decorate_unclaimed {
+sub decorateUnclaimed {
     my ($value) = @_;
 
     return "" if !$value || $value eq "0.00";
@@ -59,14 +61,14 @@ sub truncateAddress {
     return substr($address, 0, 6) . "..." . substr($address, -4);
 }
 
-sub print_error_response {
+sub printErrorResponse {
     my ($cgi, $error_response) = @_;
     print $cgi->header('application/json');
     print encode_json($error_response);
     exit;
 }
 
-sub process_wallets {
+sub processWallets {
     my ($wallets) = @_;
     return split /\s+/, $wallets;
 }

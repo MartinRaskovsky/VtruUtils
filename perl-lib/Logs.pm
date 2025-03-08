@@ -8,9 +8,9 @@ use File::Spec;
 use Time::HiRes qw(gettimeofday);
 
 use lib '.';
-use Utils qw( log_error );
+use Utils qw( logError );
 
-our @EXPORT_OK = qw(find_latest_log write_current_log compute_differences);
+our @EXPORT_OK = qw(findLatestLog writeCurrentLog computeDifferences);
 
 my $log_dir = "../public/data";
 make_path($log_dir) unless -d $log_dir;
@@ -51,7 +51,7 @@ sub _sort_recursive {
     }
 }
 
-sub find_latest_log {
+sub findLatestLog {
     my ($vault) = @_;
     opendir(my $dh, $log_dir) or return;
     my @files = grep { /^${vault}_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\.json$/ } readdir($dh);
@@ -68,7 +68,7 @@ sub find_latest_log {
     return decode_json($json);
 }
 
-sub write_current_log {
+sub writeCurrentLog {
     my ($vault,$new_data,$old_data) = @_;
 
     my $new_json = canonical_json_unused($new_data);  # Sorts and encodes new JSON
@@ -102,7 +102,7 @@ sub getDifference {
     return $diff_display;
 }
 
-sub compute_differences {
+sub computeDifferences {
     my ($current, $previous) = @_;
     for my $section (@{$current->{sectionKeys}}) {
         next unless exists $previous->{$section};

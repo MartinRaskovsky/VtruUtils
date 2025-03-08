@@ -5,55 +5,59 @@ use warnings;
 use DBI;
 
 use lib "../perl-lib";
-use DBConnect qw(get_dbh);
-use Utils qw(debug_log2 log_error);
+use DBConnect qw(getDbh);
+use Utils qw(debugLog logError);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(get_user_by_code store_confirmation_code update_session_id get_wallets get_user_by_session set_vault_and_wallets get_vault_and_wallets delete_vault_and_wallets);
+our @EXPORT_OK = qw(getEmailFromCode getEmailFromSession putConfirmationCode putSessionId getWallets putVaultAndWallets getVaultAndWallets deleteVaultAndWallets);
 
 my $MODULE = "DBUtils";
 
-sub get_user_by_code {
+sub getEmailFromCode {
     my ($code) = @_;
     if (!defined $code) {
-        debug_log2($MODULE, "get_user_by_code(undef)");
+        debugLog($MODULE, "getEmailFromCode(undef)");
         return undef;
     }
-    debug_log2($MODULE, "get_user_by_code($code)");
+    debugLog($MODULE, "getEmailFromCode($code)");
 
-    my $dbh = get_dbh();
+    my $dbh = getDbh();
     return unless $dbh;
     
     my $sth = $dbh->prepare("SELECT email FROM users WHERE confirmation_code = ?");
     $sth->execute($code);
-    return $sth->fetchrow_hashref;
+    my $hash = $sth->fetchrow_hashref;
+    return unless $hash;
+    my $mail = $hash->{email};
 }
 
-sub get_user_by_session {
+sub getEmailFromSession {
     my ($session_id) = @_;
     if (!defined $session_id) {
-        debug_log2($MODULE, "get_user_by_session(undef)");
+        debugLog($MODULE, "getEmailFromSession(undef)");
         return undef;
     }
-    debug_log2($MODULE, "get_user_by_session($session_id)");
+    debugLog($MODULE, "getEmailFromSession($session_id)");
 
-    my $dbh = get_dbh();
+    my $dbh = getDbh();
     return unless $dbh;
     
     my $sth = $dbh->prepare("SELECT email FROM users WHERE session_id = ?");
     $sth->execute($session_id);
-    return $sth->fetchrow_hashref;
+    my $hash = $sth->fetchrow_hashref;
+    return unless $hash;
+    my $mail = $hash->{email};
 }
 
-sub set_vault_and_wallets {
+sub putVaultAndWallets {
     my ($email, $vault, $wallets_ref) = @_;
     if (!defined $email) {
-        debug_log2($MODULE, "set_vault_and_wallets(undef)");
+        debugLog($MODULE, "putVaultAndWallets(undef)");
         return;
     }
-    debug_log2($MODULE, "set_vault_and_wallets($email, $vault)");
+    debugLog($MODULE, "putVaultAndWallets($email, $vault)");
     
-    my $dbh = get_dbh();
+    my $dbh = getDbh();
     return unless $dbh;
     
     eval {
@@ -73,20 +77,20 @@ sub set_vault_and_wallets {
         }
         
         #$dbh->commit();
-        debug_log2($MODULE, "Vault and wallets updated successfully for $email");
+        debugLog($MODULE, "Vault and wallets updated successfully for $email");
     };
 
     if ($@) {
-        log_error("DB Error in set_vault_and_wallets: $@");
+        logError("DB Error in putVaultAndWallets: $@");
         $dbh->rollback();
     }
 }
 
-sub get_vault_and_wallets {
+sub getVaultAndWallets {
     my ($email) = @_;
-    debug_log2($MODULE, "get_vault_and_wallets($email)");
+    debugLog($MODULE, "getVaultAndWallets($email)");
     
-    my $dbh = get_dbh();
+    my $dbh = getDbh();
     return unless $dbh;
     
     my $sth_vault = $dbh->prepare("SELECT vault_address FROM vaults WHERE email = ?");
@@ -101,15 +105,15 @@ sub get_vault_and_wallets {
         push @wallets, $wallet;
     }
     
-    debug_log2($MODULE, "get_vault_and_wallets=($vault,...)");
+    debugLog($MODULE, "getVaultAndWallets=($vault,...)");
     return ($vault, \@wallets);
 }
 
-sub delete_vault_and_wallets {
+sub deleteVaultAndWallets {
     my ($email) = @_;
-    debug_log2($MODULE, "delete_vault_and_wallets($email)");
+    debugLog($MODULE, "deleteVaultAndWallets($email)");
     
-    my $dbh = get_dbh();
+    my $dbh = getDbh();
     return unless $dbh;
     
     eval {
@@ -117,49 +121,49 @@ sub delete_vault_and_wallets {
         $sth->execute($email);
         
         $dbh->commit();
-        debug_log2($MODULE, "Vault and wallets deleted for $email");
+        debugLog($MODULE, "Vault and wallets deleted for $email");
     };
     
     if ($@) {
-        log_error("DB Error in delete_vault_and_wallets: $@");
+        logError("DB Error in deleteVaultAndWallets: $@");
         $dbh->rollback();
     }
 }
 
-sub get_wallets {
-    my ($user) = @_;
-    my $email = $user? $user->{email}: "";
-    debug_log2($MODULE, "get_wallets($email)");
-    if (!$user) { return (0, 0); }
-    my ($vault, $wallets) = get_vault_and_wallets($email);
+sub getWallets {
+    my ($email) = @_;
+    $email = $email // "";
+    debugLog($MODULE, "getWallets($email)");
+    if ($email eq "") { return (0, 0); }
+    my ($vault, $wallets) = getVaultAndWallets($email);
     if (!defined $vault) { return (0, 0); }
     my $wallets_str = join(" ", @$wallets);
-    debug_log2($MODULE, "get_wallets=($vault,...)");
+    debugLog($MODULE, "getWallets=($vault,...)");
     return ($vault, $wallets_str);
 }
 
-sub store_confirmation_code {
+sub putConfirmationCode {
     my ($email, $code) = @_;
-    debug_log2($MODULE, "store_confirmation_code($email, $code) ");
-    my $dbh = get_dbh();
+    debugLog($MODULE, "putConfirmationCode($email, $code) ");
+    my $dbh = getDbh();
     return unless $dbh;
     
-    debug_log2($MODULE, "INSERT INTO users ($email, $code)");
+    debugLog($MODULE, "INSERT INTO users ($email, $code)");
     my $sth = $dbh->prepare("INSERT INTO users (email, confirmation_code) VALUES (?, ?) ON DUPLICATE KEY UPDATE confirmation_code = ?");
     $sth->execute($email, $code, $code);
-    debug_log2($MODULE, "Confirmation code stored in DB");
+    debugLog($MODULE, "Confirmation code stored in DB");
 }
 
-sub update_session_id {
+sub putSessionId {
     my ($email, $session_id) = @_;
-    debug_log2($MODULE, "update_session_id($email, $session_id)");
-    my $dbh = get_dbh();
+    debugLog($MODULE, "putSessionId($email, $session_id)");
+    my $dbh = getDbh();
     return unless $dbh;
     
     my $sth = $dbh->prepare("UPDATE users SET session_id = ? WHERE email = ?");
-    debug_log2($MODULE, "Storing session_id for $email");
+    debugLog($MODULE, "Storing session_id for $email");
     $sth->execute($session_id, $email);
-    debug_log2($MODULE, "session_id stored successfully");
+    debugLog($MODULE, "session_id stored successfully");
 }
 
 1;

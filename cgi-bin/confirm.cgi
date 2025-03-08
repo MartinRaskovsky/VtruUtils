@@ -5,26 +5,26 @@ use CGI;
 use Digest::SHA qw(sha256_hex);
 
 use lib '../perl-lib';
-use Utils qw (debug_log2);
-use DBUtils qw(get_user_by_code update_session_id);
-use Dashboard qw(get_main_wrapper);
-use Cookies qw(set_session_cookie);
+use Utils qw (debugLog trimSpaces);
+use DBUtils qw( getEmailFromCode putSessionId);
+use Dashboard qw(getMainWrapper);
+use Cookies qw(setSessionCookie);
 
 my $MODULE = "confirm.cgi";
 
-debug_log2($MODULE, "Entered");
+debugLog($MODULE, "Entered");
 
 my $cgi = CGI->new;
 
 sub invalidCode {
     my ($who, $confirmation_code) = @_;
-    $confirmation_code = $confirmation_code || "";
-    debug_log2($MODULE, "invalidCode($who, $confirmation_code)");
+    $confirmation_code = $confirmation_code // "";
+    debugLog($MODULE, "invalidCode($who, $confirmation_code)");
     my $message = "Invalid confirmation_code on $who \"$confirmation_code\"";
     print $message;
 }
 
-my $confirmation_code = $cgi->param('code');
+my $confirmation_code = trimSpaces(scalar $cgi->param('code'));
 if (!$confirmation_code || $confirmation_code !~ /^\d{6}$/) {
     print $cgi->header('text/html');
     invalidCode("entry", $confirmation_code);
@@ -32,28 +32,29 @@ if (!$confirmation_code || $confirmation_code !~ /^\d{6}$/) {
 }
 
 my $session_id = undef;
-my $user = get_user_by_code($confirmation_code);
-if ($user) {
+my $email = getEmailFromCode($confirmation_code);
+if ($email) {
     # Generate session_id
     $session_id = sha256_hex(time() . rand());
-    set_session_cookie($session_id);    # before header
+    setSessionCookie($session_id);    # before header
 }
+
 print $cgi->header('text/html');         # no prints before this line
 
-if ($user) {
-    debug_log2($MODULE, "session_id=$session_id");
-    update_session_id($user->{email}, $session_id);
+if ($email) {
+    debugLog($MODULE, "session_id=$session_id");
+    putSessionId($email, $session_id);
     print "<!--Success-->";
-    print get_main_wrapper($user);
+    print getMainWrapper($email);
 } else {
     invalidCode('exit', $confirmation_code);
 }
 
     # If no confirmation_code, trigger login modal
-    if ($user) {
-        debug_log2($MODULE, "Active");
+    if ($email) {
+        debugLog($MODULE, "Active");
     } else {
-        debug_log2($MODULE, "loginModald");
+        debugLog($MODULE, "loginModald");
         print <<'HTML';
         <script>
             window.onload = function () {

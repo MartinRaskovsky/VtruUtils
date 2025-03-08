@@ -7,7 +7,7 @@ use Symbol 'gensym';
 use JSON;
 
 use lib ".";
-use Utils qw( log_error debug_log2 );
+use Utils qw( logError debugLog );
 
 my $MODULE = "Execute";
 
@@ -15,7 +15,7 @@ our @EXPORT_OK = qw(run_script);
 
 sub run_script {
     my ($script_path, @args) = @_;
-    debug_log2($MODULE, "run_script($script_path, @args)");
+    debugLog($MODULE, "run_script($script_path, @args)");
 
     my @cmd = (Conf::get('NODE_PATH'), $script_path, @args);
 
@@ -23,8 +23,8 @@ sub run_script {
     my $stderr = gensym;
     my $pid = open3(gensym, $stdout, $stderr, @cmd);
     if ($@) {
-        debug_log2($MODULE, "Open3 failed: $@");
-        log_error("Open3 failed: $@");
+        debugLog($MODULE, "Open3 failed: $@");
+        logError("Open3 failed: $@");
         return ("", "Failed to execute node script: $@");
     }
 

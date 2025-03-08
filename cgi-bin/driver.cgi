@@ -6,35 +6,35 @@ use JSON;
 
 use lib '../perl-lib';
 use Conf;
-use Defs qw(get_script_for_type get_render_function get_detail_type get_explorer_url);
-use Logs qw(find_latest_log write_current_log compute_differences);
-use Render qw(render_page);
+use Defs qw(getScriptForType getRenderFunction getDetailType getExplorerURL);
+use Logs qw(findLatestLog writeCurrentLog computeDifferences);
+use Render qw(renderPage);
 use Execute qw(run_script);
-use Dashboard qw(get_wallets_html);
-use Utils qw(log_error process_wallets print_error_response);
-use Cookies qw(get_session_cookie);
-use DBUtils qw(get_user_by_session set_vault_and_wallets);
+use Dashboard qw(getWalletsHtml);
+use Utils qw(logError trimSpaces processWallets printErrorResponse);
+use Cookies qw(getSessionCookie);
+use DBUtils qw( getEmailFromSession putVaultAndWallets);
 
 my $cgi = CGI->new;
 
 # Get parameters
-my $type     = $cgi->param('type')     || 'sections';
-my $vault    = $cgi->param('vault')    || '';
-my $wallets  = $cgi->param('wallets')  || '';
-my $grouping = $cgi->param('grouping') || 'none';
-my $format   = $cgi->param('format')   || 'html';
+my $type     = $cgi->param('type')     // 'sections';
+my $vault    = trimSpaces(scalar $cgi->param('vault'))  // '';
+my $wallets  = $cgi->param('wallets')  // '';
+my $grouping = $cgi->param('grouping') // 'none';
+my $format   = $cgi->param('format')   // 'html';
 
-#log_error("Type: $type");
-#log_error("Grouping: $grouping");
+#logError("Type: $type");
+#logError("Grouping: $grouping");
 
 # Convert wallets to an array
-my @wallets_list = process_wallets($wallets);
+my @wallets_list = processWallets($wallets);
 
 # Determine script based on type
-my $script_name = get_script_for_type($type);
+my $script_name = getScriptForType($type);
 my $script_path = Conf::get('BIN_PATH') . "/$script_name";
 
-#log_error("script_path: $script_path");
+#logError("script_path: $script_path");
 
 # Construct command
 my @cmd = ($vault ? ('-v', $vault) : ());
@@ -51,42 +51,42 @@ if ($type ne "sections" && $grouping && $grouping ne "none") {
 
 #$N = @cmd;
 #for ($i=0; $i<$N; $i++) {
-#    log_error("cmd[$i]: $cmd[$i]");
+#    logError("cmd[$i]: $cmd[$i]");
 #}
 
 # Execute the script
 my ($output, $error) = run_script($script_path, @cmd);
 
 if ($error) {
-    log_error("Script ($script_name) error: $error");
+    logError("Script ($script_name) error: $error");
 }
 
 # Parse JSON output
 my $result;
 eval { $result = decode_json($output) };
 if ($@) {
-    log_error("JSON Parsing Error: $@");
-    print_error_response($cgi, { success => 0, error => "Invalid JSON format received" });
+    logError("JSON Parsing Error: $@");
+    printErrorResponse($cgi, { success => 0, error => "Invalid JSON format received" });
 }
 
 # Determine rendering function
 my $body;
 my $header = "";
-my $render_function = get_render_function($type);
+my $render_function = getRenderFunction($type);
 if ($type eq 'sections') {
     $vault = $result->{address};
     $wallets = $result->{wallets};
     #my $joined = join(" ", @{$result->{wallets} // []});  # Ensure wallets are formatted correctly, avoid warnings if undefined
 
-    my $session_id = get_session_cookie();
-    my $user = get_user_by_session($session_id);
-    set_vault_and_wallets($user->{email}, $vault, $wallets);
-    #$header = get_wallets_html($vault, $joined);
+    my $session_id = getSessionCookie();
+    my $email = getEmailFromSession($session_id);
+    putVaultAndWallets($email, $vault, $wallets);
+    #$header = getWalletsHtml($vault, $joined);
 
     # Compute differences if applicable
-    my $previous_log = find_latest_log($vault);
-    write_current_log($vault, $result, $previous_log);
-    compute_differences($result, $previous_log) if $previous_log;
+    my $previous_log = findLatestLog($vault);
+    writeCurrentLog($vault, $result, $previous_log);
+    computeDifferences($result, $previous_log) if $previous_log;
     $body = $render_function->($vault, $wallets, $result);
 } else {
     $body = $render_function->($grouping, $result);
@@ -94,7 +94,7 @@ if ($type eq 'sections') {
 
 # Render and output final page
 print $cgi->header(-type => 'text/html', -charset => 'UTF-8');
-print render_page($header, $body, $type);
+print renderPage($header, $body, $type);
 
 exit;
 

@@ -4,17 +4,17 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( get_detail_type );
-use Utils qw( debug_log2 log_error getLabel explorerURL decorate_unclaimed truncateAddress);
+use Defs qw ( getDetailType );
+use Utils qw( debugLog logError getLabel explorerURL decorateUnclaimed truncateAddress);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(render_page render_sections_html render_details_html);
+our @EXPORT_OK = qw(renderPage renderSections );
 
 my $MODULE = "Render";
 
-sub render_page {
+sub renderPage {
     my ($header, $body_content, $type) = @_;
-    debug_log2($MODULE, "render_page(..., $type)");
+    debugLog($MODULE, "renderPage(..., $type)");
     
     if ($type eq 'sections') {
         # ✅ Full page rendering
@@ -83,7 +83,7 @@ sub generateTotals {
     return $html;
 }
 
-sub render_sections_html {
+sub renderSections {
     my ($vault, $wallets, $result) = @_;
     my $name = $result->{name};
     my $count = 1 + $#{$result->{wallets}};
@@ -132,7 +132,7 @@ END_HTML
 
         $html .= generateTotal($result, $index);
 
-        my $type = get_detail_type($section);
+        my $type = getDetailType($section);
         if ($type ne "") {
 
             my $wallets_str = join(" ", @$wallets);
@@ -176,7 +176,7 @@ END_HTML
     return $html;
 }
 
-sub render_vtru_staked {
+sub renderVtruStaked {
     my ($grouping, $data) = @_;
     my $type = "stake";
     my ($title) = ($grouping eq 'none') ? 'Wallet' : '#Stakes';
@@ -206,7 +206,7 @@ END_HTML
 }
 
 # 🔹 Additional Details Rendering Functions
-sub render_vibe_details {
+sub renderVibeDetails {
     my ($grouping, $data) = @_;
     my $type = "vibe";
     my $close = closeModal($type);
@@ -230,7 +230,7 @@ END_HTML
         $html .= "<td class='decimal-align'>$noTokens</td>";
         $html .= "<td class='decimal-align'>$balance</td>";
         $html .= "<td class='decimal-align'>$claimed</td>";
-        $html .= "<td class='decimal-align'>" . decorate_unclaimed($unclaimed) . "</td>";
+        $html .= "<td class='decimal-align'>" . decorateUnclaimed($unclaimed) . "</td>";
         $html .= "</tr>";
     }
 
@@ -239,7 +239,7 @@ END_HTML
     return $html;
 }
 
-sub render_bsc_staked {
+sub renderBscStaked {
     my ($grouping, $data) = @_;
     my $type = "bsc";
     my $close = closeModal($type);
@@ -263,7 +263,7 @@ END_HTML
     return $html;
 }
 
-sub render_vortex_details {
+sub renderVortexDetails {
    my ($grouping, $data) = @_;
     my $type = "vortex";
     my $close = closeModal($type);
