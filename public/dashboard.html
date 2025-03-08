@@ -249,7 +249,7 @@
             toggleLogoutButton(false);   // Hide logout button
             
             // OPTIONAL: If you want to notify the server
-            fetch('logout.cgi', { method: 'GET', credentials: 'include' })
+            fetch("logout.cgi", { method: 'GET', credentials: 'include' })
                 .then(() => location.reload()); // Reload the page
         }
 
@@ -270,14 +270,6 @@
     <script>
         function deleteCookie(name) {
             document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-        }
-
-        function logout() {
-            deleteCookie('session_id');  
-            toggleLogoutButton(false);
-
-            fetch('logout.cgi', { method: 'GET', credentials: 'include' })
-                .then(() => location.reload());
         }
 
         function toggleLogoutButton(show) {

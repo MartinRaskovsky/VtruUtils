@@ -79,6 +79,7 @@ if [ -f "$PROJECT_ROOT/public/index.html" ]; then
 
     # Modify fetch() calls for CGI scripts
     sed -i 's|fetch("login.cgi?|fetch("/cgi-bin/login.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
+    sed -i 's|fetch("logout.cgi?|fetch("/cgi-bin/logout.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
     sed -i 's|fetch("confirm.cgi?|fetch("/cgi-bin/confirm.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
     sed -i 's|fetch("driver.cgi?|fetch("/cgi-bin/driver.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
 
