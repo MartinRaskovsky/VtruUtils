@@ -38,10 +38,12 @@ sub init {
         $config{NODE_PATH} = '/opt/cpanel/ea-nodejs16/bin/node';
         $config{BIN_PATH} = "$base_dir/bin";
         $config{LOG_FILE} = "$base_dir/logs/cgi-debug.log";
+        $config{COOKIE_SECURE} = 1;
     } else {
         $config{NODE_PATH} = '/usr/local/bin/node'; 
         $config{BIN_PATH} = "$base_dir/bin";
         $config{LOG_FILE} = "$base_dir/logs/cgi-debug.log"; 
+        $config{COOKIE_SECURE} = 0;
     }
 }
 

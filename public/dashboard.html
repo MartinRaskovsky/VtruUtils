@@ -57,7 +57,10 @@
 <body>
 
     <div id="main-wrapper">
-        <h1>Vault & Wallet Details</h1>
+        <div id="header">
+            <h1>Vault & Wallet Details</h1>
+            <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
         <form action="driver.cgi" method="GET" target="outputFrame">
             <div class="form-container">
 <!--main-input-BEGIN-->
@@ -81,18 +84,22 @@
     <div id="loginModal" class="modal">
         <h2>Login</h2>
         <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <button type="submit">Login / Sign Up</button>
+            <div class="modal-content">
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required>
+              <button type="submit">Login / Sign Up</button>
+            </div>
         </form>
     </div>
 
     <div id="codeModal" class="modal">
         <h2>Enter Confirmation Code</h2>
         <form id="codeForm">
-            <label for="code">Code:</label>
-            <input type="text" id="code" name="code" required pattern="\d{6}">
-            <button type="submit">Confirm</button>
+            <div class="modal-content">
+              <label for="code">Code:</label>
+              <input type="text" id="code" name="code" required pattern="\d{6}">
+              <button type="submit">Confirm</button>
+            </div>
         </form>
     </div>
 
@@ -241,7 +248,70 @@
                 modal.style.display = "none";
             }, 200);
         };
-    </script
+
+        function deleteCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+        }
+
+        function logout() {
+            deleteCookie('session_id');  // Remove session cookie
+            toggleLogoutButton(false);   // Hide logout button
+            
+            // OPTIONAL: If you want to notify the server
+            fetch('logout.cgi', { method: 'GET', credentials: 'include' })
+                .then(() => location.reload()); // Reload the page
+        }
+
+        function toggleLogoutButton(show) {
+            document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
+        }
+
+        // Show logout button only if the session cookie exists
+        function checkSession() {
+            if (document.cookie.includes('session_id=')) {
+                toggleLogoutButton(true);
+            }
+        }
+
+        checkSession(); // Run on page load     
+    </script>
+
+    <script>
+        function deleteCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+        }
+
+        function logout() {
+            deleteCookie('session_id');  
+            toggleLogoutButton(false);
+
+            fetch('logout.cgi', { method: 'GET', credentials: 'include' })
+                .then(() => location.reload());
+        }
+
+        function toggleLogoutButton(show) {
+            document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
+        }
+
+        function checkSession() {
+            // Client-side cookie check (only works if session_id is NOT HttpOnly)
+            let cookies = document.cookie.split(';').map(cookie => cookie.trim());
+            let hasSession = cookies.some(cookie => /^session_id=/.test(cookie));
+
+            if (hasSession) {
+                toggleLogoutButton(true);
+            }
+        }
+
+        // Ensure checkSession runs after page load
+        document.addEventListener('DOMContentLoaded', checkSession);
+
+        // Server-side session check
+        if (typeof sessionExists !== "undefined" && sessionExists) {
+            toggleLogoutButton(true);
+        }
+    </script>
+
 
 </body>
 </html>

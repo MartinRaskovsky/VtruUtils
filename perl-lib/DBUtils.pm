@@ -98,7 +98,7 @@ sub get_vault_and_wallets {
         push @wallets, $wallet;
     }
     
-    debug_log2($MODULE, "Vault: $vault, Wallets: @wallets");
+    debug_log2($MODULE, "get_vault_and_wallets=($vault,...)");
     return ($vault, \@wallets);
 }
 
@@ -131,8 +131,9 @@ sub get_wallets {
     #my ($vault) = '0x9e6e23761499590d5026c608124467c3587336c8';
     #my ($wallets) = '0x9970c734daf5949125794b971f5872fd87ecafaf 0xd07d220d7e43eca35973760f8951c79deebe0dcc';
     my ($vault, $wallets) = get_vault_and_wallets($email);
+    if (!defined $vault) { return (0, 0); }
     my $wallets_str = join(" ", @$wallets);
-    debug_log2($MODULE, "get_wallets=($vault, $wallets_str)");
+    debug_log2($MODULE, "get_wallets=($vault,...)");
     return ($vault, $wallets_str);
 }
 

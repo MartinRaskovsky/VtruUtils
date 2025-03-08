@@ -5,6 +5,7 @@ use warnings;
 use CGI::Cookie;
 
 use lib "../perl-lib";
+use Conf;
 use Utils qw(debug_log2);
 
 use Exporter 'import';
@@ -22,10 +23,11 @@ sub set_session_cookie {
         -value   => $session_id,
         -expires => '+1M',  # 1-month expiration
         -path    => '/',
+        -secure   => Conf::get('COOKIE_SECURE'),
         -httponly => 1,
-        -secure   => 1,
     );
     
+    debug_log2($MODULE, "Set-Cookie: $cookie)");
     print "Set-Cookie: $cookie\n";
 }
 
@@ -34,6 +36,16 @@ sub get_session_cookie {
     debug_log2($MODULE, "get_session_cookie()");
     my %cookies = CGI::Cookie->fetch;
     my $session_id = $cookies{'session_id'} ? $cookies{'session_id'}->value : undef;
+    if ($session_id) {
+        debug_log2($MODULE, "get_session_cookie=$session_id");
+    } else {
+        debug_log2($MODULE, "session_id cookie not found");
+        debug_log2($MODULE, "current cookies:");
+        foreach my $key (keys %cookies) {
+            my $value = $cookies{$key};
+            debug_log2($MODULE, "\t$key => $value");
+        }
+    }
     return $session_id;
 }
 

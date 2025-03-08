@@ -26,7 +26,19 @@ eval {
     load_dashboard($user);
 
     # If no confirmation_code, trigger login modal
-    if (!$user) {
+    if ($session_id) {
+        debug_log2($MODULE, "Active");
+        print <<'HTML';
+        <script>
+            window.onload = function () {
+                closeAuthModal("loginModal");
+                toggleLogoutButton(true);
+            };
+            sessionExists = true;
+        </script>
+HTML
+    } else {
+        debug_log2($MODULE, "loginModal");
         print <<'HTML';
         <script>
             window.onload = function () {
@@ -35,6 +47,7 @@ eval {
         </script>
 HTML
     }
+
 
 };
 

@@ -71,7 +71,7 @@ if ($@) {
 
 # Determine rendering function
 my $body;
-my $header = "$type";
+my $header = "";
 my $render_function = get_render_function($type);
 if ($type eq 'sections') {
     $vault = $result->{address};

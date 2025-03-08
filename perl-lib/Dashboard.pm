@@ -14,9 +14,10 @@ my $MODULE = "Dashboard";
 
 sub get_wallets_html {
     my ($vault, $wallets) = @_;
-    $vault = $vault // 0;
-    $wallets = $wallets // 0;
-    debug_log2($MODULE, "get_wallets_html($vault, $wallets)");
+    if (!defined $vault   || $vault   eq "0") { $vault = '' ; }
+    if (!defined $wallets || $wallets eq "0") { $wallets = '' ; }
+    my ($N);
+    debug_log2($MODULE, "get_wallets_html($vault)");
     my $html =<<END_HTML;
         <label for="vaultAddress">Vault:</label>
         <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" value="$vault">
@@ -26,7 +27,7 @@ sub get_wallets_html {
                   
         <button type="submit">Get Details</button>
 END_HTML
-    debug_log2($MODULE, "get_wallets_html=$html");
+    #debug_log2($MODULE, "get_wallets_html=$html");
     return $html;
 }
 
@@ -56,12 +57,10 @@ sub load_dashboard {
 
     while (my $line = <$fh>) {
         if ($line =~ /^<!--main-input-BEGIN-->/) {
-            debug_log2($MODULE, "FOUND: <!--main-input-BEGIN-->");
             $inside_block = 1;
             print $wrapper . "\n";  # Insert the replacement content
         }
         elsif ($line =~ /^<!--main-input-END-->/) {
-            debug_log2($MODULE, "FOUND: <!--main-input-END-->");
             $inside_block = 0;
             next;  # Skip this line, as it's part of the block
         }
