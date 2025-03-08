@@ -16,16 +16,16 @@ sub getWalletsHtml {
     my ($vault, $wallets) = @_;
     if (!defined $vault   || $vault   eq "0") { $vault = '' ; }
     if (!defined $wallets || $wallets eq "0") { $wallets = '' ; }
-    my ($N);
-    debugLog($MODULE, "getWalletsHtml($vault)");
+    my $state = ($vault ne "" || $wallets ne '')? "" : "disabled"; # assumes if given they are valid
+    debugLog($MODULE, "getWalletsHtml(state=$state; vault=$vault)");
     my $html =<<END_HTML;
         <label for="vaultAddress">Vault:</label>
-        <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" value="$vault">
-                
+        <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="validateForm()" value="$vault">
+
         <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-        <textarea id="walletAddresses" name="wallets" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line">$wallets</textarea>
-                  
-        <button type="submit">Get Details</button>
+        <textarea id="walletAddresses" name="wallets" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()">$wallets</textarea>
+
+        <button type="submit" id="getDetailsBtn" $state>Get Details</button>
 END_HTML
     #debugLog($MODULE, "getWalletsHtml=$html");
     return $html;

@@ -20,7 +20,7 @@ my $cgi = CGI->new;
 # Get parameters
 my $type     = $cgi->param('type')     // 'sections';
 my $vault    = trimSpaces(scalar $cgi->param('vault'))  // '';
-my $wallets  = $cgi->param('wallets')  // '';
+my $wallets  = trimSpaces(scalar $cgi->param('wallets'))  // '';
 my $grouping = $cgi->param('grouping') // 'none';
 my $format   = $cgi->param('format')   // 'html';
 

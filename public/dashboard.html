@@ -56,16 +56,16 @@
             <div class="form-container">
 <!--main-input-BEGIN-->
                 <label for="vaultAddress">Vault:</label>
-                <input type="text" id="vaultAddress" placeholder="Enter Vault Address">
+                <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="validateForm()">
             
                 <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-                <textarea id="walletAddresses" rows="5" cols="42"  placeholder="Enter Wallet Addresses, one per line"></textarea>
+                <textarea id="walletAddresses" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()"></textarea>
           
-                <button type="submit">Get Details</button>
+                <button type="submit" id="getDetailsBtn" disabled>Get Details</button>
 <!--main-input-END-->
             </div>
         </form>
-
+    
         <iframe id="outputFrame" name="outputFrame" src="about:blank"></iframe>
     </div>
 
@@ -102,9 +102,45 @@
         </div>
     </div>
 
+
+    <script>
+        function isValidWeb3Address(address) {
+            return /^0x[a-fA-F0-9]{40}$/.test(address.trim());
+        }
+        
+        function validateForm() {
+            const vaultInput = document.getElementById('vaultAddress');
+            const walletInput = document.getElementById('walletAddresses');
+             const button = document.getElementById('getDetailsBtn');
+
+            // If elements are not found, exit function early
+            if (!vaultInput || !walletInput || !button) {
+                return;
+            }
+
+            const vaultAddress = vaultInput.value.trim();
+            const walletAddresses = walletInput.value.trim();
+
+            //console.log(`vaultAddress=${vaultAddress}`);
+            //console.log(`walletAddresses=${walletAddresses}`);
+    
+            let isValidVault = vaultAddress.length === 0 || isValidWeb3Address(vaultAddress);
+            let walletList = walletAddresses.split(/\s+/).map(addr => addr.trim()).filter(addr => addr !== '');
+            let isValidWallets = walletList.length === 0 || walletList.every(isValidWeb3Address);
+
+            if ((vaultAddress !== '' || walletAddresses !== '') && isValidVault && isValidWallets) {
+                button.disabled = false;
+            } else {
+                button.disabled = true;
+            }
+        }
+        </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            //console.log('DOMContentLoaded');
             checkLoginStatus();
+            validateForm();
 
             // Existing iframe resizing logic
             let iframe = document.getElementById("outputFrame");
@@ -170,6 +206,7 @@
 
         function checkLoginStatus() {
             let isAuthenticated = document.cookie.includes("authenticated=true");
+            //console.log(`checkLoginStatus=${isAuthenticated}`);
             if (!isAuthenticated) {
                 openAuthModal("loginModal");
             } else {

@@ -50,29 +50,39 @@ sub getEmailFromSession {
 }
 
 sub putVaultAndWallets {
-    my ($email, $vault, $wallets_ref) = @_;
+    my ($email, $vault, $wallets) = @_;
     if (!defined $email) {
         debugLog($MODULE, "putVaultAndWallets(undef)");
         return;
     }
-    debugLog($MODULE, "putVaultAndWallets($email, $vault)");
+    my ($N);
+    $N = $wallets ? @$wallets : 0;
+    debugLog($MODULE, "putVaultAndWallets($email, $vault, wallets: $N)");
     
     my $dbh = getDbh();
     return unless $dbh;
     
     eval {
-        # 1️⃣ Insert or update the vault
-        my $sth_vault = $dbh->prepare("INSERT INTO vaults (email, vault_address) 
-                                       VALUES (?, ?) ON DUPLICATE KEY UPDATE vault_address = ?");
-        $sth_vault->execute($email, $vault, $vault);
+
+        if ($vault) {
+            # 1️⃣ Insert or update the vault
+            my $sth_vault = $dbh->prepare("INSERT INTO vaults (email, vault_address) 
+                                        VALUES (?, ?) ON DUPLICATE KEY UPDATE vault_address = ?");
+            $sth_vault->execute($email, $vault, $vault);
+            debugLog($MODULE, "INSERT INTO vaults ($email, $vault)");
+        } else {
+             my $sth_vault = $dbh->prepare("DELETE FROM vaults WHERE email = ?");
+            $sth_vault->execute($email);       
+        }
         
         # 2️⃣ DELETE all old wallets for this email
         my $sth_delete_wallets = $dbh->prepare("DELETE FROM wallets WHERE email = ?");
         $sth_delete_wallets->execute($email);
         
         # 3️⃣ INSERT IGNORE to add only new wallets, preventing duplicates
-        my $sth_wallet = $dbh->prepare("INSERT IGNORE INTO wallets (email, wallet_address) VALUES (?, ?)");
-        foreach my $wallet (@$wallets_ref) {
+        my $sth_wallet = $dbh->prepare("INSERT INTO wallets (email, wallet_address) VALUES (?, ?)");
+        foreach my $wallet (@$wallets) {
+            #debugLog($MODULE, "INSERT INTO wallets (email, wallet_address) VALUES ($email, $wallet)");
             $sth_wallet->execute($email, $wallet);
         }
         
@@ -96,7 +106,7 @@ sub getVaultAndWallets {
     my $sth_vault = $dbh->prepare("SELECT vault_address FROM vaults WHERE email = ?");
     $sth_vault->execute($email);
     my ($vault) = $sth_vault->fetchrow_array();
-    return unless $vault;
+    $vault = $vault // '';
     
     my $sth_wallets = $dbh->prepare("SELECT wallet_address FROM wallets WHERE email = ?");
     $sth_wallets->execute($email);
@@ -105,7 +115,9 @@ sub getVaultAndWallets {
         push @wallets, $wallet;
     }
     
-    debugLog($MODULE, "getVaultAndWallets=($vault,...)");
+    my $N;
+    $N = @wallets;
+    debugLog($MODULE, "getVaultAndWallets=($vault, wallets: $N)");
     return ($vault, \@wallets);
 }
 
@@ -120,7 +132,7 @@ sub deleteVaultAndWallets {
         my $sth = $dbh->prepare("DELETE FROM vaults WHERE email = ?");
         $sth->execute($email);
         
-        $dbh->commit();
+        #$dbh->commit();
         debugLog($MODULE, "Vault and wallets deleted for $email");
     };
     

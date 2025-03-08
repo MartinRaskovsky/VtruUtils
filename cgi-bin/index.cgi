@@ -8,20 +8,27 @@ use lib '../perl-lib';
 use DBUtils qw(getEmailFromSession);
 use Dashboard qw(loadDashboard);
 use Utils qw(debugLog logError printErrorResponse);
-use Cookies qw(getSessionCookie);
+use Cookies qw(getSessionCookie deleteDessionCookie);
 
 my $MODULE = "index.cgi";
 
 debugLog($MODULE, "Entered");
 
 my $cgi = CGI->new;
-print $cgi->header('text/html');
 
 # Read confirmation_code from cookies
 
 eval {
     my $session_id = getSessionCookie();
     my $email = getEmailFromSession($session_id);
+
+    if (!defined $email) {
+        debugLog($MODULE, "Cookie with no DB entry, deleteing cookie");
+        deleteDessionCookie(); # before content header;
+        $session_id = 0;
+    }
+
+    print $cgi->header('text/html'); # after deleting cookie
 
     loadDashboard($email);
 

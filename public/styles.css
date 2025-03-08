@@ -786,6 +786,13 @@ table {
         -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset !important;
     }
 
+    /* Grey out the disabled button */
+    #getDetailsBtn:disabled {
+        background-color: #cccccc; /* Light grey */
+        color: #666666; /* Darker grey text */
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
 
 /* Debug colors */ 
 /*
