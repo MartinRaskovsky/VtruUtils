@@ -11,9 +11,11 @@ use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
 use Dashboard qw(getWalletsHtml);
-use Utils qw(logError trimSpaces processWallets printErrorResponse);
+use Utils qw(debugLog logError trimSpaces processWallets printErrorResponse);
 use Cookies qw(getSessionCookie);
 use DBUtils qw( getEmailFromSession putVaultAndWallets);
+
+my $MODULE = "driver.cgi";
 
 my $cgi = CGI->new;
 
@@ -24,8 +26,8 @@ my $wallets  = trimSpaces(scalar $cgi->param('wallets'))  // '';
 my $grouping = $cgi->param('grouping') // 'none';
 my $format   = $cgi->param('format')   // 'html';
 
-#logError("Type: $type");
-#logError("Grouping: $grouping");
+#debugLog($MODULE, "Type: $type");
+#debugLog($MODULE, "Grouping: $grouping");
 
 # Convert wallets to an array
 my @wallets_list = processWallets($wallets);
@@ -34,7 +36,7 @@ my @wallets_list = processWallets($wallets);
 my $script_name = getScriptForType($type);
 my $script_path = Conf::get('BIN_PATH') . "/$script_name";
 
-#logError("script_path: $script_path");
+#debugLog($MODULE, "script_path: $script_path");
 
 # Construct command
 my @cmd = ($vault ? ('-v', $vault) : ());
@@ -42,6 +44,7 @@ my @cmd = ($vault ? ('-v', $vault) : ());
 my ($i,$N);
 $N = @wallets_list;
 for ($i=0; $i<$N; $i++) {
+    #debugLog("wallet[$i]", $wallets_list[$i]);
     push @cmd, $wallets_list[$i];
 }
 
@@ -51,7 +54,7 @@ if ($type ne "sections" && $grouping && $grouping ne "none") {
 
 #$N = @cmd;
 #for ($i=0; $i<$N; $i++) {
-#    logError("cmd[$i]: $cmd[$i]");
+#    debugLog($MODULE, "cmd[$i]: $cmd[$i]");
 #}
 
 # Execute the script

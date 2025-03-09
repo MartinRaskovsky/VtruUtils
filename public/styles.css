@@ -22,11 +22,11 @@ label {
 
 /* Ensure Vault & Wallets fields are exactly 42 characters wide */
 input#vaultAddress, textarea#walletAddresses {
-    width: 42ch; /* Exactly 42 characters */
+    width: 44ch; /* Exactly 42 characters */
     max-width: none; /* Remove previous constraint */
-    min-width: 42ch; /* Prevent shrinkage */
+    min-width: 44ch; /* Prevent shrinkage */
     font-size: 12px;
-    font-family: monospace;
+    font-family: "Courier New", Courier, monospace;
     padding: 10px;
     color: white;
     border: 1px solid #444;
@@ -89,7 +89,7 @@ td:first-child, th:first-child, .section-header {
 
 .wallet-cell {
     /*font-family: 'Poppins', sans-serif;*/
-    font-family: monospace; /* Standard JSON font */
+    font-family: "Courier New", Courier, monospace; /* Standard JSON font */
     text-align: left;
     /*font-weight: bold;*/
     max-width: 300px;
@@ -122,7 +122,7 @@ pre {
     white-space: pre-wrap; /* Preserve formatting */
     overflow-x: auto; /* Enable horizontal scrolling */
     text-align: left; /* Ensure left-aligned JSON */
-    font-family: monospace; /* Standard JSON font */
+    font-family: "Courier New", Courier, monospace; /* Standard JSON font */
     max-width: 90%;
     margin: auto; /* Prevent unwanted centering */
 }
@@ -625,7 +625,7 @@ th, td {
 
 @media (min-width: 600px) {
     input#vaultAddress, textarea#walletAddresses {
-        width: 42ch; /* Exactly 42 characters */;
+        width: 44ch; /* Exactly 42 characters */;
     }
 }
 
