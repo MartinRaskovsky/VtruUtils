@@ -40,7 +40,7 @@ sub getSessionCookie {
         debugLog($MODULE, "getSessionCookie=$session_id");
     } else {
         debugLog($MODULE, "session_id cookie not found");
-        debugLog($MODULE, "current cookies:");
+        #debugLog($MODULE, "current cookies:");
         foreach my $key (keys %cookies) {
             my $value = $cookies{$key};
             debugLog($MODULE, "\t$key => $value");

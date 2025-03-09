@@ -9,6 +9,7 @@ yarn-error.log*
 
 # Environment variables
 data/.env
+data/.mysql_password
 
 # Dependency directories
 .DS_Store

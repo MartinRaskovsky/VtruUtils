@@ -8,16 +8,70 @@ use File::Spec;
 use Time::HiRes qw(gettimeofday);
 
 use lib '.';
-use Utils qw( logError );
+use Utils qw( logError debugLog);
 
-our @EXPORT_OK = qw(findLatestLog writeCurrentLog computeDifferences);
+use Debug qw(getType);
+
+our @EXPORT_OK = qw(getSignature findLatestLog writeCurrentLog computeDifferences);
+
+my $MODULE = "Logs   ";
 
 my $log_dir = "../public/data";
 make_path($log_dir) unless -d $log_dir;
 
 use Time::HiRes qw(gettimeofday);
 
-sub get_iso_timestamp {
+sub getSignature {
+    my ($email, $vault, $wallets) = @_;
+    debugLog($MODULE, "getSignature($email, $vault, ...)");
+
+    my $signature = '';
+
+    # Process email (remove '@' and invalid filename characters)
+    if (defined $email && $email ne '') {
+        my $pattern = $email;
+        $pattern =~ s/@//g;   # Remove '@'
+        $pattern =~ s/[^a-zA-Z0-9_.-]//g;  # Remove invalid filename characters
+        $signature .= $pattern;
+    }
+
+    # Append Vault if defined
+    if (defined $vault && $vault ne '') {
+        debugLog($MODULE, "using vault: $vault");
+        $vault =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
+        $signature .= "_$vault";
+    }
+
+    # If no vault is available, use wallets
+    elsif (defined $wallets && ref($wallets) eq 'ARRAY' && @$wallets > 0) {
+        my $N = scalar(@$wallets);
+
+        # Determine segment length based on the number of wallets
+        my $segment_length = ($N == 1) ? 10 : ($N <= 3) ? 6 : ($N <= 5) ? 4 : 3;
+        
+        debugLog($MODULE, "Using $N wallets, segment length: $segment_length");
+
+        foreach my $wallet (@$wallets) {
+            $wallet =~ s/^0x//;  # Remove '0x' prefix
+            $wallet =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
+
+            if (length($wallet) >= $segment_length * 2) {
+                my $short_wallet = substr($wallet, 0, $segment_length) . "_" . substr($wallet, -$segment_length);
+                $signature .= "_$short_wallet";
+            } else {
+                $signature .= "_$wallet";  # If wallet is too short, use as is
+            }
+        }
+    }
+
+    # Ensure signature length remains within Linux filename limits (255 characters)
+    $signature = substr($signature, 0, 200);  # Leave space for timestamp & extension
+
+    debugLog($MODULE, "Final signature: $signature");
+    return $signature;
+}
+
+sub getISOTimeStamp {
     my ($sec, $msec) = gettimeofday(); # Get current time with microsecond precision
     my ($year, $mon, $mday, $hour, $min, $full_sec) = (localtime($sec))[5,4,3,2,1,0];
     
@@ -29,32 +83,33 @@ sub get_iso_timestamp {
 }
 
 
-sub canonical_json_unused {
+sub Canonical_JSONUnused {
     my ($data) = @_;
     return JSON->new->canonical(1)->utf8->encode($data);
 }       
     
-sub sorted_json {
+sub sortedJSON {
     my ($data) = @_;
-    return encode_json(_sort_recursive($data)); 
+    return encode_json(innerSort($data)); 
 }       
     
-sub _sort_recursive {
+sub innerSort {
     my ($item) = @_;
     
     if (ref $item eq 'HASH') {
-        return { map { $_ => _sort_recursive($item->{$_}) } sort keys %$item };
+        return { map { $_ => innerSort($item->{$_}) } sort keys %$item };
     } elsif (ref $item eq 'ARRAY') {
-        return [ map { _sort_recursive($_) } @$item ]; 
+        return [ map { innerSort($_) } @$item ]; 
     } else {
         return $item;
     }
 }
 
 sub findLatestLog {
-    my ($vault) = @_;
+    my ($signature) = @_;
+    debugLog($MODULE, "findLatestLog($signature)");
     opendir(my $dh, $log_dir) or return;
-    my @files = grep { /^${vault}_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\.json$/ } readdir($dh);
+    my @files = grep { /^${signature}_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\.json$/ } readdir($dh);
     closedir($dh);
 
     return unless @files;
@@ -69,19 +124,20 @@ sub findLatestLog {
 }
 
 sub writeCurrentLog {
-    my ($vault,$new_data,$old_data) = @_;
+    my ($signature,$new_data,$old_data) = @_;
+    debugLog($MODULE, "writeCurrentLog($signature)");
 
-    my $new_json = canonical_json_unused($new_data);  # Sorts and encodes new JSON
+    my $new_json = Canonical_JSONUnused($new_data);  # Sorts and encodes new JSON
         
     if ($old_data) {
-        my $old_json = canonical_json_unused($old_data);  # Sorts and encodes old JSON
+        my $old_json = Canonical_JSONUnused($old_data);  # Sorts and encodes old JSON
     
         # Skip writing if identical
         return if $new_json eq $old_json;
     }
 
-    my $timestamp = get_iso_timestamp();
-    my $file_path = "$log_dir/${vault}_${timestamp}.json";
+    my $timestamp = getISOTimeStamp();
+    my $file_path = "$log_dir/${signature}_${timestamp}.json";
     
     open my $fh, '>', $file_path or return;
     print $fh encode_json($new_data);
@@ -104,6 +160,7 @@ sub getDifference {
 
 sub computeDifferences {
     my ($current, $previous) = @_;
+    debugLog($MODULE, "computeDifferences()");
     for my $section (@{$current->{sectionKeys}}) {
         next unless exists $previous->{$section};
 

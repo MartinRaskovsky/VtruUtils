@@ -55,6 +55,7 @@ END_HTML
 
 sub generateTotalRow {
     my ($section, $diff, $value) = @_;
+    $diff = $diff // "";
     if ($diff eq "") { $diff = "&nbsp;" }
     my $html = <<END_HTML;
         <tr class='total-row'>

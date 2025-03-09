@@ -7,7 +7,7 @@ use JSON;
 use lib '../perl-lib';
 use Conf;
 use Defs qw(getScriptForType getRenderFunction getDetailType getExplorerURL);
-use Logs qw(findLatestLog writeCurrentLog computeDifferences);
+use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
 use Dashboard qw(getWalletsHtml);
@@ -84,8 +84,9 @@ if ($type eq 'sections') {
     #$header = getWalletsHtml($vault, $joined);
 
     # Compute differences if applicable
-    my $previous_log = findLatestLog($vault);
-    writeCurrentLog($vault, $result, $previous_log);
+    my $signature = getSignature($email, $vault, $wallets);
+    my $previous_log = findLatestLog($signature);
+    writeCurrentLog($signature, $result, $previous_log);
     computeDifferences($result, $previous_log) if $previous_log;
     $body = $render_function->($vault, $wallets, $result);
 } else {

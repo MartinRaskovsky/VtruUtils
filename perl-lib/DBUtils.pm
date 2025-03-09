@@ -77,6 +77,7 @@ sub putVaultAndWallets {
         
         # 2️⃣ DELETE all old wallets for this email
         my $sth_delete_wallets = $dbh->prepare("DELETE FROM wallets WHERE email = ?");
+        #debugLog($MODULE, "DELETE FROM wallets WHERE email = $email");
         $sth_delete_wallets->execute($email);
         
         # 3️⃣ INSERT IGNORE to add only new wallets, preventing duplicates
