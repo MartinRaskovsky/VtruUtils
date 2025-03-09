@@ -6,7 +6,7 @@ use Digest::SHA qw(sha256_hex);
 
 use lib '../perl-lib';
 use DBUtils qw(putConfirmationCode);
-use EmailUtils qw( sendConfirmationEmail);
+use MailMessages qw( sendConfirmationEmail);
 use Utils qw(logError debugLog trimSpaces);
 
 my $MODULE = "login.cgi";
