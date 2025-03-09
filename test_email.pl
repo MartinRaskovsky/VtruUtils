@@ -23,8 +23,11 @@ sub sendEmail {
 
     close($mail) or print STDERR "Sendmail process failed: $!";
 
+
+    print "test sent to: $email\n";
+
     return 1;
 }
 
-sendEmail('martinr6969@gmail.com', 'Testing', "This is a test");
-
+sendEmail('martinr6969@gmail.com', 'Testing to gmail',   "This is a test to gmail.com");
+sendEmail('mail@martinr.com',      'Testing to martinr', "This is a test to martinr.com");
