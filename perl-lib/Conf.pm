@@ -7,7 +7,7 @@ use Cwd 'abs_path';
 
 my %config = (
     IS_APACHE => 0,
-    USE_EMAIL => 0,
+    USE_EMAIL => 1,
 );
 
 my $init_done = 0;
@@ -45,6 +45,8 @@ sub init {
         $config{LOG_FILE} = "$base_dir/logs/cgi-debug.log"; 
         $config{COOKIE_SECURE} = 0;
     }
+
+    $config{FROM_EMAIL} = 'noreply@martinr.com';
 }
 
 # Method to retrieve configuration values
