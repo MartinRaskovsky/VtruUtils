@@ -9,7 +9,7 @@ use Conf;
 use Utils qw(debugLog);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(setSessionCookie getSessionCookie deleteDessionCookie);
+our @EXPORT_OK = qw(setSessionCookie getSessionCookie deleteSessionCookie);
 
 my $MODULE = 'Cookies';
 
@@ -50,8 +50,8 @@ sub getSessionCookie {
 }
 
 # Remove session_id cookie (logout)
-sub deleteDessionCookie {
-    debugLog($MODULE, "deleteDessionCookie()");
+sub deleteSessionCookie {
+    debugLog($MODULE, "deleteSessionCookie()");
     
     my $cookie = CGI::Cookie->new(
         -name    => 'session_id',
