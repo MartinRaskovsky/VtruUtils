@@ -18,7 +18,7 @@ sub sendConfirmationEmail {
   <title>VaWa App Login Code</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.5;">
-  <h1 style="color: #4A90E2;">Doc's VaWa App - Vault & Wallet Details</h1>
+  <h1 style="color: #4B0082;">Doc's VaWa App - Vault & Wallet Details</h1>
   <p><strong>Your confirmation code:</strong></p>
   <p style="font-size: 20px; color: red;"><b>$code</b></p>
   
