@@ -13,7 +13,7 @@ use Utils qw(debugLog);
 our @EXPORT_OK = qw(createSession getSessionEmail deleteSession);
 use Exporter 'import';
 
-my $MODULE = "LoginManagment";
+my $MODULE = "LoginMngment";
 
 # Creates a session upon successful confirmation
 sub createSession {
@@ -37,7 +37,7 @@ sub getSessionEmail {
     return unless $session_id;
     
     my $email = getEmailFromSession($session_id);
-    return $email;
+    return ($email, $session_id);
 }
 
 # Deletes the session (logout)

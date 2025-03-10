@@ -87,12 +87,14 @@
         <h2>Enter Confirmation Code</h2>
         <form id="codeForm">
             <div class="modal-content">
-              <label for="code">Code:</label>
-              <input type="text" id="code" name="code" required pattern="\d{6}">
-              <button type="submit">Confirm</button>
+                <label for="code">Code:</label>
+                <input type="text" id="code" name="code" required pattern="\d{6}" maxlength="6">
+                <button type="submit" id="confirmButton" disabled style="cursor: not-allowed; opacity: 0.5;">
+                    Confirm
+                </button>
             </div>
         </form>
-    </div>
+    </div>    
 
     <!-- ✅ Vault Details Modal (Original functionality) -->
     <div id="modal" class="modal" style="display:none;">
@@ -138,12 +140,42 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            //console.log('DOMContentLoaded');
-            checkLoginStatus();
-            validateForm();
+            // ✅ Authentication Modals
+            window.openAuthModal = function (id) {
+                let modal = document.getElementById(id);
+                let overlay = document.getElementById("modalOverlay");
 
-            // Existing iframe resizing logic
+                if (modal) {
+                    modal.style.display = "block";
+                    modal.style.visibility = "visible";
+                    modal.style.opacity = "1";
+
+                    overlay.style.display = "block"; // Show background overlay
+                } else {
+                    console.error(`❌ Modal ${id} not found`);
+                }
+            };
+
+            window.closeAuthModal = function (id) {
+                let modal = document.getElementById(id);
+                let overlay = document.getElementById("modalOverlay");
+
+                if (modal) {
+                    modal.style.display = "none";
+                    overlay.style.display = "none"; // Hide background overlay
+                }
+            };
+
+            function checkLoginStatus() {
+                let isAuthenticated = document.cookie.includes("authenticated=true");
+                if (!isAuthenticated) {
+                    openAuthModal("loginModal"); // ✅ Now safe to call
+                }
+            }
+
+            // ✅ Iframe Handling
             let iframe = document.getElementById("outputFrame");
+
             function adjustIframeHeight() {
                 if (!iframe || !iframe.contentWindow.document.body) return;
                 requestAnimationFrame(() => {
@@ -166,23 +198,45 @@
 
             window.onresize = adjustIframeHeight;
 
-            // Login Modal Handling
+            // ✅ Login Form Handling
             document.getElementById("loginForm").addEventListener("submit", function (event) {
                 event.preventDefault();
                 let email = document.getElementById("email").value;
 
                 fetch("login.cgi?email=" + encodeURIComponent(email))
                     .then(response => response.text())
-                    .then(data => {
+                    .then(() => {
                         closeAuthModal("loginModal");
                         openAuthModal("codeModal");
                     })
                     .catch(error => console.error("Login Error:", error));
             });
 
+            // ✅ Confirmation Code Handling (With Fixed Button Behavior)
+            let codeInput = document.getElementById("code");
+            let confirmButton = document.getElementById("confirmButton");
+
+            function validateCodeInput() {
+                let codeValue = codeInput.value.trim();
+                let isValid = /^\d{6}$/.test(codeValue);
+                
+                confirmButton.disabled = !isValid; // Enable only if exactly 6 digits
+                
+                if (isValid) {
+                    confirmButton.style.cursor = "pointer"; 
+                    confirmButton.style.opacity = "1"; // Full visibility when enabled
+                } else {
+                    confirmButton.style.cursor = "not-allowed"; 
+                    confirmButton.style.opacity = "0.5"; // Greyed-out effect
+                }
+            }
+
+            codeInput.addEventListener("input", validateCodeInput);
+            validateCodeInput(); // Initialize button state on page load
+
             document.getElementById("codeForm").addEventListener("submit", function (event) {
                 event.preventDefault();
-                let code = document.getElementById("code").value;
+                let code = codeInput.value;
 
                 fetch("confirm.cgi?code=" + encodeURIComponent(code))
                     .then(response => response.text())
@@ -192,56 +246,23 @@
                             toggleLogoutButton(true);
                             let formContainer = document.querySelector(".form-container");
                             if (formContainer) {
-                                formContainer.innerHTML = html; // Replace only inner content
+                                formContainer.innerHTML = html;
                             } else {
                                 console.error("❌ .form-container not found!");
                             }
                         } else {
-                            alert(`Invalid code ${code}/${data}. Try again.`);
+                            alert(`Invalid code ${code}. Try again.`);
                         }
                     })
                     .catch(error => console.error("Code Verification Error:", error));
             });
+
+            // ✅ Run Initial Checks
+            checkLoginStatus();
+            checkSession();
         });
 
-        function checkLoginStatus() {
-            let isAuthenticated = document.cookie.includes("authenticated=true");
-            //console.log(`checkLoginStatus=${isAuthenticated}`);
-            if (!isAuthenticated) {
-                openAuthModal("loginModal");
-            } else {
-                //console.log(`✅ logged in OK`);
-            }
-        }
-
-        // Authentication modals (Login & Code Entry)
-        window.openAuthModal = function (id) {
-            let modal = document.getElementById(id);
-            let overlay = document.getElementById("modalOverlay");
-
-            if (modal) {
-                modal.style.display = "block";
-                modal.style.visibility = "visible";
-                modal.style.opacity = "1";
-
-                overlay.style.display = "block"; // Show background overlay
-                //console.log(`✅ Modal ${id} opened`);
-            } else {
-                console.error(`❌ Modal ${id} not found`);
-            }
-        };
-
-        window.closeAuthModal = function (id) {
-            let modal = document.getElementById(id);
-            let overlay = document.getElementById("modalOverlay");
-
-            if (modal) {
-                modal.style.display = "none";
-                overlay.style.display = "none"; // Hide background overlay
-            }
-        };
-
-        // Vault Details Modal (Original functionality)
+        // ✅ Vault Details Modal (RESTORED TO OUTSIDE DOMContentLoaded)
         window.openModal = function (type, grouping, vault, wallets) {
             let modal = document.getElementById("modal");
             let modalContent = modal.querySelector(".modal-content");
@@ -277,6 +298,7 @@
             }, 200);
         };
 
+        // ✅ Logout & Session Handling (RESTORED TO OUTSIDE DOMContentLoaded)
         function deleteCookie(name) {
             document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
         }
@@ -285,7 +307,7 @@
             deleteCookie('session_id');  // Remove session cookie
             toggleLogoutButton(false);   // Hide logout button
             
-            // OPTIONAL: If you want to notify the server
+            // OPTIONAL: Notify the server
             fetch("logout.cgi", { method: 'GET', credentials: 'include' })
                 .then(() => location.reload()); // Reload the page
         }
@@ -294,14 +316,16 @@
             document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
         }
 
-        // Show logout button only if the session cookie exists
+        // ✅ Check Session on Load (RESTORED)
         window.checkSession = function () {
             if (document.cookie.includes('session_id=')) {
                 toggleLogoutButton(true);
             }
-        }
+        };
 
-        checkSession(); // Run on page load     
+        // ✅ Run Session Check
+        checkSession();
+
     </script>
 
     <script>

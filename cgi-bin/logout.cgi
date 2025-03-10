@@ -4,18 +4,13 @@ use warnings;
 use CGI;
 
 use lib "../perl-lib";
-use Cookies qw(deleteSessionCookie);
+use LoginManagment qw(deleteSession);
 
-my $MODULE = "logout";
-
+my $MODULE = "logout.cgi";
 my $cgi = CGI->new;
 
-# ✅ Remove session cookie before sending headers
-deleteSessionCookie();
+deleteSession();  # ✅ Ensure session is deleted before printing the header
 
-# ✅ Now send headers
-print $cgi->header('text/html');
-
-# ✅ Redirect or show logout message
+print $cgi->header('text/html');  # ✅ Header printed after session cleanup
 print "<script>window.location.href = '/index.html';</script>";
 

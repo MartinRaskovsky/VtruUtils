@@ -2,39 +2,31 @@
 use strict;
 use warnings;
 use CGI;
-use DBI;
 
 use lib '../perl-lib';
-use DBUtils qw(getEmailFromSession);
 use Dashboard qw(loadDashboard);
 use Utils qw(debugLog logError printErrorResponse);
-use Cookies qw(getSessionCookie deleteSessionCookie);
+use LoginManagment qw(getSessionEmail deleteSession);
 
 my $MODULE = "index.cgi";
 
 debugLog($MODULE, "Entered");
 
 my $cgi = CGI->new;
-
-# Read confirmation_code from cookies
-
 eval {
-    my $session_id = getSessionCookie();
-    my $email = getEmailFromSession($session_id);
+    my ($email, $session_id) = getSessionEmail();  # ✅ Ensure session is retrieved before printing the header
 
     if (!defined $email) {
-        debugLog($MODULE, "Cookie with no DB entry, deleteing cookie");
-        deleteSessionCookie(); # before content header;
+        debugLog($MODULE, "Cookie with no DB entry, deleting cookie");
+        deleteSession();
         $session_id = 0;
     }
 
-    print $cgi->header('text/html'); # after deleting cookie
-
+    print $cgi->header('text/html');  # ✅ Print header after cookies are handled
     loadDashboard($email);
 
-    # If no confirmation_code, trigger login modal
     if ($session_id) {
-        debugLog($MODULE, "Active");
+        debugLog($MODULE, "Active session");
         print <<'HTML';
         <script>
             window.onload = function () {
@@ -54,11 +46,10 @@ HTML
         </script>
 HTML
     }
-
-
 };
 
 if ($@) {
     logError("index.cgi Error: $@");
     printErrorResponse($cgi, { success => 0, error => "Invalid Request format received" });
 }
+
