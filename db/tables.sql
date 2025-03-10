@@ -5,6 +5,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     session_id CHAR(64) NULL
 );
+ALTER TABLE users ADD COLUMN keep_logged_in BOOLEAN DEFAULT FALSE;
 
 DROP TABLE IF EXISTS vaults;
 CREATE TABLE vaults (

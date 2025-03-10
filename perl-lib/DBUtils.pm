@@ -9,9 +9,47 @@ use DBConnect qw(getDbh);
 use Utils qw(debugLog logError);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(getEmailFromCode getEmailFromSession putConfirmationCode putSessionId getWallets putVaultAndWallets getVaultAndWallets deleteVaultAndWallets);
+our @EXPORT_OK = qw(
+    getEmailFromCode getEmailFromSession putConfirmationCode putSessionId 
+    getWallets putVaultAndWallets getVaultAndWallets deleteVaultAndWallets
+    getKeepLoggedIn updateKeepLoggedIn
+);
 
 my $MODULE = "DBUtils";
+
+sub getKeepLoggedIn {
+    my ($email) = @_;
+    debugLog($MODULE, "getKeepLoggedIn($email)");
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare("SELECT keep_logged_in FROM users WHERE email = ?");
+    $sth->execute($email);
+    
+    my ($keep_logged_in) = $sth->fetchrow_array();
+    $sth->finish;
+    $dbh->disconnect;
+
+    debugLog($MODULE, "keep_logged_in=$keep_logged_in for $email");
+    return $keep_logged_in // 0;  # Default to 0 if not found
+}
+
+sub updateKeepLoggedIn {
+    my ($email, $keep_logged_in) = @_;
+    debugLog($MODULE, "updateKeepLoggedIn($email, keep_logged_in=$keep_logged_in)");
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare("UPDATE users SET keep_logged_in = ? WHERE email = ?");
+    $sth->execute($keep_logged_in, $email);
+    
+    $sth->finish;
+    $dbh->disconnect;
+
+    debugLog($MODULE, "Updated keep_logged_in=$keep_logged_in for $email");
+}
 
 sub getEmailFromCode {
     my ($code) = @_;

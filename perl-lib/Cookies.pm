@@ -13,25 +13,28 @@ our @EXPORT_OK = qw(setSessionCookie getSessionCookie deleteSessionCookie);
 
 my $MODULE = 'Cookies';
 
-# Set session_id cookie
+# ✅ Set session_id cookie with optional long expiration
 sub setSessionCookie {
-    my ($session_id) = @_;
-    debugLog($MODULE, "setSessionCookie($session_id)");
-    
+    my ($session_id, $keep_logged_in) = @_;
+    debugLog($MODULE, "setSessionCookie($session_id, keep_logged_in=$keep_logged_in)");
+
+    # ✅ Determine cookie expiration
+    my $expires = $keep_logged_in ? 'Fri, 31 Dec 9999 23:59:59 GMT' : undef;  # Long-lasting or session-based
+
     my $cookie = CGI::Cookie->new(
         -name    => 'session_id',
         -value   => $session_id,
-        -expires => '+1M',  # 1-month expiration
+        -expires => $expires,
         -path    => '/',
         -secure   => Conf::get('COOKIE_SECURE'),
         -httponly => 1,
     );
-    
-    debugLog($MODULE, "Set-Cookie: $cookie)");
+
+    debugLog($MODULE, "Set-Cookie: $cookie");
     print "Set-Cookie: $cookie\n";
 }
 
-# Get session_id cookie
+# ✅ Get session_id cookie
 sub getSessionCookie {
     debugLog($MODULE, "getSessionCookie()");
     my %cookies = CGI::Cookie->fetch;
@@ -40,16 +43,11 @@ sub getSessionCookie {
         debugLog($MODULE, "getSessionCookie=$session_id");
     } else {
         debugLog($MODULE, "session_id cookie not found");
-        #debugLog($MODULE, "current cookies:");
-        #foreach my $key (keys %cookies) {
-        #    my $value = $cookies{$key};
-        #    debugLog($MODULE, "\t$key => $value");
-        #}
     }
     return $session_id;
 }
 
-# Remove session_id cookie (logout)
+# ✅ Remove session_id cookie (logout)
 sub deleteSessionCookie {
     debugLog($MODULE, "deleteSessionCookie()");
     
@@ -59,8 +57,9 @@ sub deleteSessionCookie {
         -expires => '-1d',  # Expire immediately
         -path    => '/',
     );
-    
+
     print "Set-Cookie: $cookie\n";
 }
 
 1;
+

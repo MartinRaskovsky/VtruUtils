@@ -6,39 +6,27 @@ use JSON;
 
 use lib '../perl-lib';
 use Conf;
-use Defs qw(getScriptForType getRenderFunction getDetailType getExplorerURL);
+use Defs qw(getScriptForType getRenderFunction );
 use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
 use Dashboard qw(getWalletsHtml);
 use Utils qw(debugLog logError trimSpaces processWallets printErrorResponse);
-use Cookies qw(getSessionCookie);
-use DBUtils qw( getEmailFromSession putVaultAndWallets);
+use LoginManagment qw(getSessionEmail);
 
 my $MODULE = "driver.cgi";
 
 my $cgi = CGI->new;
-
-# Get parameters
 my $type     = $cgi->param('type')     // 'sections';
 my $vault    = trimSpaces(scalar $cgi->param('vault'))  // '';
 my $wallets  = trimSpaces(scalar $cgi->param('wallets'))  // '';
 my $grouping = $cgi->param('grouping') // 'none';
 my $format   = $cgi->param('format')   // 'html';
 
-#debugLog($MODULE, "Type: $type");
-#debugLog($MODULE, "Grouping: $grouping");
-
-# Convert wallets to an array
 my @wallets_list = processWallets($wallets);
-
-# Determine script based on type
 my $script_name = getScriptForType($type);
 my $script_path = Conf::get('BIN_PATH') . "/$script_name";
 
-#debugLog($MODULE, "script_path: $script_path");
-
-# Construct command
 my @cmd = ($vault ? ('-v', $vault) : ());
 
 my ($i,$N);
@@ -49,7 +37,7 @@ for ($i=0; $i<$N; $i++) {
 }
 
 if ($type ne "sections" && $grouping && $grouping ne "none") {
-    push @cmd, ('-g', $grouping) if $grouping;
+    push @cmd, ('-g', $grouping);
 }
 
 #$N = @cmd;
@@ -57,36 +45,34 @@ if ($type ne "sections" && $grouping && $grouping ne "none") {
 #    debugLog($MODULE, "cmd[$i]: $cmd[$i]");
 #}
 
-# Execute the script
 my ($output, $error) = run_script($script_path, @cmd);
 
 if ($error) {
     logError("Script ($script_name) error: $error");
 }
 
-# Parse JSON output
 my $result;
 eval { $result = decode_json($output) };
 if ($@) {
     logError("JSON Parsing Error: $@");
     printErrorResponse($cgi, { success => 0, error => "Invalid JSON format received" });
+    exit;
 }
 
-# Determine rendering function
 my $body;
 my $header = "";
 my $render_function = getRenderFunction($type);
+
+my ($email, $session_id) = getSessionEmail();
+
 if ($type eq 'sections') {
     $vault = $result->{address};
     $wallets = $result->{wallets};
-    #my $joined = join(" ", @{$result->{wallets} // []});  # Ensure wallets are formatted correctly, avoid warnings if undefined
 
-    my $session_id = getSessionCookie();
-    my $email = getEmailFromSession($session_id);
-    putVaultAndWallets($email, $vault, $wallets);
-    #$header = getWalletsHtml($vault, $joined);
+    if ($email) {
+        putVaultAndWallets($email, $vault, $wallets);
+    }
 
-    # Compute differences if applicable
     my $signature = getSignature($email, $vault, $wallets);
     my $previous_log = findLatestLog($signature);
     writeCurrentLog($signature, $result, $previous_log);
@@ -96,7 +82,6 @@ if ($type eq 'sections') {
     $body = $render_function->($grouping, $result);
 }
 
-# Render and output final page
 print $cgi->header(-type => 'text/html', -charset => 'UTF-8');
 print renderPage($header, $body, $type);
 

@@ -76,11 +76,18 @@
         <h2>Login</h2>
         <form id="loginForm">
             <div class="modal-content">
-              <label for="email">Email:</label>
-              <input type="email" id="email" name="email" required>
-              <button type="submit">Login / Sign Up</button>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <!-- ✅ "Keep me logged in" toggle -->
+                <div class="toggle-container">
+                    <input type="checkbox" id="keepLoggedIn" name="keepLoggedIn">
+                    <label for="keepLoggedIn">Keep me logged in</label>
+                </div>
+
+                <button type="submit">Login / Sign Up</button>
             </div>
-        </form>
+        </form>  
     </div>
 
     <div id="codeModal" class="modal">
@@ -198,12 +205,13 @@
 
             window.onresize = adjustIframeHeight;
 
-            // ✅ Login Form Handling
+            // ✅ Login Form Handling (Now Includes "Keep Me Logged In" Option)
             document.getElementById("loginForm").addEventListener("submit", function (event) {
                 event.preventDefault();
                 let email = document.getElementById("email").value;
+                let keepLoggedIn = document.getElementById("keepLoggedIn").checked ? "1" : "0"; // ✅ Capture toggle state
 
-                fetch("login.cgi?email=" + encodeURIComponent(email))
+                fetch("login.cgi?email=" + encodeURIComponent(email) + "&keepLoggedIn=" + keepLoggedIn)
                     .then(response => response.text())
                     .then(() => {
                         closeAuthModal("loginModal");

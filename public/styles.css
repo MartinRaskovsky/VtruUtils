@@ -724,52 +724,73 @@ table {
     height: 100%;
     z-index: 1000; /* Below modal but above everything else */
 }
-        /* Center the title while keeping Logout at the top-right */
-        #header {
-            display: flex;
-            align-items: center;
-            /*justify-content: center; /* Keep title centered */
-            position: relative;
-            padding: 10px 20px;
-        }
 
-        #header H1 {
-            transform: translate(10px, 0px);
-        }
-        
-        #logoutBtn {
-            background-color: #6f42c1; /* Match other buttons */
-            color: white;
-            padding: 6px 14px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 5px;
-            position: absolute;
-            right: 20px; /* Align to top-right */
-            top: 50%;
-            transform: translateY(-50%);
-            white-space: nowrap; /* Prevent stretching */
-            width: auto; /* Ensures the button fits its text */
-            min-width: unset; /* Overrides global button min-width */
-            max-width: none; /* Ensures it does not inherit unwanted max-width */
-            display: none; /* Initially hidden */
-            border: 1px solid #492853;
-        }
-        
-        #logoutBtn:hover {
-            background-color: #5a34a3;
-        }
-        
-        input#email, input#code {
-            color: white;
-            padding: 5px;
-            background: rgba(255, 255, 255, 0.1);
-        }
+/* Center the title while keeping Logout at the top-right */
+#header {
+    display: flex;
+    align-items: center;
+    /*justify-content: center; /* Keep title centered */
+    position: relative;
+    padding: 10px 20px;
+}
 
-        #logoutBtn { 
-            transform: translate(-10px, -30px);
-        }
+#header H1 {
+    transform: translate(10px, 0px);
+}
+        
+#logoutBtn {
+    background-color: #6f42c1; /* Match other buttons */
+    color: white;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    position: absolute;
+    right: 20px; /* Align to top-right */
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap; /* Prevent stretching */
+    width: auto; /* Ensures the button fits its text */
+    min-width: unset; /* Overrides global button min-width */
+    max-width: none; /* Ensures it does not inherit unwanted max-width */
+    display: none; /* Initially hidden */
+    border: 1px solid #492853;
+}
+        
+#logoutBtn:hover {
+    background-color: #5a34a3;
+}
+        
+input#email, input#code {
+    color: white;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#logoutBtn { 
+    transform: translate(-10px, -30px);
+}
+
+/* ✅ Style for "Keep Me Logged In" toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.toggle-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.toggle-container label {
+    font-size: 14px;
+    cursor: pointer;
+}
+
 
     /* Force autofill styling to match the input field */
     input:-webkit-autofill {
@@ -794,6 +815,8 @@ table {
         opacity: 0.6;
     }
 
+
+    
 /* Debug colors */ 
 /*
 button, .stake-btn{ background: red;}
