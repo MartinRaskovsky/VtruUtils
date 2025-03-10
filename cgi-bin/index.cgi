@@ -8,7 +8,7 @@ use lib '../perl-lib';
 use DBUtils qw(getEmailFromSession);
 use Dashboard qw(loadDashboard);
 use Utils qw(debugLog logError printErrorResponse);
-use Cookies qw(getSessionCookie deleteDessionCookie);
+use Cookies qw(getSessionCookie deleteSessionCookie);
 
 my $MODULE = "index.cgi";
 
@@ -24,7 +24,7 @@ eval {
 
     if (!defined $email) {
         debugLog($MODULE, "Cookie with no DB entry, deleteing cookie");
-        deleteDessionCookie(); # before content header;
+        deleteSessionCookie(); # before content header;
         $session_id = 0;
     }
 

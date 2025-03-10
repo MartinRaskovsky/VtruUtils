@@ -63,29 +63,4 @@ sub deleteSessionCookie {
     print "Set-Cookie: $cookie\n";
 }
 
-# Set confirmation_code cookie
-#sub set_confirmation_code_cookie {
-#    my ($confirmation_code) = @_;
-#    debugLog($MODULE, "set_confirmation_code_cookie($confirmation_code)");
-#    
-#    my $cookie = CGI::Cookie->new(
-#        -name    => 'confirmation_code',
-#        -value   => $confirmation_code,
-#        -expires => '+1h',  # 1-hour expiration
-#        -path    => '/',
-#        -httponly => 1,
-#        -secure   => 1,
-#    );
-#    
-#    print "Set-Cookie: $cookie\n";
-#}
-
-# Get confirmation_code cookie
-#sub get_confirmation_code_cookie {
-#    debugLog($MODULE, "get_confirmation_code_cookie()");
-#    my %cookies = CGI::Cookie->fetch;
-#    my $cookie = $cookies{'confirmation_code'} ? $cookies{'confirmation_code'}->value : undef;
-#    return $cookie;
-#}
-
 1;
