@@ -13,7 +13,7 @@ our @EXPORT_OK = qw(sendEmail);
 my $MODULE = "EmailUtils";
 
 my $USE_EMAIL = Conf::get('USE_EMAIL') // 1;
-my $FROM_EMAIL = Conf::get('FROM_EMAIL') || 'no-reply@vawa.com';
+my $FROM_EMAIL = Conf::get('FROM_EMAIL') || 'vawa2025@gmail.com';
 
 sub sendEmail {
     my ($email, $subject, $body) = @_;

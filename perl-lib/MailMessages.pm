@@ -27,12 +27,12 @@ sub sendConfirmationEmail {
 
   <h2>Key Features:</h2>
   <ul>
-    <li>View all details of your <b>Vitruveo Vault</b> and its associated wallets.</li>
-    <li>Add multiple wallets to track them together.</li>
+    <li>View all details of your <b>Vitruveo Vault and its associated wallets</b>.</li>
+    <li>Add <b>multiple wallets</b> to track them together.</li>
     <li>Quickly answer the common question: <i>"Where are my tokens?"</i></li>
     <li><b>Track all your Vitruveo tokens and coins across every wallet you own, ensuring complete visibility of your assets.</b></li>
     <li>Track your <b>Vortex tokens</b> on the BSC chain.</li>
-    <li>Monitor your <b>Ethereum-based</b> assets in real time.</li>
+    <li>Monitor your <b>Ethereum-based</b> assets.</li>
   </ul>
 
   <p>Enter your confirmation code to access your VaWa account.</p>
@@ -41,7 +41,7 @@ sub sendConfirmationEmail {
 
   <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
   <p><b>Learn more about VaWa:</b> <a href="https://about.martinr.com/vawa" target="_blank">https://about.martinr.com/vawa</a></p>
-  <p>For further information, questions, or suggestions, please contact: <a href="mailto:docmartinraskovsky\@gmail.com">docmartinraskovsky\@gmail.com</a></p>
+  <p>For further information, questions, or suggestions, please contact: <a href="mailto:vawa2025\@gmail.com">vawa2025\@gmail.com</a></p>
 
 </body>
 </html>
