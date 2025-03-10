@@ -40,7 +40,7 @@ sub sendConfirmationEmail {
   <p><i>Thank you for choosing VaWa!</i></p>
 
   <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-  <p><b>Learn more about VaWa:</b> <a href="https://about.martinr.com/vawa" target="_blank">https://about.martinr.com/vawa</a></p>
+  <p><b>Learn more about VaWa:</b> <a href="https://about.martinr.com/vawa_notes.html" target="_blank">https://about.martinr.com/vawa_notes.html</a></p>
   <p>For further information, questions, or suggestions, please contact: <a href="mailto:vawa2025\@gmail.com">vawa2025\@gmail.com</a></p>
 
 </body>
