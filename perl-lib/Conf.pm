@@ -46,7 +46,7 @@ sub init {
         $config{COOKIE_SECURE} = 0;
     }
 
-    $config{FROM_EMAIL} = 'mail@martinr.com';
+    $config{FROM_EMAIL} = 'vawa2025@gmail.com';
 }
 
 # Method to retrieve configuration values

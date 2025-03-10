@@ -5,7 +5,10 @@ use warnings;
 
 use lib './perl-lib';
 use EmailUtils qw(sendEmail);
+use Conf;
 
-sendEmail('martinr6969@gmail.com', '$FROM_EMAIL Testing to gmail',   "This is a test to gmail.com");
-sendEmail('vawa2025@gmail.com',    '$FROM_EMAIL testing to vawa',    "This is a test to gmail.com");
-sendEmail('mail@martinr.com',      '$FROM_EMAIL Testing to martinr', "This is a test to martinr.com");
+my $FROM_EMAIL = Cong::get('FROM_EMAIL');
+
+sendEmail('martinr6969@gmail.com', "$FROM_EMAIL Testing to gmail",   "This is a test to martinr6969@gmail.com");
+sendEmail('vawa2025@gmail.com',    "$FROM_EMAIL testing to vawa",    "This is a test to vawa2025@gmail.com");
+sendEmail('mail@martinr.com',      "$FROM_EMAIL Testing to martinr", "This is a test to mail@martinr.com");
