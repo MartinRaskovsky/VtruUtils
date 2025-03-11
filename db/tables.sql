@@ -3,7 +3,8 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL PRIMARY KEY,
     confirmation_code VARCHAR(6) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    session_id CHAR(64) NULL
+    session_id CHAR(64) NULL,
+    keep_logged_in BOOLEAN DEFAULT FALSE
 );
 ALTER TABLE users ADD COLUMN keep_logged_in BOOLEAN DEFAULT FALSE;
 
