@@ -101,22 +101,22 @@ async function testGetVibeBalances() {
  * Test getVibeBalances method when all contract calls fail.
  */
 async function testGetVibeBalancesFailures() {
-    // ✅ Reset stubs before overriding them for failures
     mockContract.getVibeNFTSharesByOwner.reset();
-    
-    // ✅ Ensure all calls reject
     mockContract.getVibeNFTSharesByOwner.rejects(new Error("Contract call failed"));
 
-    const balances = await tokenVibe.getVibeBalances([wallet1, wallet2]);
-    
-    assert.deepStrictEqual(
-        balances,
-        [null, null],
-        `❌ testGetVibeBalancesFailures failed: Expected [null, null] but got ${JSON.stringify(balances)}`
-    );
-
-    console.log("✅ testGetVibeBalancesFailures passed.");
+    try {
+        await tokenVibe.getVibeBalances([wallet1, wallet2]);
+        assert.fail("❌ Expected getVibeBalances to throw an error, but it did not.");
+    } catch (error) {
+        assert.strictEqual(
+            error.message,
+            "Error Code null: Contract call failed",
+            `❌ testGetVibeBalancesFailures failed: Expected 'Contract call failed' but got '${error.message}'`
+        );
+        console.log("✅ testGetVibeBalancesFailures passed.");
+    }
 }
+
 
 // Run all tests
 (async () => {
