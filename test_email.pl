@@ -8,7 +8,7 @@ my $FROM_EMAIL = 'vawa2025@gmail.com';
 sub sendEmail {
     my ($email, $subject, $body) = @_;
 
-    my $sendmail = "/usr/sbin/sendmail -t";
+    my $sendmail = "/usr/sbin/sendmail -v -t";
     open(my $mail, "|-", $sendmail) or do {
         print STDERR "Cannot open sendmail: $!";
         return 0;
