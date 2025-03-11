@@ -20,7 +20,8 @@
     "Boosters": "0x8246eb7D32416888aBeB23b1E715ee5A156d3aBe",
     "VTROStake": "0x27436fccC5b1B3Ff50Bd74c413a9DCfEd4bA2d0b",
     "VTRU": "0x931AC5400ba4BD2d882Ef6Bc3C5714113f2a4d29",
-    "VERSE": "0x72D2bFb14b3351d17A63Cd4c8085E034e313c54c"
+    "VERSE": "0x72D2bFb14b3351d17A63Cd4c8085E034e313c54c",
+    "SEVO": "0x2A34059DF3D60B1864f10F10492746bd26d3D24a"
   },
   "testnet": {
     "AssetRegistry": "0xeC84C281396C4E971586E0707FA39585073E6403",
@@ -85,6 +86,73 @@
         ],
         "stateMutability": "view",
         "type": "function"
+      }
+    ],
+    "SEVO": [
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "implementation",
+                  "type": "address"
+              },
+              {
+                  "internalType": "bytes",
+                  "name": "_data",
+                  "type": "bytes"
+              }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "target",
+                  "type": "address"
+              }
+          ],
+          "name": "AddressEmptyCode",
+          "type": "error"
+      },
+      {
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "implementation",
+                  "type": "address"
+              }
+          ],
+          "name": "ERC1967InvalidImplementation",
+          "type": "error"
+      },
+      {
+          "inputs": [],
+          "name": "ERC1967NonPayable",
+          "type": "error"
+      },
+      {
+          "inputs": [],
+          "name": "FailedInnerCall",
+          "type": "error"
+      },
+      {
+          "anonymous": false,
+          "inputs": [
+              {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "implementation",
+                  "type": "address"
+              }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+      },
+      {
+          "stateMutability": "payable",
+          "type": "fallback"
       }
     ],
     "VIBE": [

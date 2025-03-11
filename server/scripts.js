@@ -161,7 +161,7 @@ async function runGetDetails(type, vault, wallets, grouping) {
     let scriptName = "";
     switch (type) {
         case "bsc":
-            scriptName = "getDetailSevoStaked.js";
+            scriptName = "getDetailSevoXStaked.js";
             grouping = false;
             break;
         case "vibe":

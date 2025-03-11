@@ -8,7 +8,7 @@
  */
 
 const Web3 = require('../lib/libWeb3');
-const TokenStakedSevo = require("../lib/tokenStakedSevo");
+const tokenStakedSevoX = require("../lib/tokenStakedSevoX");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_SEVOX } = require('../shared/constants');
@@ -20,7 +20,7 @@ const KEYS = ['wallet', 'balance'];
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log("\nUsage: getBalanceSevoStaked.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceSevoXStaked.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   (Ignored)");
     console.log("  -f                  Format output as an aligned table.");
@@ -38,9 +38,9 @@ function showUsage() {
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
         const bsc = new Web3(Web3.BSC);
-        const tokenStakedSevo = new TokenStakedSevo(bsc);
+        const token = new tokenStakedSevoX(bsc);
 
-        const balances = await tokenStakedSevo.getBalances(wallets);
+        const balances = await token.getBalances(wallets);
         let totalBalance = 0n;
         const formattedData = [];
 

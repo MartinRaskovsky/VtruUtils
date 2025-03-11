@@ -6,8 +6,8 @@ VAULT_ADDRESS=`../tests/showConfig.js | egrep VAULT_ADDRESS= | sed 's/VAULT_ADDR
 for script in \
     getBalanceVtruHeld getBalanceVtruStaked getBalanceVerse getBalanceVibe getBalanceVortex \
     getBalanceEth getBalanceBnb \
-    getBalanceSevoStaked \
-    getDetailVtruStaked getDetailVibe getDetailVortex getDetailSevoStaked getSections
+    getBalanceSevoXStaked \
+    getDetailVtruStaked getDetailVibe getDetailVortex getDetailSevoXStaked getSections
 do
     GROUP=""
     if test $script = "getDetailVtruStaked"

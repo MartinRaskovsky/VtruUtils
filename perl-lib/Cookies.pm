@@ -16,6 +16,11 @@ my $MODULE = 'Cookies';
 # ✅ Set session_id cookie with optional long expiration
 sub setSessionCookie {
     my ($session_id, $keep_logged_in) = @_;
+    if (!defined $session_id || !defined $keep_logged_in) { 
+        $session_id = $session_id // '';
+        $keep_logged_in = $keep_logged_in // '';
+        return; 
+    }
     debugLog($MODULE, "setSessionCookie($session_id, keep_logged_in=$keep_logged_in)");
 
     # ✅ Determine cookie expiration

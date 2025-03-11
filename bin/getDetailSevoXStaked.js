@@ -8,7 +8,7 @@
  */
 
 const Web3 = require('../lib/libWeb3');
-const TokenStakedSevo = require('../lib/tokenStakedSevo');
+const tokenStakedSevoX = require('../lib/tokenStakedSevoX');
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_SEVOX } = require('../shared/constants');
@@ -20,7 +20,7 @@ const KEYS = ['wallet', 'unlocked', 'locked', 'date'];
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log(`\nUsage: getDetailsSevoStaked.js [options] <wallet1> <wallet2> ... <walletN>\n`);
+    console.log(`\nUsage: getDetailsSevoXStaked.js [options] <wallet1> <wallet2> ... <walletN>\n`);
     console.log(`Options:`);
     console.log("  -v <vaultAddress>   (Ignored)");
     console.log(`  -f                  Format output as an aligned table.`);
@@ -51,9 +51,9 @@ async function formatStamp(bsc, stamp) {
 async function runDetails(vaultAddress, wallets, formatOutput) {
     try {
         const bsc = new Web3(Web3.BSC);
-        const tokenStakedSevo = new TokenStakedSevo(bsc);
+        const token = new tokenStakedSevoX(bsc);
 
-        const stakingDetails = await tokenStakedSevo.getDetails(wallets);
+        const stakingDetails = await token.getDetails(wallets);
         if (!stakingDetails) {
             console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);

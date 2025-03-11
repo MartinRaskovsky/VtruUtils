@@ -7,7 +7,7 @@ our @EXPORT_OK = qw(getScriptForType getDetailType getExplorerURL getRenderFunct
 # Define script mapping
 my %script_map = (
     'sections' => 'getSections.js',
-    'bsc'      => 'getDetailSevoStaked.js',
+    'bsc'      => 'getDetailSevoXStaked.js',
     'vibe'     => 'getDetailVibe.js',
     'vortex'   => 'getDetailVortex.js',
     'stake'    => 'getDetailVtruStaked.js'

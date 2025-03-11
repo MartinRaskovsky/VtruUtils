@@ -12,9 +12,12 @@ use Render qw(renderPage);
 use Execute qw(run_script);
 use Dashboard qw(getWalletsHtml);
 use Utils qw(debugLog logError trimSpaces processWallets printErrorResponse);
+use DBUtils qw(putVaultAndWallets);
 use LoginManagment qw(getSessionEmail);
 
 my $MODULE = "driver.cgi";
+
+debugLog($MODULE, "Entered");
 
 my $cgi = CGI->new;
 my $type     = $cgi->param('type')     // 'sections';
@@ -68,7 +71,6 @@ my ($email, $session_id) = getSessionEmail();
 if ($type eq 'sections') {
     $vault = $result->{address};
     $wallets = $result->{wallets};
-
     if ($email) {
         putVaultAndWallets($email, $vault, $wallets);
     }
@@ -78,6 +80,10 @@ if ($type eq 'sections') {
     writeCurrentLog($signature, $result, $previous_log);
     computeDifferences($result, $previous_log) if $previous_log;
     $body = $render_function->($vault, $wallets, $result);
+    my $error = $result->{errors};
+    if ($error && $error ne "") {
+        $header = "<font color=red><b>$error</b></font>";
+    }
 } else {
     $body = $render_function->($grouping, $result);
 }

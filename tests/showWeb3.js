@@ -13,7 +13,7 @@
 const Web3 = require("../lib/libWeb3");
 const { scaleDown, formatNumber, formatRawNumber, logJson } = require("../lib/vtruUtils");
 
-const TokenStakedSevo = require("../lib/tokenStakedSevo");
+const tokenStakedSevoX = require("../lib/tokenStakedSevoX");
 
 
 // Define test wallet addresses (configure accordingly)
@@ -60,7 +60,7 @@ async function testWalletBalances(network) {
 async function testStakedContract(network) {
     console.log(`\nTesting staked contract balance retrieval on ${network.toUpperCase()}...`);
     const web3 = await Web3.create(network);  // Use the factory method
-    const tokenStakedVtru = new TokenStakedSevo(web3);
+    const tokenStakedVtru = new tokenStakedSevoX(web3);
     const inWallet = testWallets[network];
     
     if (!inWallet || inWallet === "0x0000000000000000000000000000000000000000") {

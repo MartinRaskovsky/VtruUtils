@@ -20,7 +20,7 @@ const { getFileName } = require("../lib/vtruUtils");
  * @param {string} value - Wallet balance value.
  */
 function add(rows, wallet, value) {
-    if (value && value !== "0.00") {
+    if (value && value !== "0" && value !== "0.00") {
         rows.push(`${wallet},"${value}"`);
     }
 }

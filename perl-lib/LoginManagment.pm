@@ -37,6 +37,7 @@ sub getSessionEmail {
     return unless $session_id;
     
     my $email = getEmailFromSession($session_id);
+    debugLog($MODULE, "getSessionEmail=($email, $session_id)");
     return ($email, $session_id);
 }
 

@@ -66,7 +66,9 @@ sub getEmailFromCode {
     $sth->execute($code);
     my $hash = $sth->fetchrow_hashref;
     return unless $hash;
-    my $mail = $hash->{email};
+    my $email = $hash->{email};
+    debugLog($MODULE, "getEmailFromCode=$email");
+    return $email;
 }
 
 sub getEmailFromSession {
@@ -84,7 +86,9 @@ sub getEmailFromSession {
     $sth->execute($session_id);
     my $hash = $sth->fetchrow_hashref;
     return unless $hash;
-    my $mail = $hash->{email};
+    my $email = $hash->{email};
+    debugLog($MODULE, "getEmailFromSession=$email");
+    return $email;
 }
 
 sub putVaultAndWallets {

@@ -30,7 +30,7 @@ const contractModules = [
   "../lib/tokenStakedVtru",
   "../lib/tokenVerse",
   "../lib/tokenVibe",
-  "../lib/tokenStakedSevo"
+  "../lib/tokenStakedSevoX"
 ];
 contractModules.forEach((modPath) => {
   require.cache[require.resolve(modPath)] = { exports: DummyContract };
