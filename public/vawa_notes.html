@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="STYLESHEET" href="/css/reset.css" type="text/css">
-    <link rel="STYLESHEET" href="/css/gallery.css" type="text/css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
-    <script type="text/javascript" src="/js/include.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="STYLESHEET" href="/css/comments.css" type="text/css">
-    <link rel="STYLESHEET" href="/css/emoticons.css" type="text/css">
-    <!--link rel="STYLESHEET" href="/css/links.css" type="text/css"-->
-    <script type="text/javascript" src="/js/comLib.js"></script>
-    <script type="text/javascript" src="/js/save.js"></script>
     <title>Doc’s VaWa App - Vault & Wallet Tracker</title>
+    
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/gallery.css">
+    <link rel="stylesheet" href="/css/comments.css">
+    <link rel="stylesheet" href="/css/emoticons.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script src="/js/include.js"></script>
+    <script src="/js/comLib.js"></script>
+    <script src="/js/save.js"></script>
+    <script src="/js/ismobile.js"></script>
+    <script src="/js/menustate.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,7 +28,7 @@
         h1, h2, h3 {
             color: #4B0082;
         }
-        ul {
+        ul.about-bullets {
             list-style-type: none;
             padding-left: 0;
         }
@@ -47,100 +51,96 @@
         button[type="submit"] {
             background-color: #4B0082;
             color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
+            border: 1px solid #492853;
+            padding: 8px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: bold;
+            cursor: pointer;
             transition: 0.3s;
-            padding: 8px;
-        border: 1px solid #492853;
         }
         button[type="submit"]:hover {
-            background-color: #4B0082;
+            background-color: #3A0068;
         }
     </style>
 </head>
 <body>
-    <script type="text/javascript" src="/js/ismobile.js"></script>
-    <script type="text/javascript" src="/js/menustate.js"></script>
-  <!-- Include the menu -->
-<div class="centering"><h1>VaWa App - Doc’s Vault & Wallet Tracker App</h1></div>
-<div class="page">
-
-    <p>Tracking your assets <b>across multiple wallets and networks</b> can be time-consuming and frustrating. 
-    Most blockchain explorers only allow checking one wallet at a time, making it difficult to get a complete picture of your holdings—especially when following best practices like spreading assets across multiple wallets for security.</p>
-
-    <p><b>VaWa was created to solve this challenge</b>.</p>
-
-    <p><center>
-        <button type="submit" onclick="window.location.href='https://about.martinr.com/vawa/index.html';">VaWa App</button>
-    </center></p>
-
-    <p>Originally designed for Vitruveo, the app was extended to support SEVO-X on Binance Smart Chain (BSC), enabling users to track both Vitruveo and SEVO-X assets in a single interface. With this multi-network expansion, VaWa now supports Vitruveo (VTRU), Ethereum (ETH) and Binance Coin (BNB).</p>
-
-    <h2>What is VaWa?</h2>
-    <p><b>VaWa</b> (Vault and Wallet Tracker) is a multi-network, multi-wallet tool built for Vitruveo users who want a unified view of their assets. 
-    Instead of manually checking one address at a time, VaWa lets you track all your wallets and networks in one place.</p>
-
-    <h2>Key Features</h2>
-    <ul class="about-bullets">
-        <li>View details of your Vitruveo Vault and its linked wallets together with as many extra wallets.</li>
-        <li>Track all your Vitruveo tokens and coins across multiple wallets in a single dashboard.</li>
-        <li>Find out exactly <i>Where are my tokens?</i> without checking multiple explorers.</li>
-        <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
-        <li>Support for multiple networks:
-            <ul class="about-bullets">
-                <li>VTRU on Vitruveo, along with staked VTRU, VTRO, wVTRU, VERSE, VIBE, and VORTEX.</li>
-                <li>BNB on Binance Smart Chain (BSC) and staked SEVO-X.</li>
-                <li>ETH on Ethereum for Ethereum-based balances.</li>
-            </ul>
-        </li>
-    </ul>
-
-    <h2>Why VaWa?</h2>
-    <p>Manually piecing together wallet balances across multiple explorers is inefficient and frustrating. VaWa was designed to solve that problem.</p>
-    <ul class="about-bullets">
-        <li>Developed primarily for Vitruveo, ensuring a full overview of your Vault and wallet balances.</li>
-        <li>Integrates SEVO-X on BSC, tracking Vitruveo-related assets across chains.</li>
-        <li>Supports Vitruveo, Ethereum and BNB, allowing you to see your entire portfolio in one place.</li>
-    </ul>
-
-    <p>Instead of using separate blockchain explorers for Vitruveo, BSC and Ethereum, VaWa unifies everything into one convenient and efficient platform.</p>
-
-    <hr>
-
-    <h2>We Value Your Feedback!</h2>
-    <p>VaWa was built to simplify your asset tracking, but we want to keep improving.</p>
-    <p>We welcome all suggestions, feature requests, complaints, or even just your appreciation—your feedback helps shape the future of VaWa!</p>
-
-    <h3>Tell Us What You Think</h3>
-    <p><i>Thank you for being part of VaWa’s journey!</i></p>
-<hr>
-<div class="inner">
-    <div id="comment-container"></div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            insertCommentForm('vawa_app.txt');
-        });
-    </script>
-</div>
-  </div>
-  <footer class="footer">
-    <hr>
-    <!--p class="link"><a href="privacy.html">Privacy</a></p-->
-    <!--p class="link"><a href="contact.html">Contact</a></p-->
-    <div class="icons">
-      <ul>
-        <li><a href="https://www.twitter.com/martinraskovsky/"><img src="images/TW.png"></a></li>
-        <li><a href="https://www.facebook.com/martin.raskovsky.photography/"><img src="images/FB.png"></a></li>
-        <li><a href="https://www.instagram.com/martinraskovsky/"><img src="images/IG.png"></a></li>
-        <li><a href="https://martinr.com/"><img src="images/WWW.png"></a></li>
-      </ul>
+    <div class="centering">
+        <h1>VaWa App - Doc’s Vault & Wallet Tracker</h1>
     </div>
-    <p class="copy">Copyright &copy; 2025, Dr Mart&iacute;n Raskovsky</p>
-  </footer>
-<IMG SRC="/cgi-bin/counter.cgi?name=vawa_app" ALT="" WIDTH=1 HEIGHT=1>
+    <div class="page">
+        <p>Tracking your assets <b>across multiple wallets and networks</b> can be time-consuming and frustrating. Most blockchain explorers only allow checking one wallet at a time, making it difficult to get a complete picture of your holdings—especially when following best practices like spreading assets across multiple wallets for security.</p>
+        
+        <p><b>VaWa was created to solve this challenge</b>.</p>
+        
+        <center>
+            <button type="submit" onclick="window.location.href='https://about.martinr.com/vawa/index.html';">VaWa App</button>
+        </center>
+        
+        <p>Originally designed for Vitruveo, VaWa was later extended to support SEVO-X on Binance Smart Chain (BSC), enabling users to track Vitruveo and SEVO-X assets in a single interface. VaWa now supports Vitruveo (VTRU), Ethereum (ETH), and Binance Coin (BNB).</p>
+        
+        <h2>What is VaWa?</h2>
+        <p><b>VaWa</b> (Vault and Wallet Tracker) is a multi-network, multi-wallet tool that provides a unified view of your assets, eliminating the need to check multiple blockchain explorers individually.</p>
+        
+        <h2>Key Features</h2>
+        <ul class="about-bullets">
+            <li>View details of your Vitruveo Vault and linked wallets.</li>
+            <li>Track all your Vitruveo tokens and coins across multiple wallets in a single dashboard.</li>
+            <li>Find out exactly <i>Where are my tokens?</i> without checking multiple explorers.</li>
+            <li>Discover hidden or forgotten tokens and coins.</li>
+            <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
+            <li>Supports multiple networks:
+                <ul class="about-bullets">
+                    <li>VTRU on Vitruveo, along with staked VTRU, VTRO, wVTRU, VERSE, VIBE, and VORTEX.</li>
+                    <li>VTRU bridged on ETH and BSC.</li>
+                    <li>BNB on Binance Smart Chain (BSC) and staked SEVO-X.</li>
+                    <li>ETH on Ethereum.</li>
+                </ul>
+            </li>
+        </ul>
+        
+        <h2>Why VaWa?</h2>
+        <p>Manually piecing together wallet balances across multiple explorers is inefficient and frustrating. VaWa was designed to simplify this process.</p>
+        <ul class="about-bullets">
+            <li>Developed for Vitruveo, ensuring a complete overview of Vault and wallet balances.</li>
+            <li>Integrates SEVO-X on BSC for cross-chain asset tracking.</li>
+            <li>Supports Vitruveo, Ethereum, and BNB, providing a unified portfolio view.</li>
+        </ul>
+        <p>Instead of using separate blockchain explorers, VaWa unifies everything into one convenient platform.</p>
+        
+        <hr>
+        
+        <h2>We Value Your Feedback!</h2>
+        <p>VaWa was built to simplify asset tracking, and we welcome all suggestions, feature requests, or feedback to improve the experience.</p>
+        
+        <h3>Tell Us What You Think</h3>
+        <p><i>Thank you for being part of VaWa’s journey!</i></p>
+        <hr>
+        
+        <div class="inner">
+            <div id="comment-container"></div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    insertCommentForm('vawa_app.txt');
+                });
+            </script>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <hr>
+        <div class="icons">
+            <ul>
+                <li><a href="https://www.twitter.com/martinraskovsky/"><img src="images/TW.png" alt="Twitter"></a></li>
+                <li><a href="https://www.facebook.com/martin.raskovsky.photography/"><img src="images/FB.png" alt="Facebook"></a></li>
+                <li><a href="https://www.instagram.com/martinraskovsky/"><img src="images/IG.png" alt="Instagram"></a></li>
+                <li><a href="https://martinr.com/"><img src="images/WWW.png" alt="Website"></a></li>
+            </ul>
+        </div>
+        <p class="copy">&copy; 2025, Dr. Mart&iacute;n Raskovsky</p>
+    </footer>
+    
+    <img src="/cgi-bin/counter.cgi?name=vawa_app" alt="" width="1" height="1">
 </body>
 </html>
+

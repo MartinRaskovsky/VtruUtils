@@ -9,7 +9,9 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const { SEC_VTRU_HELD, SEC_VTRU_STAKED, SEC_VTRO_HELD, SEC_WVTRU, SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_SEVOX, SEC_ETH, SEC_BNB } = require('../shared/constants');
+const { SEC_VTRU_HELD, SEC_VTRU_STAKED, SEC_VTRO_HELD, SEC_WVTRU, SEC_VERSE, SEC_VIBE, SEC_VORTEX, 
+        SEC_SEVOX, SEC_VTRU_ETH, SEC_VTRU_BSC, SEC_ETH, SEC_BNB 
+    } = require('../shared/constants');
 
 const logsDir = path.join(__dirname, '../public/data');
 
