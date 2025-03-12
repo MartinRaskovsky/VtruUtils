@@ -19,6 +19,10 @@ my $MODULE = "DBUtils";
 
 sub getKeepLoggedIn {
     my ($email) = @_;
+    if (!defined $email) {
+        debugLog($MODULE, "getKeepLoggedIn(undef)");
+        return 0;
+    }
     debugLog($MODULE, "getKeepLoggedIn($email)");
 
     my $dbh = getDbh();

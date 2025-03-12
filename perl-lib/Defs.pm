@@ -51,8 +51,11 @@ sub getDetailType {
 
 # Retrieve explorer URL
 sub getExplorerURL {
-    my ($type, $address) = @_;
-    return exists $explorers{$type} ? "$explorers{$type}$address" : "";
+    my ($network, $address, $label) = @_;
+    $label ||= $address;
+    return exists $explorers{$network} 
+        ? "<a target=\"_blank\" href='$explorers{$network}$address'>$label</a>"
+        : "";
 }
 
 # Retrieve render function for type

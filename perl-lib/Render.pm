@@ -4,8 +4,8 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( getDetailType );
-use Utils qw( debugLog logError getLabel explorerURL decorateUnclaimed truncateAddress);
+use Defs qw ( getDetailType getExplorerURL);
+use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
 
 use Exporter 'import';
 our @EXPORT_OK = qw(renderPage renderSections );
@@ -98,9 +98,10 @@ sub renderSections {
 END_HTML
 
     for my $index (0 .. $#{$result->{sectionTitles}}) {
-        my $section = $result->{sectionTitles}[$index];
-        my $total_key = $result->{totalKeys}[$index];
+        my $section     = $result->{sectionTitles}[$index];
+        my $total_key   = $result->{totalKeys}[$index];
         my $section_key = $result->{sectionKeys}[$index];
+        my $networkKey  = $result->{networkKeys}[$index];
         my $controls = "";
 
         if ($section eq "VTRU Staked") {
@@ -124,7 +125,7 @@ END_HTML
             my $balance = $result->{$section_key}[$wallet_index] || "0.00";
             my $diff_section = "diff_$section_key"; 
             my $diff_display = $result->{$diff_section}[$wallet_index] // '';
-            my $address = explorerURL($section_key, $wallet, truncateAddress($wallet));
+            my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet));
             if (lc($vault) eq $wallet) {
                 $address = "<strong>$address</strong>";
             }

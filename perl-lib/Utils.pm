@@ -6,8 +6,9 @@ use JSON;
 
 use lib "../perl-lib";
 use Conf;
+use Defs qw (getExplorerURL );
 
-our @EXPORT_OK = qw(logError debugLog explorerURL trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed );
+our @EXPORT_OK = qw(logError debugLog trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed );
 
 my $MODULE = "Utils";
 
@@ -28,39 +29,6 @@ sub trimSpaces {
     return $str;
 }
 
-sub explorerURL {
-    my ($type, $address, $label) = @_;
-    $label ||= $address;
-
-    my %map = (
-        'BNB'               => "BSC",
-        'ETH'               => "ETH",
-        'SEVOXStaked'       => "BSC",
-        'VERSE'             => "VTRU",
-        'VIBE'              => "VTRU",
-        'VORTEX'            => "VTRU",
-        'VTROHeld'          => "VTRU",
-        'VTRUBSCBridged'    => "BSC",
-        'VTRUETHBridged'    => "ETH",
-        'VTRUHeld'          => "VTRU",
-        'VTRUStaked'        => "VTRU",
-        'wVTRU'             => "VTRU"
-    );
-
-    my %explorers = (
-        'BSC'  => "https://bscscan.com/address/",
-        'ETH'  => "https://etherscan.io/address/",
-        'VTRU' => "https://explorer.vitruveo.xyz/address/"
-    );
-
-        $type =~ s/section//;
-        my $mapped = $map{$type} // "";
-
-    return exists $explorers{$mapped} 
-        ? "<a target=\"_blank\" href='$explorers{$mapped}$address'>$label</a>"
-        : "";
-}
-
 sub decorateUnclaimed {
     my ($value) = @_;
 
@@ -70,10 +38,10 @@ sub decorateUnclaimed {
 }
 
 sub getLabel {
-    my ($type, $grouping, $data) = @_;
+    my ($network, $grouping, $data) = @_;
     return $data if $grouping ne 'none';
     return $data if $grouping eq 'none' && $data eq 'Total';
-    return explorerURL($type, $data, truncateAddress($data));
+    return getExplorerURL($network, $data, truncateAddress($data));
 }
 
 sub truncateAddress {
