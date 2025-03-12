@@ -124,7 +124,7 @@ END_HTML
             my $balance = $result->{$section_key}[$wallet_index] || "0.00";
             my $diff_section = "diff_$section_key"; 
             my $diff_display = $result->{$diff_section}[$wallet_index] // '';
-            my $address = explorerURL('VTRU', $wallet, truncateAddress($wallet));
+            my $address = explorerURL($section_key, $wallet, truncateAddress($wallet));
             if (lc($vault) eq $wallet) {
                 $address = "<strong>$address</strong>";
             }

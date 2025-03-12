@@ -9,6 +9,8 @@ use Conf;
 
 our @EXPORT_OK = qw(logError debugLog explorerURL trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed );
 
+my $MODULE = "Utils";
+
 sub logError {
     my ($message) = @_;
     Conf::log_message("ERROR: " . $message);
@@ -30,14 +32,32 @@ sub explorerURL {
     my ($type, $address, $label) = @_;
     $label ||= $address;
 
+    my %map = (
+        'BNB'               => "BSC",
+        'ETH'               => "ETH",
+        'SEVOXStaked'       => "BSC",
+        'VERSE'             => "VTRU",
+        'VIBE'              => "VTRU",
+        'VORTEX'            => "VTRU",
+        'VTROHeld'          => "VTRU",
+        'VTRUBSCBridged'    => "BSC",
+        'VTRUETHBridged'    => "ETH",
+        'VTRUHeld'          => "VTRU",
+        'VTRUStaked'        => "VTRU",
+        'wVTRU'             => "VTRU"
+    );
+
     my %explorers = (
         'BSC'  => "https://bscscan.com/address/",
         'ETH'  => "https://etherscan.io/address/",
         'VTRU' => "https://explorer.vitruveo.xyz/address/"
     );
 
-    return exists $explorers{$type} 
-        ? "<a target=\"_blank\" href='$explorers{$type}$address'>$label</a>"
+        $type =~ s/section//;
+        my $mapped = $map{$type} // "";
+
+    return exists $explorers{$mapped} 
+        ? "<a target=\"_blank\" href='$explorers{$mapped}$address'>$label</a>"
         : "";
 }
 
