@@ -77,7 +77,11 @@ async function getSections(vaultAddress, wallets, formatOutput) {
             }, null, 2));
         }
     } catch (error) {
-        abort(error.message);
+        console.log(JSON.stringify({
+            address: vaultAddress,
+            wallets: wallets,
+            errors: error.message
+        }, null, 2));
     }
 }
 

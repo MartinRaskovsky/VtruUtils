@@ -11,13 +11,35 @@ use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
 use Dashboard qw(getWalletsHtml);
-use Utils qw(debugLog logError trimSpaces processWallets printErrorResponse);
+use Utils qw(debugLog logError trimSpaces processWallets );
 use DBUtils qw(putVaultAndWallets);
 use LoginManagment qw(getSessionEmail);
 
 my $MODULE = "driver.cgi";
 
 debugLog($MODULE, "Entered");
+
+sub formatError {
+    my ($message) = @_;
+    return "<font color=red><b>$message</b></font>";
+}
+
+sub getFriendlyErrorMessage {
+    my ($message) = @_;
+
+    my %error_patterns = (
+        qr/cannot start up; retry in 1s/i   => "Service is temporarily unavailable. Retry later.",
+        qr/timeout/i                        => "The request timed out. Retry later.",
+    );
+
+    foreach my $pattern (keys %error_patterns) {
+        if ($message =~ $pattern) {
+            return formatError($error_patterns{$pattern});
+        }
+    }
+
+    return formatError($message);
+}
 
 my $cgi = CGI->new;
 my $type     = $cgi->param('type')     // 'sections';
@@ -57,8 +79,9 @@ if ($error) {
 my $result;
 eval { $result = decode_json($output) };
 if ($@) {
-    logError("JSON Parsing Error: $@");
-    printErrorResponse($cgi, { success => 0, error => "Invalid JSON format received" });
+    print $cgi->header(-type => 'text/html', -charset => 'UTF-8');
+    my $header = getFriendlyErrorMessage($output);
+    print renderPage($header, "", $type);
     exit;
 }
 
