@@ -67,7 +67,7 @@ sub sendConfirmationEmail {
   </ul>
 
   <p>For more information, visit: <a href="https://about.martinr.com/vawa_notes.html" target="_blank">VaWa Notes</a></p>
-  <p>Need help? Contact us at <a href="mailto:vawa2025@gmail.com">vawa2025@gmail.com</a></p>
+  <p>Need help? Contact us at <a href="mailto:vawa2025\@gmail.com">vawa2025\@gmail.com</a></p>
 
   <p><i>Thank you for choosing VaWa!</i></p>
 
