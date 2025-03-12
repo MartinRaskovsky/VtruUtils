@@ -86,7 +86,7 @@ sub generateTotals {
 
 sub renderSections {
     my ($vault, $wallets, $result) = @_;
-    my $name = $result->{name};
+    my $name = $result->{name} // "";
     my $count = 1 + $#{$result->{wallets}};
     my $plural = ($count == 1) ? "" : "es";
     my $title = "$name<br>Analysed $count address$plural";
