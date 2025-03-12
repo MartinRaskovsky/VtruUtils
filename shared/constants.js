@@ -16,6 +16,7 @@ const NET_BSC   = "BSC";
 const SEC_VTRU_HELD   = "VTRU Held";
 const SEC_VTRU_STAKED = "VTRU Staked";
 const SEC_VTRO_HELD   = "VTRO Held";
+const SEC_VUSD        = "VUSD";
 const SEC_WVTRU       = "wVTRU";
 const SEC_VERSE       = "VERSE";
 const SEC_VIBE        = "VIBE";
@@ -44,6 +45,7 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_VTRU_HELD,
         SEC_VTRU_STAKED,
         SEC_VTRO_HELD,
+        SEC_VUSD,
         SEC_WVTRU,
         SEC_VERSE,
         SEC_VIBE,
@@ -67,6 +69,7 @@ if (typeof window !== "undefined") {
         SEC_VTRU_HELD,
         SEC_VTRU_STAKED,
         SEC_VTRO_HELD,
+        SEC_VUSD,
         SEC_WVTRU,
         SEC_VERSE,
         SEC_VIBE,

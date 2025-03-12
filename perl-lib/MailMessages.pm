@@ -48,7 +48,7 @@ sub sendConfirmationEmail {
     <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
     <li>Supports multiple networks:
       <ul>
-        <li>VTRU on Vitruveo, along with staked VTRU, VTRO, wVTRU, VERSE, VIBE, and VORTEX.</li>
+        <li>VTRU on Vitruveo, along with staked VTRU, VUSD, VTRO, wVTRU, VERSE, VIBE, and VORTEX.</li>
         <li>VTRU bridged on ETH and BSC.</li>
         <li>BNB on Binance Smart Chain (BSC) and staked SEVO-X.</li>
         <li>ETH on Ethereum.</li>
