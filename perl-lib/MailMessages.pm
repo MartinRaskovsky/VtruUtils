@@ -16,38 +16,66 @@ sub sendConfirmationEmail {
 <html>
 <head>
   <title>VaWa App Login Code</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+    }
+    h1, h2, h3 {
+        color: #4B0082;
+    }
+    .code-box {
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.5;">
-  <h1 style="color: #4B0082;">Doc's VaWa App<br>Vault & Wallet Details</h1>
+<body>
+  <h1>VaWa App Login Code</h1>
   <p><strong>Your confirmation code:</strong></p>
-  <p style="font-size: 20px; color: red;"><b>$code</b></p>
-  
-  <h2>What is VaWa?</h2>
-  <p><b>VaWa is your multi-network, multi-wallet app.</b> It provides a seamless way to consolidate all your wallet information in one place.</p>
+  <p class="code-box">$code</p>
 
-  <h2>Key Features:</h2>
+  <h2>What is VaWa?</h2>
+  <p><b>VaWa</b> (Vault and Wallet Tracker) is a multi-network, multi-wallet tool that provides a unified view of your assets, eliminating the need to check multiple blockchain explorers individually.</p>
+
+  <h2>Key Features</h2>
   <ul>
-    <li>View all details of your <b>Vitruveo Vault and its associated wallets</b>.</li>
-    <li>Add <b>multiple wallets</b> to track them together.</li>
-    <li>Quickly answer the common question: <i>"Where are my tokens?"</i></li>
-    <li><b>Track all your Vitruveo tokens and coins across every wallet you own, ensuring complete visibility of your assets.</b></li>
-    <li>Track your <b>Vortex tokens</b> on the BSC chain.</li>
-    <li>Monitor your <b>Ethereum-based</b> assets.</li>
+    <li>View details of your Vitruveo Vault and linked wallets.</li>
+    <li>Track all your Vitruveo tokens and coins across multiple wallets in a single dashboard.</li>
+    <li>Find out exactly <i>Where are my tokens?</i> without checking multiple explorers.</li>
+    <li>Discover hidden or forgotten tokens and coins.</li>
+    <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
+    <li>Supports multiple networks:
+      <ul>
+        <li>VTRU on Vitruveo, along with staked VTRU, VTRO, wVTRU, VERSE, VIBE, and VORTEX.</li>
+        <li>VTRU bridged on ETH and BSC.</li>
+        <li>BNB on Binance Smart Chain (BSC) and staked SEVO-X.</li>
+        <li>ETH on Ethereum.</li>
+      </ul>
+    </li>
   </ul>
 
-  <p>Enter your confirmation code to access your VaWa account.</p>
-  
-  <p><i>Thank you for choosing VaWa!</i></p>
+  <h2>How to Use Your Login Code</h2>
+  <p>To access your VaWa account, enter the confirmation code provided above. This code is valid for a limited time and should not be shared with anyone.</p>
 
-  <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-  <p><b>Learn more about VaWa:</b> <a href="https://about.martinr.com/vawa_notes.html" target="_blank">https://about.martinr.com/vawa_notes.html</a></p>
-  <p>For further information, questions, or suggestions, please contact: <a href="mailto:vawa2025\@gmail.com">vawa2025\@gmail.com</a></p>
+  <h2>Security Notes</h2>
+  <ul>
+    <li>VaWa will never ask for your private keys or passwords.</li>
+    <li>Always make sure you are using the official VaWa website.</li>
+    <li>If you did not request this login code, please ignore this email.</li>
+  </ul>
+
+  <p>For more information, visit: <a href="https://about.martinr.com/vawa_notes.html" target="_blank">VaWa Notes</a></p>
+  <p>Need help? Contact us at <a href="mailto:vawa2025@gmail.com">vawa2025@gmail.com</a></p>
+
+  <p><i>Thank you for choosing VaWa!</i></p>
 
 </body>
 </html>
 END_HTML
+
     return sendEmail($email, $subject, $body);
 }
 
 1;
-
