@@ -91,13 +91,25 @@ sub renderSections {
     my $plural = ($count == 1) ? "" : "es";
     my $title = "$name<br>Analysed $count address$plural";
 
-    my $html = <<END_HTML;
-    <h2>$title</h2><div class='table-container'>
-    <table class='stake-table'>
-    <thead><tr><th>WALLET</th><th>CHANGE</th><th>BALANCE</th></tr></thead><tbody>
+    # Count total sections to determine split point
+    my $total_sections = scalar @{$result->{sectionTitles}};
+    my $half = int(($total_sections + 1) / 2); # Ensure even distribution
+    # Start table container
+my $html = <<END_HTML;
+    <h2 class='table-title'>$title</h2><div class='table-container'>
 END_HTML
 
+    my $table_open = 0;
+
     for my $index (0 .. $#{$result->{sectionTitles}}) {
+        # Open new table if needed
+        if ($index == 0 || $index == $half) {
+            $html .= "<table class='stake-table'>
+            <thead><tr><th>WALLET</th><th>CHANGE</th><th>BALANCE</th></tr></thead>
+            <tbody>";
+            $table_open = 1;
+        }
+
         my $section     = $result->{sectionTitles}[$index];
         my $total_key   = $result->{totalKeys}[$index];
         my $section_key = $result->{sectionKeys}[$index];
@@ -157,14 +169,28 @@ $controls
             </tr>
 END_HTML
         }
+
         $html .= "<tr class='spacer-row'><td colspan='3'></td></tr>";
+
+         # Close table at half and end
+        if ($index == $half - 1 || $index == $#{$result->{sectionTitles}}) {
+            $html .= "</tbody></table>";
+            $table_open = 0; 
+        }
     }
-    
+
+       # Close container
+    $html .= "</div>";
+
+
+   # Add Summary table at the end
     my $totals = generateTotals($result);
     $html .=<<END_HTML;
+    <p><center><table class="summary-table">
     <tr class="section-header"><td colspan="3">Summary</td></tr>
+    <tbody>
     $totals
-    </tbody></table></div>
+    </tbody></table></center>
 END_HTML
 
     return $html;

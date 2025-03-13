@@ -47,13 +47,6 @@ textarea {
     min-height: 80px;
 }
 
-.table-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    /*max-width: 900px;*/
-}
-
 table {
     width: auto;
     max-width: 90%;
@@ -290,6 +283,14 @@ button, .stake-btn {
     border-collapse: collapse;
 }
 
+/* Summary table specific styling */
+.summary-table {
+    width: 60%; /* Shrinks the summary table */
+    min-width: 300px; /* Prevents it from being too small */
+    max-width: 600px; /* Ensures readability */
+    margin: 20px auto 80px auto; /* Adds 40px bottom margin */
+}
+
 body, .spacer-row td {
     background-color: #4B0082; /* Purple background */
 }
@@ -372,10 +373,13 @@ button:active, .stake-btn:active {
    background: #9472ac;
 }
 
+.summary-table {
+    background: #9472ac;
+ }
+
 .close {
     background: rgba(255, 255, 255, 0.2);
 }
-
 
 /* Modal related */
 
@@ -437,7 +441,6 @@ button:active, .stake-btn:active {
     background: rgb(53, 6, 82);
 }
 
-
 /* ✅ TABLE HEADER BACKGROUND */
 .modal-content table thead th {
     background-color: #6a0dad !important;
@@ -470,7 +473,6 @@ button:active, .stake-btn:active {
     background-color: transparent; /* Ensures track is fully hidden */
 }
 
-
 /* ✅ CLOSE BUTTON POSITION */
 .close {
     position: absolute;
@@ -489,18 +491,33 @@ button:active, .stake-btn:active {
     background: rgba(255, 255, 255, 0.4);
 }
 
-/* ==== */
-
-/* Ensure the table container does not overflow */
-.table-container {
-    width: 100%;
-    padding: 10px;
-    max-width: 90%; /* Prevent extra space from appearing */
-    /*max-width: 500px;
-    overflow-x: auto; /* Enable scrolling only when necessary */
-    display: block;
+.table-title {
+    margin-top: 20px; /* Adjust as needed */
+    margin-bottom: 40px; /* Adjust as needed */
+    text-align: center;
 }
 
+.table-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start; /* Prevents equal-height tables */
+    gap: 20px; /* Prevent excess spacing causing premature wrapping */
+    max-width: 100%; /* Ensures full width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Ensure tables in the layout are correctly sized */
+.table-container table {
+    width: calc(50% - 10px); /* Forces exact 2-column layout */
+    min-width: 280px; /* Prevents tables from being too small */
+    max-width: 500px; /* Ensures readability */
+    background: white;
+    border-collapse: collapse;
+}
+
+/* WHATCHIT Added might break things or fix scroll */
 /* Make table fully responsive */
 table {
     width: auto; /* Let the table size itself properly */
@@ -508,6 +525,18 @@ table {
     table-layout: auto; /* Allow columns to resize based on content */
     border-collapse: collapse;
 }
+/* WHATCHIT */
+
+/* WHATCHIT 2 */
+/* ✅ Ensure scrollbar does not overlap */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    max-width: calc(100% - 10px); /* ✅ Adjust width to prevent overlap */
+    padding-right: 10px; /* ✅ Creates space for the scrollbar */
+    box-sizing: border-box; /* ✅ Ensures padding doesn’t affect size */
+}
+/* WHATCHIT 2*/
 
 /* Adjust column widths dynamically */
 th, td {
@@ -522,15 +551,6 @@ th, td {
     max-width: 120px; /* Reduce width on small screens */
     overflow-wrap: break-word;
     font-size: 12px;
-}
-
-/* Fix the right band issue */
-.table-container {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto; /* Allow scrolling only when necessary */
-    display: block;
-    padding-right: 0; /* Ensure no unwanted space */
 }
 
 /* ✅ Ensure radio buttons remain aligned */
@@ -558,6 +578,41 @@ th, td {
     gap: 10px;
 }
 
+    .table-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 20px;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Ensure tables align properly */
+    .table-container table {
+        border: none;
+        border-spacing: 0;
+        box-sizing: border-box;
+        margin-top: 0;
+    }
+    
+    /* Normalize first row alignment */
+    .table-container table thead,
+    .table-container table tr:first-child {
+        margin: 0;
+        padding: 0;
+        vertical-align: top;
+    }
+    
+    /* Ensure buttons or controls don’t affect height */
+    .table-container .stake-btn-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    /**** ****/
+ 
 /* ✅ Larger Tablets (max-width: 768px) */
 @media (max-width: 768px) {
     .table-container {
@@ -681,23 +736,6 @@ th, td {
 
 }
 
-/* ✅ Ensure scrollbar does not overlap */
-.table-container {
-    overflow-x: auto;
-    width: 100%;
-    max-width: calc(100% - 10px); /* ✅ Adjust width to prevent overlap */
-    padding-right: 10px; /* ✅ Creates space for the scrollbar */
-    box-sizing: border-box; /* ✅ Ensures padding doesn’t affect size */
-}
-
-/* ✅ Ensure table adjusts within container */
-table {
-    width: 100%;
-    max-width: 100%;
-    table-layout: auto;
-    border-collapse: collapse;
-}
-
 /* Ensure modals start hidden but are properly styled */
 #loginModal, #codeModal {
     display: none; /* Hide initially */
@@ -815,25 +853,35 @@ input#email, input#code {
         opacity: 0.6;
     }
 
-
-    
 /* Debug colors */ 
-/*
-button, .stake-btn{ background: red;}
 
 body {
     max-width: 768px;
 }
 
-@media (max-width: 768px) {
-    button, .stake-btn { background: green;}
+/*
+button, .stake-btn{ background: red;}
+
+@media (max-width: 768px) { button, .stake-btn { background: green;} }
+@media (max-width: 600px) { button, .stake-btn { background: blue;}  }
+@media (max-width: 480px) { button, .stake-btn { background: black;} }
+
+.form-container {
+    border: 2px solid green !important;
+    background: rgba(255, 0, 0, 0.1);
 }
 
-@media (max-width: 600px) {
-    button, .stake-btn { background: blue;}
+.table-container {
+    border: 2px solid red !important;
+    background: rgba(255, 0, 0, 0.1);
+}
+.table {
+    border: 2px solid green !important;
+    background: rgba(0, 0, 255, 0.1);   
 }
 
-@media (max-width: 480px) {
-    button, .stake-btn { background: black;}
+.table-container table {
+    border: 2px solid blue !important;
+    background: rgba(0, 0, 255, 0.1);
 }
 */
