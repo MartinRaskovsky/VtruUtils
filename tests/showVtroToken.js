@@ -19,7 +19,7 @@ async function getBalanceVtro(wallet) {
         const balance = await token.getVtroBalance(wallet);
 
         if (balance) {
-            console.log(`${wallet} ${formatRawNumber(balance, 0)} VTRO`);
+            console.log(`${wallet} ${formatRawNumber(balance, 2)} VTRO`);
         }
 
     } catch (error) {
