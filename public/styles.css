@@ -230,7 +230,7 @@ button, .stake-btn {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 12px;
+    font-size: 10px;
     cursor: pointer;
     height: 10px; /* ✅ Matches button / stake-btn */
     margin: 0;
@@ -238,7 +238,7 @@ button, .stake-btn {
 
 /* ✅ Grouping Label - Move 1px Down */
 .group-label {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
     margin-left: 5px;
     line-height: 24px; /* Ensures alignment */
