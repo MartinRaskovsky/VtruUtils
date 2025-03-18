@@ -17,6 +17,14 @@ sub renderPage {
     debugLog($MODULE, "renderPage(..., $type)");
     
     if ($type eq 'sections') {
+        my $modal =<<END_HTML;
+            <div id="modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <h3>Loading...</h3>
+                    <button onclick="closeModal()" class="stake-btn">Close</button>
+                </div>
+            </div>
+END_HTML
         # ✅ Full page rendering
         return <<"END_HTML";
 <!DOCTYPE html>
@@ -26,10 +34,63 @@ sub renderPage {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Query Results</title>
     <link rel="stylesheet" href="/public/styles.css">
+    <script src="/public/scripts.js" defer></script>  <!-- Ensures scripts run after DOM loads -->
 </head>
-<body>
+<body class="rendered-page" id="rendered-page">
+    <div id="main-wrapper">
+        <div id="header">
+            <button id="backBtn" class="header-btn" onclick="restoreForm()">Back</button>
+            <h1>Vault & Wallet Details</h1>
+            <button id="logoutBtn" class="header-btn" onclick="logout()">Log Out</button>
+        </div>        
+
+        <div id="content">
+            <!-- DRIVER.CGI GENERATED CONTENT STARTS HERE -->
 $header
+$modal
 $body_content
+            <!-- DRIVER.CGI GENERATED CONTENT ENDS HERE -->
+        </div>
+    </div>
+
+    <script>
+    function openModal(type, grouping, vault, wallets) {
+        let modal = document.getElementById("modal");
+        let modalContent = modal.querySelector(".modal-content");
+
+        if (!modal || !modalContent) { 
+            console.log("Missing modal or modal-content");
+            return; 
+        }
+
+        modalContent.innerHTML = "<h3>Loading...</h3>";
+
+        let params = new URLSearchParams({ type, grouping, vault, wallets });
+        fetch("driver.cgi?" + params.toString())
+            .then(response => response.text())
+            .then(html => {
+                modalContent.innerHTML = html;
+                modal.classList.add("active");
+                modal.style.display = "block";
+            })
+            .catch(error => {
+                modalContent.innerHTML = "<h3>Error loading content</h3>";
+                modal.classList.add("active");
+                modal.style.display = "block";
+            });
+    }
+
+    function closeModal() {
+        let modal = document.getElementById("modal");
+        if (!modal) return;
+        modal.style.display = "none";
+        modal.classList.remove("active");  // Hide modal
+    }
+
+</script>
+
+
+    <script src="/public/scripts.js"></script> 
 </body>
 </html>
 END_HTML
@@ -161,7 +222,7 @@ END_HTML
 $controls
               </div>
               <div class="stake-btn-container">
-                  <button onclick="parent.openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
+                  <button onclick="openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
                     View $section Details
                   </button>
                 </div>
@@ -220,9 +281,9 @@ END_HTML
         my ($label) = getLabel('VTRU', $grouping, $row->{wallet});
         $html .= "<tr>";
         $html .= "<td>$label</td>";
-        $html .= "<td>$row->{amount}</td>";
-        $html .= "<td>$row->{reward}</td>";
-        $html .= "<td>$row->{totalStaked}</td>";
+        $html .= "<td class='decimal-align'>$row->{amount}</td>";
+        $html .= "<td class='decimal-align'>$row->{reward}</td>";
+        $html .= "<td class='decimal-align'>$row->{totalStaked}</td>";
         $html .= "<td>$row->{availableToUnstake}</td>";
         $html .= "<td>$row->{estimatedMaturity}</td>";
         $html .= "</tr>";
@@ -282,8 +343,8 @@ END_HTML
         $html .= "<tr>";
         $html .= "<td>$label</td>";
         $html .= "<td>$row->{date}</td>";
-        $html .= "<td>$row->{locked}</td>";
-        $html .= "<td>$row->{unlocked}</td>";
+        $html .= "<td class='decimal-align'>$row->{locked}</td>";
+        $html .= "<td class='decimal-align'>$row->{unlocked}</td>";
         $html .= "</tr>";
     }
 

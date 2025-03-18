@@ -10,33 +10,30 @@ use MailMessages qw(sendConfirmationEmail);
 use Utils qw(logError debugLog trimSpaces);
 
 my $MODULE = "login.cgi";
+debugLog($MODULE, "Entered");
+
+# ✅ Print environment variables to debug server configuration
+#debugLog($MODULE, "Environment Variables:");
+#foreach my $key (sort keys %ENV) {
+#    debugLog($MODULE, "$key => $ENV{$key}");
+#}
 
 my $cgi = CGI->new;
 print $cgi->header('text/html');
-debugLog($MODULE, "Entered");
 
 my $email = trimSpaces(scalar $cgi->param('email'));
-my $keep_logged_in = $cgi->param('keepLoggedIn') // "0";  # Default to "0" (not kept logged in)
+my $keep_logged_in = $cgi->param('keepLoggedIn') // "0";
 
-# ✅ Validate email format
 if (!$email || $email !~ /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/) {
-    $email = $email // "";
     logError("Invalid email address \"$email\"");
-    print "Invalid email address \"$email\"\n";
+    print "<p>Invalid email address \"$email\"</p>";
     exit;
 }
 
-# ✅ Store confirmation code
-my $code = int(rand(900000)) + 100000;  # Ensures a 6-digit number
+my $code = int(rand(900000)) + 100000;
 putConfirmationCode($email, $code);
-
-# ✅ Store "keep me logged in" preference in the database
 updateKeepLoggedIn($email, $keep_logged_in);
-
-# ✅ Send confirmation email
 sendConfirmationEmail($email, $code);
 
-# ✅ Notify the user
-print "<h2>Check your email for the confirmation code.</h2>";
-print "<script>setTimeout(() => { openModal('codeModal'); }, 2000);</script>";
-
+# ✅ Redirect to the confirmation page
+print "<meta http-equiv='refresh' content='0; url=confirm.cgi?email=$email'>";

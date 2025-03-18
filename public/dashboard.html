@@ -19,11 +19,6 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-        }
-
-        body {
-            overflow-y: scroll;
-            padding-right: var(--scrollbar-width, 0px);
             background-color: rgb(75, 0, 130) !important;
         }
 
@@ -34,77 +29,39 @@
             min-height: 100vh;
         }
 
-        #outputFrame {
-            width: 100%;
-            border: none;
-            background-color: transparent;
-            min-height: 600px;
-            height: auto;
-            display: block;
-            margin: 20px auto 0px auto;
+        .form-container {
+            text-align: center;
+            margin-top: 20px;
         }
 
+        #content {
+            width: 100%;
+        }
     </style>
 </head>
-<body>
+<body class="dashboard-page" id="dashboard-page">
 
     <div id="main-wrapper">
         <div id="header">
+            <button id="backBtn" class="header-btn" onclick="restoreForm()">Back</button>
             <h1>Vault & Wallet Details</h1>
-            <button id="logoutBtn" onclick="logout()">Logout</button>
-        </div>
-        <form action="driver.cgi" method="GET" target="outputFrame">
-            <div class="form-container">
+            <button id="logoutBtn" class="header-btn" onclick="logout()">Log Out</button>
+        </div>        
+        <div id="content">
+            <form id="detailsForm">
+                <div class="form-container">
 <!--main-input-BEGIN-->
-                <label for="vaultAddress">Vault:</label>
-                <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="validateForm()">
-            
-                <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-                <textarea id="walletAddresses" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()"></textarea>
-          
-                <button type="submit" id="getDetailsBtn" disabled>Get Details</button>
+                    <label for="vaultAddress">Vault:</label>
+                    <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="validateForm()">
+                    <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
+                    <textarea id="walletAddresses" rows="5" cols="42" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()"></textarea>
+                    <button type="submit" id="getDetailsBtn" disabled>Get Details</button>
 <!--main-input-END-->
-            </div>
-        </form>
-    
-        <iframe id="outputFrame" name="outputFrame" src="about:blank"></iframe>
-    </div>
-
-    <div id="modalOverlay"></div>
-    
-    <!-- ✅ Authentication Modals -->
-    <div id="loginModal" class="modal">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <div class="modal-content">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-
-                <!-- ✅ "Keep me logged in" toggle -->
-                <div class="toggle-container">
-                    <input type="checkbox" id="keepLoggedIn" name="keepLoggedIn">
-                    <label for="keepLoggedIn">Keep me logged in</label>
                 </div>
-
-                <button type="submit">Login / Sign Up</button>
-            </div>
-        </form>  
+            </form>
+        </div>
     </div>
 
-    <div id="codeModal" class="modal">
-        <h2>Enter Confirmation Code</h2>
-        <form id="codeForm">
-            <div class="modal-content">
-                <label for="code">Code:</label>
-                <input type="text" id="code" name="code" required pattern="\d{6}" maxlength="6">
-                <button type="submit" id="confirmButton" disabled style="cursor: not-allowed; opacity: 0.5;">
-                    Confirm
-                </button>
-            </div>
-        </form>
-    </div>    
-
-    <!-- ✅ Vault Details Modal (Original functionality) -->
     <div id="modal" class="modal" style="display:none;">
         <div class="modal-content">
             <h3>Loading...</h3>
@@ -112,173 +69,65 @@
         </div>
     </div>
 
-
     <script>
         function isValidWeb3Address(address) {
             return /^0x[a-fA-F0-9]{40}$/.test(address.trim());
         }
-        
+
         function validateForm() {
             const vaultInput = document.getElementById('vaultAddress');
             const walletInput = document.getElementById('walletAddresses');
-             const button = document.getElementById('getDetailsBtn');
+            const button = document.getElementById('getDetailsBtn');
 
-            // If elements are not found, exit function early
-            if (!vaultInput || !walletInput || !button) {
-                return;
-            }
+            if (!vaultInput || !walletInput || !button) return;
 
             const vaultAddress = vaultInput.value.trim();
             const walletAddresses = walletInput.value.trim();
 
-            //console.log(`vaultAddress=${vaultAddress}`);
-            //console.log(`walletAddresses=${walletAddresses}`);
-    
             let isValidVault = vaultAddress.length === 0 || isValidWeb3Address(vaultAddress);
             let walletList = walletAddresses.split(/\s+/).map(addr => addr.trim()).filter(addr => addr !== '');
             let isValidWallets = walletList.length === 0 || walletList.every(isValidWeb3Address);
 
-            if ((vaultAddress !== '' || walletAddresses !== '') && isValidVault && isValidWallets) {
-                button.disabled = false;
-            } else {
-                button.disabled = true;
-            }
+            button.disabled = !(vaultAddress || walletAddresses) || !isValidVault || !isValidWallets;
         }
-        </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // ✅ Authentication Modals
-            window.openAuthModal = function (id) {
-                let modal = document.getElementById(id);
-                let overlay = document.getElementById("modalOverlay");
-
-                if (modal) {
-                    modal.style.display = "block";
-                    modal.style.visibility = "visible";
-                    modal.style.opacity = "1";
-
-                    overlay.style.display = "block"; // Show background overlay
-                } else {
-                    console.error(`❌ Modal ${id} not found`);
-                }
-            };
-
-            window.closeAuthModal = function (id) {
-                let modal = document.getElementById(id);
-                let overlay = document.getElementById("modalOverlay");
-
-                if (modal) {
-                    modal.style.display = "none";
-                    overlay.style.display = "none"; // Hide background overlay
-                }
-            };
-
-            function checkLoginStatus() {
-                let isAuthenticated = document.cookie.includes("authenticated=true");
-                if (!isAuthenticated) {
-                    openAuthModal("loginModal"); // ✅ Now safe to call
-                }
-            }
-
-            // ✅ Iframe Handling
-            let iframe = document.getElementById("outputFrame");
-
-            function adjustIframeHeight() {
-                if (!iframe || !iframe.contentWindow.document.body) return;
-                requestAnimationFrame(() => {
-                    let contentHeight = iframe.contentWindow.document.body.scrollHeight;
-                    let maxHeight = window.innerHeight - 100;
-                    iframe.style.height = Math.min(contentHeight, maxHeight) + "px";
-                });
-            }
-
-            iframe.onload = function () {
-                setTimeout(adjustIframeHeight, 200);
-                observeIframeChanges();
-            };
-
-            function observeIframeChanges() {
-                if (!iframe || !iframe.contentWindow.document.body) return;
-                let observer = new MutationObserver(adjustIframeHeight);
-                observer.observe(iframe.contentWindow.document.body, { childList: true, subtree: true });
-            }
-
-            window.onresize = adjustIframeHeight;
-
-            // ✅ Login Form Handling (Now Includes "Keep Me Logged In" Option)
-            document.getElementById("loginForm").addEventListener("submit", function (event) {
-                event.preventDefault();
-                let email = document.getElementById("email").value;
-                let keepLoggedIn = document.getElementById("keepLoggedIn").checked ? "1" : "0"; // ✅ Capture toggle state
-
-                fetch("login.cgi?email=" + encodeURIComponent(email) + "&keepLoggedIn=" + keepLoggedIn)
-                    .then(response => response.text())
-                    .then(() => {
-                        closeAuthModal("loginModal");
-                        openAuthModal("codeModal");
-                    })
-                    .catch(error => console.error("Login Error:", error));
-            });
-
-            // ✅ Confirmation Code Handling (With Fixed Button Behavior)
-            let codeInput = document.getElementById("code");
-            let confirmButton = document.getElementById("confirmButton");
-
-            function validateCodeInput() {
-                let codeValue = codeInput.value.trim();
-                let isValid = /^\d{6}$/.test(codeValue);
-                
-                confirmButton.disabled = !isValid; // Enable only if exactly 6 digits
-                
-                if (isValid) {
-                    confirmButton.style.cursor = "pointer"; 
-                    confirmButton.style.opacity = "1"; // Full visibility when enabled
-                } else {
-                    confirmButton.style.cursor = "not-allowed"; 
-                    confirmButton.style.opacity = "0.5"; // Greyed-out effect
-                }
-            }
-
-            codeInput.addEventListener("input", validateCodeInput);
-            validateCodeInput(); // Initialize button state on page load
-
-            document.getElementById("codeForm").addEventListener("submit", function (event) {
-                event.preventDefault();
-                let code = codeInput.value;
-
-                fetch("confirm.cgi?code=" + encodeURIComponent(code))
-                    .then(response => response.text())
-                    .then(html => {
-                        if (html.includes("Success")) {
-                            closeAuthModal("codeModal");
-                            toggleLogoutButton(true);
-                            let formContainer = document.querySelector(".form-container");
-                            if (formContainer) {
-                                formContainer.innerHTML = html;
-                            } else {
-                                console.error("❌ .form-container not found!");
-                            }
-                        } else {
-                            alert(`Invalid code ${code}. Try again.`);
-                        }
-                    })
-                    .catch(error => console.error("Code Verification Error:", error));
-            });
-
-            // ✅ Run Initial Checks
-            checkLoginStatus();
-            checkSession();
+        document.getElementById('detailsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const vaultAddress = document.getElementById('vaultAddress').value.trim();
+            const walletAddresses = document.getElementById('walletAddresses').value.trim();
+            const contentDiv = document.getElementById('content');
+            const backBtn = document.getElementById('backBtn');
+            const params = new URLSearchParams();
+            if (vaultAddress) params.append('vault', vaultAddress);
+            if (walletAddresses) params.append('wallets', walletAddresses);
+            /*fetch(`driver.cgi?${params.toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                    backBtn.style.display = "inline-block";
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    contentDiv.innerHTML = "<p style='color:red; text-align:center;'><b>Error loading data. Please try again.</b></p>";
+                });*/
+            window.location.href = `driver.cgi?${params.toString()}`;
         });
 
-        // ✅ Vault Details Modal (RESTORED TO OUTSIDE DOMContentLoaded)
-        window.openModal = function (type, grouping, vault, wallets) {
+        function openModal(type, grouping, vault, wallets) {
+
             let modal = document.getElementById("modal");
-            let modalContent = modal.querySelector(".modal-content");
+            let modalContent = modal ? modal.querySelector(".modal-content") : null;
 
-            if (!modal || !modalContent) return console.error("❌ Modal not found");
+            if (!modal || !modalContent) { 
+                console.log("❌ Missing modal or modal-content"); 
+                return; 
+            }
 
-            modalContent.innerHTML = "<h3>Loading...</h3>";
+            modalContent.innerHTML = "<h3>Loading...</h3>"; // Default loading state
+            modal.style.display = "block"; // Ensure modal appears
+            modal.style.visibility = "visible";
+            modal.style.opacity = "1";
+            modal.style.zIndex = "1000";
 
             let params = new URLSearchParams({ type, grouping, vault, wallets });
 
@@ -286,85 +135,42 @@
                 .then(response => response.text())
                 .then(html => {
                     modalContent.innerHTML = html;
-                    modal.style.display = "block";
-                    modal.classList.add("active");
+                    modal.style.display = "block"; // Re-confirm display in case of delay
                 })
                 .catch(error => {
-                    modalContent.innerHTML = "<h3>Error loading content</h3>";
+                    modalContent.innerHTML = "<h3 style='color:red;'>Error loading content</h3>";
                     modal.style.display = "block";
-                    console.error("Fetch error:", error);
                 });
-        };
+        }
 
-        window.closeModal = function () {
+        function closeModal() {
             let modal = document.getElementById("modal");
             if (!modal) return;
 
-            modal.classList.remove("active");
+            modal.style.opacity = "0"; // Smooth fade out
+            modal.style.visibility = "hidden";
 
             setTimeout(() => {
-                modal.style.display = "none";
-            }, 200);
-        };
-
-        // ✅ Logout & Session Handling (RESTORED TO OUTSIDE DOMContentLoaded)
-        function deleteCookie(name) {
-            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+                modal.style.display = "none"; // Completely hide after transition
+            }, 300);
         }
 
-        function logout() {
-            deleteCookie('session_id');  // Remove session cookie
-            toggleLogoutButton(false);   // Hide logout button
-            
-            // OPTIONAL: Notify the server
-            fetch("logout.cgi", { method: 'GET', credentials: 'include' })
-                .then(() => location.reload()); // Reload the page
-        }
-
-        function toggleLogoutButton(show) {
-            document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
-        }
-
-        // ✅ Check Session on Load (RESTORED)
-        window.checkSession = function () {
+        window.checkSession = function() {
             if (document.cookie.includes('session_id=')) {
                 toggleLogoutButton(true);
             }
         };
 
-        // ✅ Run Session Check
-        checkSession();
-
-    </script>
-
-    <script>
-        function deleteCookie(name) {
-            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-        }
-
         function toggleLogoutButton(show) {
             document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
         }
 
-        window.checkSession = function() {
-            // Client-side cookie check (only works if session_id is NOT HttpOnly)
-            let cookies = document.cookie.split(';').map(cookie => cookie.trim());
-            let hasSession = cookies.some(cookie => /^session_id=/.test(cookie));
-            hasSession = hasSession || (typeof sessionExists !== "undefined" && sessionExists);
+        // ✅ Ensure it runs on page load properly
+        document.addEventListener("DOMContentLoaded", checkSession);
 
-            if (hasSession) {
-                toggleLogoutButton(true);
-            }
-        }
-
-        // Ensure checkSession runs after page load
-        document.addEventListener('DOMContentLoaded', checkSession);
-
-        // Server-side session check
-        if (typeof sessionExists !== "undefined" && sessionExists) {
-            toggleLogoutButton(true);
-        }
     </script>
-
+    <script src="/public/scripts.js"></script> 
+    
 </body>
 </html>
+

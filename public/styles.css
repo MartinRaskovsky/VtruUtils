@@ -1,16 +1,38 @@
-/* General Layout */
 body {
     font-family: 'Poppins', sans-serif;
     color: white;
-    margin: auto;
+    margin: 0;
     padding: 0;
     text-align: center;
     font-size: 14px;
     padding-bottom: 40px;
+
+    display: flex;
+    flex-direction: column; /* Stack content properly */
+    align-items: center; /* Centers horizontally */
+    justify-content: flex-start; /* Aligns to the top */
+    min-height: 100vh; /* Ensures full height */
 }
 
-html, body {
-    max-width: 900px;
+#main-wrapper {
+    max-width: 900px; /* Prevents excessive width */
+    width: 100%; /* Ensures responsiveness */
+    margin: 0 auto; /* Ensures horizontal centering */
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /* Centers the page */
+    align-items: flex-start; /* Prevents unwanted vertical centering */
+}
+
+
+#main-wrapper {
+    max-width: 900px; /* Ensures a reasonable width */
+    width: 100%; /* Ensures it stretches properly */
+    margin: 0 auto; /* Centers horizontally */
 }
 
 label {
@@ -158,6 +180,7 @@ pre {
 .decimal-align {
     text-align: right;
     padding-right: 8px;
+    font-variant-numeric: tabular-nums; /* Ensures monospaced number width */
 }
 
 /* Change column alignment */
@@ -174,12 +197,6 @@ pre {
 .diff-value.decrease, .balance-cell.decrease, .diff-cell.decrease {
     color: #b63c3c;
     font-weight: bold;
-}
-
-/* Ensure decimal values are aligned properly */
-.decimal-align {
-    text-align: right;
-    padding-right: 8px;
 }
 
 /* Form Styling */
@@ -341,6 +358,12 @@ button:active, .stake-btn:active {
     box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.3); /* Add an inset shadow for depth */
 }
 
+input:focus, textarea:focus {
+    outline: 2px solid #6A0DAD !important;
+    border-color: #6A0DAD !important;
+    box-shadow: 0px 0px 5px rgba(106, 13, 173, 0.7) !important;
+}
+
 .total-row, .stake-controls {
     background-color: #b090c8;
 }
@@ -436,8 +459,9 @@ button:active, .stake-btn:active {
 }
 
 .modal.active {
-    visibility: visible;
-    opacity: 1;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     background: rgb(53, 6, 82);
 }
 
@@ -736,6 +760,15 @@ th, td {
 
 }
 
+/* Centered Page Title */
+h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 22px;
+    margin: 0;
+    color: white;
+}
+
 /* Ensure modals start hidden but are properly styled */
 #loginModal, #codeModal {
     display: none; /* Hide initially */
@@ -763,52 +796,75 @@ th, td {
     z-index: 1000; /* Below modal but above everything else */
 }
 
-/* Center the title while keeping Logout at the top-right */
+/* Header Styling - Ensures proper button and title alignment */
 #header {
     display: flex;
     align-items: center;
-    /*justify-content: center; /* Keep title centered */
-    position: relative;
+    justify-content: space-between;  /* Back (left), Title (center), Logout (right) */
+    width: 100%;
     padding: 10px 20px;
+    position: relative;
 }
 
-#header H1 {
-    transform: translate(10px, 0px);
+/* Centered Title */
+#header h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 22px;
+    margin: 0;
 }
-        
-#logoutBtn {
-    background-color: #6f42c1; /* Match other buttons */
-    color: white;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-size: 12px;
+
+/* General Button Styling - Shared by Back and Logout */
+.header-btn {
+    padding: 6px 6px;
+    font-size: 10px;
     font-weight: bold;
+    color: white;
+    background-color: #6f42c1;
+    cursor: pointer;
     border-radius: 5px;
-    position: absolute;
-    right: 20px; /* Align to top-right */
-    top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap; /* Prevent stretching */
-    width: auto; /* Ensures the button fits its text */
-    min-width: unset; /* Overrides global button min-width */
-    max-width: none; /* Ensures it does not inherit unwanted max-width */
-    display: none; /* Initially hidden */
+    white-space: nowrap;
+    width: auto;  /* Allow flexible sizing */
+    min-width: unset;
+    max-width: none;
     border: 1px solid #492853;
 }
-        
-#logoutBtn:hover {
+
+/* Back Button - Left Aligned */
+#backBtn {
+    margin-right: auto; /* Ensures left alignment */
+    transform: translate(-20px, 0);
+}
+
+/* Logout Button - Right Aligned */
+#logoutBtn {
+    display: none; /* Initially hidden */
+    margin-left: auto; /* Ensures right alignment */
+    transform: translate(-20px, 0);
+}
+
+/* Hover Effects */
+.header-btn:hover {
     background-color: #5a34a3;
 }
-        
+
+/* Show Logout button when enabled */
+#logoutBtn:not([style*="display: none"]) {
+    display: inline-block !important;
+}
+
+#backBtn:disabled {
+    background-color: #444 !important; /* Darker color */
+    color: #888 !important; /* Dim text */
+    cursor: not-allowed !important;
+}
+
 input#email, input#code {
     color: white;
     padding: 5px;
     background: rgba(255, 255, 255, 0.1);
 }
 
-#logoutBtn { 
-    transform: translate(-10px, -30px);
-}
 
 /* ✅ Style for "Keep Me Logged In" toggle */
 .toggle-container {
