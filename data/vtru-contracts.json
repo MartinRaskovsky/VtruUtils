@@ -22,7 +22,9 @@
     "VTRU": "0x931AC5400ba4BD2d882Ef6Bc3C5714113f2a4d29",
     "VERSE": "0x72D2bFb14b3351d17A63Cd4c8085E034e313c54c",
     "SEVO": "0x2A34059DF3D60B1864f10F10492746bd26d3D24a",
-    "VTRO": "0xDECAF2f187Cb837a42D26FA364349Abc3e80Aa5D"
+    "VTRO": "0xDECAF2f187Cb837a42D26FA364349Abc3e80Aa5D",   
+    "V3DEX": "0x8174Abe8B11225EAB76Ba007A62C602369f8E46e",
+    "VITDEX": "0x96Fb9a1Cb848865d8B7698ab3F645B85F37888b8"
   },
   "testnet": {
     "AssetRegistry": "0xeC84C281396C4E971586E0707FA39585073E6403",
@@ -23913,6 +23915,52 @@
       {
         "type": "receive",
         "stateMutability": "payable"
+      }
+    ],
+    "V3DEX": [
+      {
+        "constant": true,
+        "inputs": [{"name": "owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "", "type": "uint256"}],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ],
+    "VITDEX": [
+      {
+        "type": "function",
+        "name": "getVitdexNFTByOwner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "tokenId"
+              },
+              {
+                "type": "uint256",
+                "name": "units"
+              },
+              {
+                "type": "uint256",
+                "name": "claimed"
+              }
+            ]
+          }
+        ]
       }
     ]
   }

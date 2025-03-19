@@ -75,16 +75,19 @@ if [ -f "$PROJECT_ROOT/public/index.html" ]; then
     echo "🌐 Adjusting Apache paths in HTML files..."
 
     # Modify action attributes in forms
-    sed -i 's|action="driver.cgi"|action="/cgi-bin/driver.cgi"|g' "$PROJECT_ROOT/public/dashboard.html"
+    sed -i 's|action="login.cgi"|action="/cgi-bin/login.cgi"|g' "$PROJECT_ROOT/cgi-bin/index.cgi"
+    sed -i 's|action="confirm.cgi|action="/cgi-bin/confirm.cgi|g' "$PROJECT_ROOT/cgi-bin/confirm.cgi"
+    sed -i 's|href="index.cgi|href="/cgi-bin/index.cgi|g' "$PROJECT_ROOT/cgi-bin/confirm.cgi"
+    sed -i 's|url=confirm.cgi?|url=/cgi-bin/confirm.cgi?|g' "$PROJECT_ROOT/cgi-bin/login.cgi"
 
     # Modify fetch() calls for CGI scripts
-    sed -i 's|fetch("login.cgi?|fetch("/cgi-bin/login.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
-    sed -i 's|fetch("logout.cgi?|fetch("/cgi-bin/logout.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
-    sed -i 's|fetch("confirm.cgi?|fetch("/cgi-bin/confirm.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
-    sed -i 's|fetch("driver.cgi?|fetch("/cgi-bin/driver.cgi?|g' "$PROJECT_ROOT/public/dashboard.html"
+    sed -i 's|fetch("logout.cgi|fetch("/cgi-bin/logout.cgi|g' "$PROJECT_ROOT/public/scripts.js"
+    sed -i 's|fetch("driver.cgi?|fetch("/cgi-bin/driver.cgi?|g' "$PROJECT_ROOT/perl-lib/Render.pm"
 
     # Modify redirection in JavaScript
     sed -i 's|window.location.href="index.cgi"|window.location.href="/cgi-bin/index.cgi"|g' "$PROJECT_ROOT/public/index.html"
+    sed -i 's|window.location.href = "index.html?|window.location.href = "/vawa/index.html?|g' "$PROJECT_ROOT/public/scripts.js"
+    sed -i 's|Location: index.html?|Location: /vawa/index.html?|g' "$PROJECT_ROOT/cgi-bin/logout.cgi"
 else
     echo "⚠️ Warning: index.html not found, skipping update"
 fi

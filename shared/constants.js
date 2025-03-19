@@ -21,6 +21,8 @@ const SEC_WVTRU       = "wVTRU";
 const SEC_VERSE       = "VERSE";
 const SEC_VIBE        = "VIBE";
 const SEC_VORTEX      = "VORTEX";
+const SEC_V3DEX       = "V3TEX";
+const SEC_VITDEX      = "VITDEX";
 const SEC_SEVOX       = "SEVO-X Staked";
 const SEC_VTRU_ETH    = "VTRU ETH Bridged";
 const SEC_VTRU_BSC    = "VTRU BSC Bridged";
@@ -52,6 +54,8 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_VERSE,
         SEC_VIBE,
         SEC_VORTEX,
+        SEC_V3DEX,
+        SEC_VITDEX,
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
@@ -78,6 +82,8 @@ if (typeof window !== "undefined") {
         SEC_VERSE,
         SEC_VIBE,
         SEC_VORTEX,
+        SEC_V3DEX,
+        SEC_VITDEX,
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
