@@ -30,7 +30,7 @@ async function getBalanceUsdcBsc(wallet) {
 async function main() {
     const wallet = process.argv[2];
     if (!wallet) {
-        console.error("Usage: showUsdcBscToken.js <wallet_address>");
+        console.error("Usage: showUsdcBsc.js <wallet_address>");
         process.exit(1);
     }
 

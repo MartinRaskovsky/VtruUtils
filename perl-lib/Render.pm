@@ -4,7 +4,7 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( getDetailType getExplorerURL);
+use Defs qw ( getDetailType getExplorerURL getBrandingColor);
 use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
 
 use Exporter 'import';
@@ -115,12 +115,17 @@ END_HTML
 }
 
 sub generateTotalRow {
-    my ($section, $diff, $value) = @_;
+    my ($section, $brandColor, $diff, $value) = @_;
+    my $brand = "";
+    if ($brandColor ne "") {
+       $brand = "<div style='width: 12px; height: 12px; background-color: $brandColor; border-radius: 50%; display: inline-block; margin-right: 8px;'></div>";
+    }
     $diff = $diff // "";
     if ($diff eq "") { $diff = "&nbsp;" }
+    
     my $html = <<END_HTML;
         <tr class='total-row'>
-            <td><strong>Total $section</strong></td>
+            <td>$brand<strong>Total $section</strong></td>
             <td class='diff-cell'>$diff</td>
             <td class='balance-cell decimal-align'>$value</td>
         </tr>
@@ -129,18 +134,20 @@ END_HTML
 }
 
 sub generateTotal {
-    my ($result, $index) = @_;
+    my ($result, $index, $branded) = @_;
     my $diff_totals = "diff_totals";
-    my $section = $result->{sectionTitles}[$index];
+    my $section = $branded ? $result->{sectionTitles}[$index]: "";
     my $total_key = $result->{totalKeys}[$index];
-    return generateTotalRow($section, $result->{$diff_totals}[$index], $result->{$total_key});
+    my $networkKey  = $result->{networkKeys}[$index];
+    my $brandColor  = $branded ? getBrandingColor($networkKey): "";
+    return generateTotalRow($section, $brandColor, $result->{$diff_totals}[$index], $result->{$total_key});
 }
 
 sub generateTotals {
     my ($result) = @_;
     my $html = "";
     for my $index (0 .. $#{$result->{sectionTitles}}) {
-        $html .= generateTotal($result, $index);
+        $html .= generateTotal($result, $index, 1);
     }
     return $html;
 }
@@ -175,6 +182,7 @@ END_HTML
         my $total_key   = $result->{totalKeys}[$index];
         my $section_key = $result->{sectionKeys}[$index];
         my $networkKey  = $result->{networkKeys}[$index];
+        my $brandColor  = getBrandingColor($networkKey);
         my $controls = "";
 
         if ($section eq "VTRU Staked") {
@@ -191,7 +199,15 @@ END_HTML
 END_HTML
         }
 
-        $html .= "<tr class='section-header'><td colspan='3'>$section</td></tr>";
+        $html .=<<END_HTML;
+<tr class='section-header'>
+  <td colspan='2'>$section</td>
+  <td style="text-align: right;">
+    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
+  </td>
+</tr>
+END_HTML
+
 
         for my $wallet_index (0 .. $#{$result->{wallets}}) {
             my $wallet = $result->{wallets}[$wallet_index];
@@ -205,7 +221,7 @@ END_HTML
             $html .= generateBalanceRow($address, $diff_display, $balance);
         }
 
-        $html .= generateTotal($result, $index);
+        $html .= generateTotal($result, $index, 0);
 
         my $type = getDetailType($section);
         if ($type ne "") {

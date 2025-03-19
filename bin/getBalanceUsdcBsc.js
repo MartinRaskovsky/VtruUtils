@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves vtru bsc balance for given wallet addresses.
+ * Retrieves USDC balances for given wallet addresses.
  *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -9,19 +9,19 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenVtruBsc = require("../lib/tokenVtruBsc");
+const TokenUsdc = require("../lib/tokenUsdcBsc");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_SEC_VTRU_BSC_HELD } = require('../shared/constants');
+const { SEC_USDC_BSC } = require('../shared/constants');
 
-const TITLE = SEC_SEC_VTRU_BSC_HELD;
+const TITLE = SEC_USDC_BSC;
 const KEYS = ['wallet', 'balance'];
 
 /**
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log("\nUsage: getBalanceVtruBscHeld.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceUsdcBsc.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -38,11 +38,11 @@ function showUsage() {
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const bsc = new Web3(Web3.BSC);
-        const token = new TokenVtruBsc(bsc);
+        const net = new Web3(Web3.BSC);
+        const token = new TokenUsdc(net);
 
         // Retrieve associated wallets if vault address is provided
-        const { merged } = await VtruVault.mergeWallets(bsc, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(net, vaultAddress, wallets);
         const balances = await token.getBalances(merged);
         let totalBalance = 0n;
         const formattedData = [];
@@ -50,19 +50,19 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
         merged.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
-                formattedData.push({ wallet, balance: formatRawNumber(balance, 4) });
+                formattedData.push({ wallet, balance: formatRawNumber(balance) });
                 totalBalance += balance;
             }
         });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totalBalance, 4),
+            balance: formatRawNumber(totalBalance),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
     } catch (error) {
-        console.error("❌ Error retrieving vtru bsc balances:", error.message);
+        console.error("❌ Error retrieving USDC held balances:", error.message);
     }
 }
 

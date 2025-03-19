@@ -2,7 +2,7 @@ package Defs;
 use strict;
 use warnings;
 use Exporter 'import';
-our @EXPORT_OK = qw(getScriptForType getDetailType getExplorerURL getRenderFunction );
+our @EXPORT_OK = qw(getScriptForType getDetailType getExplorerURL getRenderFunction getBrandingColor);
 
 # Define script mapping
 my %script_map = (
@@ -27,6 +27,15 @@ my %explorers = (
     'ETH'  => "https://etherscan.io/address/",
     'VTRU' => "https://explorer.vitruveo.xyz/address/"
 );
+
+# Define network branding color
+my %branding = (
+    'BSC'  => "#F3BA2F",
+    'ETH'  => "#627EEA",
+    'VTRU' => "#8247E5",
+    'POL'  => "#282A36"
+);
+
 
 # Define render function mapping
 my %render_map = (
@@ -63,5 +72,12 @@ sub getRenderFunction {
     my ($type) = @_;
     return $render_map{$type} // die "Unknown render function for type: $type";
 }
+
+# Retrieve branding color for network
+sub getBrandingColor {
+    my ($network) = @_;
+    return $branding{$network} // die "Unknown render function for network: $network";
+}
+
 
 1;

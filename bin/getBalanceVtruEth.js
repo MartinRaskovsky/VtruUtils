@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves SEC_VTRU_ETH held balance for given wallet addresses.
+ * Retrieves vtru eth held balance for given wallet addresses.
  *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -62,7 +62,7 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
     } catch (error) {
-        console.error("❌ Error retrieving SEC_VTRU_ETH held balances:", error.message);
+        console.error("❌ Error retrieving vtru eth balances:", error.message);
     }
 }
 
