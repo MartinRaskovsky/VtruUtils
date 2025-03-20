@@ -26,6 +26,7 @@ const SEC_VITDEX      = "VITDEX";
 const SEC_SEVOX       = "SEVO-X Staked";
 const SEC_VTRU_ETH    = "VTRU ETH Bridged";
 const SEC_VTRU_BSC    = "VTRU BSC Bridged";
+const SEC_USDC_POL    = "USDC POL";
 const SEC_USDC_ETH    = "USDC ETH";
 const SEC_USDC_BSC    = "USDC BSC";
 const SEC_ETH         = "ETH";
@@ -61,6 +62,7 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_BNB,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
+        SEC_USDC_POL,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
         NET_VTRU,
@@ -89,6 +91,7 @@ if (typeof window !== "undefined") {
         SEC_BNB,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
+        SEC_USDC_POL,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
         NET_VTRU,

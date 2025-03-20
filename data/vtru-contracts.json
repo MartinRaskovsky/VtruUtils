@@ -24,7 +24,8 @@
     "SEVO": "0x2A34059DF3D60B1864f10F10492746bd26d3D24a",
     "VTRO": "0xDECAF2f187Cb837a42D26FA364349Abc3e80Aa5D",   
     "V3DEX": "0x8174Abe8B11225EAB76Ba007A62C602369f8E46e",
-    "VITDEX": "0x96Fb9a1Cb848865d8B7698ab3F645B85F37888b8"
+    "VITDEX": "0x96Fb9a1Cb848865d8B7698ab3F645B85F37888b8",
+    "USDC": "0xbCfB3FCa16b12C7756CD6C24f1cC0AC0E38569CF"
   },
   "testnet": {
     "AssetRegistry": "0xeC84C281396C4E971586E0707FA39585073E6403",
@@ -23915,6 +23916,17 @@
       {
         "type": "receive",
         "stateMutability": "payable"
+      }
+    ],
+    "USDC": [
+      {
+        "constant": true,
+        "inputs": [{"name": "owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "", "type": "uint256"}],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
       }
     ],
     "V3DEX": [

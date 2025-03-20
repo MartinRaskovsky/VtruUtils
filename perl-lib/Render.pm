@@ -116,17 +116,23 @@ END_HTML
 
 sub generateTotalRow {
     my ($section, $brandColor, $diff, $value) = @_;
-    my $title = ($section eq "")? "Total" : "";
     my $brand = "";
     if ($brandColor ne "") {
        $brand = "<div style='width: 12px; height: 12px; background-color: $brandColor; border-radius: 50%; display: inline-block; margin-right: 8px;'></div>";
     }
     $diff = $diff // "";
     if ($diff eq "") { $diff = "&nbsp;" }
+
+    my $label = "";
+    if ($section eq "") {
+        $label = "Total";
+    } else {
+        $label = "<a href='#$section'>$section</a>";
+    }
     
     my $html = <<END_HTML;
         <tr class='total-row'>
-            <td>$brand<strong>$title$section</strong></td>
+            <td>$brand<strong>$label</strong></td>
             <td class='diff-cell'>$diff</td>
             <td class='balance-cell decimal-align'>$value</td>
         </tr>
@@ -163,11 +169,23 @@ sub renderSections {
     # Count total sections to determine split point
     my $total_sections = scalar @{$result->{sectionTitles}};
     my $half = int(($total_sections + 1) / 2); # Ensure even distribution
-    # Start table container
-my $html = <<END_HTML;
-    <h2 class='table-title'>$title</h2><div class='table-container'>
+ 
+    my $html = "<h2 class='table-title'>$title</h2>";
+
+    # Summary table
+    my $totals = generateTotals($result);
+    $html .=<<END_HTML;
+    <p><center><table class="summary-table">
+    <thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead>
+    <!--tr class="section-header"><td colspan="3">Summary</td></tr-->
+    <tbody>
+    $totals
+    </tbody></table></center>
 END_HTML
 
+    # Start table container
+    $html .= "<div class='table-container'>";
+    
     my $table_open = 0;
 
     for my $index (0 .. $#{$result->{sectionTitles}}) {
@@ -201,7 +219,7 @@ END_HTML
         }
 
         $html .=<<END_HTML;
-<tr class='section-header'>
+<tr class='section-header' id="$section">
   <td colspan='2'>$section</td>
   <td style="text-align: right;">
     <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
@@ -259,18 +277,6 @@ END_HTML
 
        # Close container
     $html .= "</div>";
-
-
-   # Add Summary table at the end
-    my $totals = generateTotals($result);
-    $html .=<<END_HTML;
-    <p><center><table class="summary-table">
-    <thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead>
-    <!--tr class="section-header"><td colspan="3">Summary</td></tr-->
-    <tbody>
-    $totals
-    </tbody></table></center>
-END_HTML
 
     return $html;
 }
