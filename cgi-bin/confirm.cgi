@@ -66,11 +66,11 @@ print <<HTML;
             <input type="hidden" name="email" value="$email">
             
             <label for="code">Code:</label>
-            <input type="text" id="code" name="code" required pattern="[0-9]+" maxlength="6">
+            <input type="tel" id="code" name="code" required pattern="[0-9]{6}" maxlength="6" inputmode="numeric">
+            
             <button type="submit" id="confirmButton" disabled style="cursor: not-allowed; opacity: 0.5;">
-              Confirm
+            Confirm
             </button>
-
         </form>
 
         <a href="index.cgi" class="cancel-link">Cancel</a>

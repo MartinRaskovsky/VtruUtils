@@ -93,23 +93,26 @@
 
         document.getElementById('detailsForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            
             const vaultAddress = document.getElementById('vaultAddress').value.trim();
             const walletAddresses = document.getElementById('walletAddresses').value.trim();
             const contentDiv = document.getElementById('content');
             const backBtn = document.getElementById('backBtn');
+            const getDetailsBtn = document.getElementById('getDetailsBtn');
             const params = new URLSearchParams();
+
             if (vaultAddress) params.append('vault', vaultAddress);
             if (walletAddresses) params.append('wallets', walletAddresses);
-            /*fetch(`driver.cgi?${params.toString()}`)
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                    backBtn.style.display = "inline-block";
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                    contentDiv.innerHTML = "<p style='color:red; text-align:center;'><b>Error loading data. Please try again.</b></p>";
-                });*/
+
+            // **🔹 Show "Loading..." and disable the button**
+            getDetailsBtn.disabled = true;
+            getDetailsBtn.innerText = "Loading...";
+            getDetailsBtn.classList.add("loading");
+
+            // **🔹 Optionally, show a loading message in content**
+            contentDiv.innerHTML = `<p class="loading-message">Fetching details... Please wait.</p>`;
+
+            // **🔹 Redirect to driver.cgi**
             window.location.href = `driver.cgi?${params.toString()}`;
         });
 

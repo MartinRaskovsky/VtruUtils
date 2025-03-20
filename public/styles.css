@@ -28,7 +28,6 @@ html {
     align-items: flex-start; /* Prevents unwanted vertical centering */
 }
 
-
 #main-wrapper {
     max-width: 900px; /* Ensures a reasonable width */
     width: 100%; /* Ensures it stretches properly */
@@ -42,32 +41,46 @@ label {
     align-self: flex-start;
 }
 
-/* Ensure Vault & Wallets fields are exactly 42 characters wide */
+/* Ensure vaultAddress and walletAddresses input fields are always wide enough */
 input#vaultAddress, textarea#walletAddresses {
-    width: 44ch; /* Exactly 42 characters */
-    max-width: none; /* Remove previous constraint */
+    width: 48ch;  /* Ensure enough space for a full address */
+    max-width: 100%;  /* Prevents excessive stretching */
     min-width: 44ch; /* Prevent shrinkage */
-    font-size: 12px;
-    font-family: "Courier New", Courier, monospace;
-    padding: 10px;
+    font-size: 14px;  /* Slightly larger text for readability */
+    font-family: "Courier New", Courier, monospace; /* Keeps fixed-width font */
+    padding-left: 10px;
+    box-sizing: border-box;
     color: white;
     border: 1px solid #444;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.1);
+    text-align: center; /* Centers the text */
+    overflow: hidden; /* Hides overflowing text */
+    text-overflow: ellipsis; /* Adds "..." if the text overflows */
 }
 
-/* Ensure textarea resizes correctly while keeping width fixed */
+/* Ensure textareas remain fixed-width but allow scrolling */
 textarea#walletAddresses {
-    resize: vertical;
-    overflow-y: auto;
-    min-height: 80px;
+    resize: vertical;  /* Allows resizing vertically only */
+    overflow-y: auto; /* Enables horizontal scrolling if needed */
+    min-height: 100px; /* Ensures sufficient space for multiple wallets */
 }
 
-textarea {
-    resize: vertical;
-    overflow-y: auto;
-    min-height: 80px;
+/* Style for the "Loading..." button state */
+button.loading {
+    background-color: #555; /* Darker color to indicate loading */
+    cursor: wait;
 }
+
+/* Optional: Style the loading message */
+.loading-message {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+
 
 table {
     width: auto;
@@ -102,6 +115,27 @@ td:first-child, th:first-child, .section-header {
     border-left: none;
 }
 
+/* Section headers and totals styling */
+.section-header {
+    font-weight: bold;
+    text-align: left;
+    padding: 2px;
+    background-color: #482d5b;
+}
+
+.section-header, td {
+    border-color: #482d5b;
+}
+
+td:first-child {
+    border-left: none; /* Removes left border */
+}
+
+th:last-child,
+td:last-child {
+    text-align: right;
+}
+
 .wallet-cell {
     /*font-family: 'Poppins', sans-serif;*/
     font-family: "Courier New", Courier, monospace; /* Standard JSON font */
@@ -116,13 +150,6 @@ td:first-child, th:first-child, .section-header {
     text-align: right;
     padding-right: 4px;
     min-width: 80px; /* Ensure consistent width */
-}
-
-/* Section headers and totals styling */
-.section-header {
-    font-weight: bold;
-    text-align: left;
-    padding: 2px;
 }
 
 .spacer-row td {
@@ -338,10 +365,6 @@ th {
 
 .section-row {
     background-color: #9472ac;
-}
-
-.section-header {
-    background-color: #482d5b;
 }
 
 pre {
@@ -591,10 +614,11 @@ th, td {
     flex-direction: column; /* Stack elements */
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
 }
 
 .group-container {
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -635,10 +659,148 @@ th, td {
         padding: 0;
     }
 
-    /**** ****/
- 
-/* ✅ Larger Tablets (max-width: 768px) */
-@media (max-width: 768px) {
+/* Ensure modals start hidden but are properly styled */
+#loginModal, #codeModal {
+    display: none; /* Hide initially */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #6a0dad;/*rgba(255, 255, 255, 0.1);/* same as textarea*/
+    padding: 20px;
+    border: 2px solid #ccc;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it appears above other elements */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Darken the background when modal is open */
+#modalOverlay {
+    display: none; /* Hidden initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* Below modal but above everything else */
+}
+
+/* Header Styling - Ensures proper button and title alignment */
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  /* Back (left), Title (center), Logout (right) */
+    width: 100%;
+    /*padding: 0px 0px;*/
+    position: relative;
+}
+
+/* Centered Title */
+#header h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 22px;
+    margin: 0;
+}
+
+/* General Button Styling - Shared by Back and Logout */
+.header-btn {
+    padding: 6px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    background-color: #6f42c1;
+    cursor: pointer;
+    border-radius: 5px;
+    white-space: nowrap;
+    width: auto;  /* Allow flexible sizing */
+    min-width: unset;
+    max-width: none;
+    border: 1px solid #492853;
+}
+
+/* Back Button - Left Aligned */
+#backBtn {
+    margin-right: auto; /* Ensures left alignment */
+    transform: translate(10px, 0);
+}
+
+/* Logout Button - Right Aligned */
+#logoutBtn {
+    display: none; /* Initially hidden */
+    margin-left: auto; /* Ensures right alignment */
+    transform: translate(-10px, 0);
+}
+
+/* Hover Effects */
+.header-btn:hover {
+    background-color: #5a34a3;
+}
+
+/* Show Logout button when enabled */
+#logoutBtn:not([style*="display: none"]) {
+    display: inline-block !important;
+}
+
+#backBtn:disabled {
+    background-color: #444 !important; /* Darker color */
+    color: #888 !important; /* Dim text */
+    cursor: not-allowed !important;
+}
+
+input#email, input#code {
+    color: white;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+/* ✅ Style for "Keep Me Logged In" toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.toggle-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.toggle-container label {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    /* Force autofill styling to match the input field */
+    input:-webkit-autofill {
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Ensure correct background */
+        -webkit-text-fill-color: white !important; /* Keep text white */
+        transition: background-color 5000s ease-in-out 0s !important; /* Prevent white flash */
+        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset !important; /* Force background */
+        border: 1px solid #444 !important; /* Maintain border */
+    }
+
+    /* Ensure autofill styling remains correct after focus */
+    input:-webkit-autofill:focus {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset !important;
+    }
+
+    /* Grey out the disabled button */
+    #getDetailsBtn:disabled {
+        background-color: #cccccc; /* Light grey */
+        color: #666666; /* Darker grey text */
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+
+    /* ✅ Larger Tablets (max-width: 768px) */
+/*@media (max-width: 768px) {
     .table-container {
         overflow-x: auto;
         width: 100%;
@@ -700,19 +862,18 @@ th, td {
         font-size: 16px;
     }
 
-}
+}*/
 
-@media (min-width: 600px) {
-    input#vaultAddress, textarea#walletAddresses {
-        width: 44ch; /* Exactly 42 characters */;
-    }
-}
 
 /* ✅ Ultra-Small Screens (Phones) */
 @media (max-width: 480px) {
     body {
         font-size: 11px;
     }
+
+    /* Centered Title */
+    #header h1 { font-size: 16px; }
+    h2         { font-size: 12px; }
 
     .form-container {
         padding: 16px;
@@ -760,162 +921,13 @@ th, td {
 
 }
 
-/* Centered Page Title */
-h1 {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 22px;
-    margin: 0;
-    color: white;
-}
-
-/* Ensure modals start hidden but are properly styled */
-#loginModal, #codeModal {
-    display: none; /* Hide initially */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #6a0dad;/*rgba(255, 255, 255, 0.1);/* same as textarea*/
-    padding: 20px;
-    border: 2px solid #ccc;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Ensure it appears above other elements */
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Darken the background when modal is open */
-#modalOverlay {
-    display: none; /* Hidden initially */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000; /* Below modal but above everything else */
-}
-
-/* Header Styling - Ensures proper button and title alignment */
-#header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;  /* Back (left), Title (center), Logout (right) */
-    width: 100%;
-    padding: 10px 20px;
-    position: relative;
-}
-
-/* Centered Title */
-#header h1 {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 22px;
-    margin: 0;
-}
-
-/* General Button Styling - Shared by Back and Logout */
-.header-btn {
-    padding: 6px 6px;
-    font-size: 10px;
-    font-weight: bold;
-    color: white;
-    background-color: #6f42c1;
-    cursor: pointer;
-    border-radius: 5px;
-    white-space: nowrap;
-    width: auto;  /* Allow flexible sizing */
-    min-width: unset;
-    max-width: none;
-    border: 1px solid #492853;
-}
-
-/* Back Button - Left Aligned */
-#backBtn {
-    margin-right: auto; /* Ensures left alignment */
-    transform: translate(-20px, 0);
-}
-
-/* Logout Button - Right Aligned */
-#logoutBtn {
-    display: none; /* Initially hidden */
-    margin-left: auto; /* Ensures right alignment */
-    transform: translate(-20px, 0);
-}
-
-/* Hover Effects */
-.header-btn:hover {
-    background-color: #5a34a3;
-}
-
-/* Show Logout button when enabled */
-#logoutBtn:not([style*="display: none"]) {
-    display: inline-block !important;
-}
-
-#backBtn:disabled {
-    background-color: #444 !important; /* Darker color */
-    color: #888 !important; /* Dim text */
-    cursor: not-allowed !important;
-}
-
-input#email, input#code {
-    color: white;
-    padding: 5px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-
-/* ✅ Style for "Keep Me Logged In" toggle */
-.toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.toggle-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.toggle-container label {
-    font-size: 14px;
-    cursor: pointer;
-}
-
-
-    /* Force autofill styling to match the input field */
-    input:-webkit-autofill {
-        background-color: rgba(255, 255, 255, 0.1) !important; /* Ensure correct background */
-        -webkit-text-fill-color: white !important; /* Keep text white */
-        transition: background-color 5000s ease-in-out 0s !important; /* Prevent white flash */
-        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset !important; /* Force background */
-        border: 1px solid #444 !important; /* Maintain border */
-    }
-
-    /* Ensure autofill styling remains correct after focus */
-    input:-webkit-autofill:focus {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset !important;
-    }
-
-    /* Grey out the disabled button */
-    #getDetailsBtn:disabled {
-        background-color: #cccccc; /* Light grey */
-        color: #666666; /* Darker grey text */
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-
 /* Debug colors */ 
 
+/*
 body {
     max-width: 768px;
 }
 
-/*
 button, .stake-btn{ background: red;}
 
 @media (max-width: 768px) { button, .stake-btn { background: green;} }

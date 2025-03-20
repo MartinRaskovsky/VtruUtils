@@ -9,6 +9,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     text-align: center;
+    padding: 20px; /* Ensures proper spacing on small screens */
 }
 
 /* Ensure the title is at the very top */
@@ -26,47 +27,58 @@ h1 {
     background-color: rgba(255, 255, 255, 0.1);
     padding: 20px;
     border-radius: 10px;
-    width: 320px;
+    width: 90%; /* Adaptive width */
+    max-width: 380px; /* Slightly wider for better readability */
     border: 2px solid rgba(255, 255, 255, 0.6);
     text-align: left;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Soft shadow for better visibility */
 }
 
 /* Left-align labels */
 label {
     display: block;
     color: white;
-    font-size: 14px;
+    font-size: 16px; /* Slightly larger for better readability */
     margin-bottom: 5px;
 }
 
 /* Style input fields */
-input[type="email"], input[type="text"] {
+input[type="email"], 
+input[type="text"], 
+input[type="tel"], 
+input[type="number"] {
     width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px;
-    border-radius: 5px;
+    padding-left: 10px;
+    box-sizing: border-box;
+    margin: 8px 0 16px;
+    border-radius: 6px;
     border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    font-size: 16px; /* Better touch usability */
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    caret-color: white;
+    height: 48px;
 }
 
 /* Checkbox container */
 .checkbox-container {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
 /* Button styles */
 button {
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 6px;
     background-color: #6A0DAD;
     color: white;
     border: none;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 button:hover {
@@ -77,16 +89,9 @@ button:hover {
 .cancel-link {
     color: white;
     text-decoration: underline;
-    font-size: 14px;
-    margin-top: 10px;
+    font-size: 16px;
+    margin-top: 12px;
     display: block;
-}
-
-/* Force consistent input styles */
-input[type="email"] {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-    caret-color: white;
 }
 
 /* Prevent white autofill background */
@@ -99,3 +104,67 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: white !important;
     transition: background-color 5000s ease-in-out 0s; /* Prevents the browser from overriding styles */
 }
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+        top: 15px;
+    }
+
+    .box-container {
+        width: 95%;
+        max-width: 340px; /* Slightly smaller for tablets */
+        padding: 18px;
+    }
+
+    label {
+        font-size: 15px;
+    }
+
+    button {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .cancel-link {
+        font-size: 14px;
+    }
+}
+
+/* Mobile-Specific Adjustments */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 22px;
+        top: 10px;
+    }
+
+    .box-container {
+        width: 100%;
+        max-width: 320px; /* Smaller for mobile */
+        padding: 16px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    input[type="email"], 
+    input[type="text"], 
+    input[type="tel"], 
+    input[type="number"] {
+        font-size: 14px;
+        padding-left: 8px;
+        height: 40px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .cancel-link {
+        font-size: 13px;
+    }
+}
+

@@ -116,6 +116,7 @@ END_HTML
 
 sub generateTotalRow {
     my ($section, $brandColor, $diff, $value) = @_;
+    my $title = ($section eq "")? "Total" : "";
     my $brand = "";
     if ($brandColor ne "") {
        $brand = "<div style='width: 12px; height: 12px; background-color: $brandColor; border-radius: 50%; display: inline-block; margin-right: 8px;'></div>";
@@ -125,7 +126,7 @@ sub generateTotalRow {
     
     my $html = <<END_HTML;
         <tr class='total-row'>
-            <td>$brand<strong>Total $section</strong></td>
+            <td>$brand<strong>$title$section</strong></td>
             <td class='diff-cell'>$diff</td>
             <td class='balance-cell decimal-align'>$value</td>
         </tr>
@@ -264,7 +265,8 @@ END_HTML
     my $totals = generateTotals($result);
     $html .=<<END_HTML;
     <p><center><table class="summary-table">
-    <tr class="section-header"><td colspan="3">Summary</td></tr>
+    <thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead>
+    <!--tr class="section-header"><td colspan="3">Summary</td></tr-->
     <tbody>
     $totals
     </tbody></table></center>
