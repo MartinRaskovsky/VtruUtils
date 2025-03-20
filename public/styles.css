@@ -919,6 +919,10 @@ input#email, input#code {
         gap: 5px;
     }
 
+    input#vaultAddress, textarea#walletAddresses {
+        font-size: 10px;
+    }
+
 }
 
 /* Debug colors */ 
