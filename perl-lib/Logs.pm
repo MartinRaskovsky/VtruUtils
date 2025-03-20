@@ -52,14 +52,15 @@ sub getSignature {
         debugLog($MODULE, "Using $N wallets, segment length: $segment_length");
 
         foreach my $wallet (@$wallets) {
-            $wallet =~ s/^0x//;  # Remove '0x' prefix
-            $wallet =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
+            my $copy = $wallet;
+            $copy =~ s/^0x//;  # Remove '0x' prefix
+            $copy =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
 
-            if (length($wallet) >= $segment_length * 2) {
-                my $short_wallet = substr($wallet, 0, $segment_length) . "_" . substr($wallet, -$segment_length);
+            if (length($copy) >= $segment_length * 2) {
+                my $short_wallet = substr($copy, 0, $segment_length) . "_" . substr($copy, -$segment_length);
                 $signature .= "_$short_wallet";
             } else {
-                $signature .= "_$wallet";  # If wallet is too short, use as is
+                $signature .= "_$copy";  # If wallet is too short, use as is
             }
         }
     }
