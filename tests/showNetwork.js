@@ -22,12 +22,16 @@ async function ident(net) {
 async function main() {
   try {
     // Correct the class name and remove unnecessary await
-    const network = await new Network([Web3.VTRU, Web3.BSC]);
+    const network = await new Network([Web3.VTRU, Web3.BSC, Web3.ETH, Web3.POL]);
     const vtru = network.get(Web3.VTRU);
     const bsc = network.get(Web3.BSC);
+    const eth = network.get(Web3.ETH);
+    const pol = network.get(Web3.POL);
 
     await ident(vtru);
     await ident(bsc);
+    await ident(eth);
+    await ident(pol);
 
   } catch (error) {
     console.error('Error:', error.message);

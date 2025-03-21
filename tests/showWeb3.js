@@ -18,8 +18,9 @@ const tokenStakedSevoX = require("../lib/tokenStakedSevoX");
 
 // Define test wallet addresses (configure accordingly)
 const testWallets = {
-    vtru: "0xa857dFB740396db406d91aEA65256da4d21721e4", // Replace with a valid wallet
-    bsc: "0xa857dFB740396db406d91aEA65256da4d21721e4"  // Replace with a valid wallet
+    vtru: "0xa857dFB740396db406d91aEA65256da4d21721e4",
+    bsc: "0xa857dFB740396db406d91aEA65256da4d21721e4",
+    pol: "0xa857dFB740396db406d91aEA65256da4d21721e4",
 };
 
 async function formatStamp(bsc, stamp) {
@@ -38,7 +39,7 @@ async function formatStamp(bsc, stamp) {
 async function testNetworkConnection(network) {
     console.log(`\nTesting connection to ${network.toUpperCase()}...`);
     const web3 = await Web3.create(network);  // Use the factory method
-    const latestBlock = web3.getLatestBlockNumber();
+    const latestBlock = await web3.getLatestBlockNumber();
     console.log(`Latest block on ${network.toUpperCase()}: ${latestBlock}`);
 }
 
@@ -85,6 +86,9 @@ async function runTests() {
     await testWalletBalances(Web3.BSC);
 
     await testStakedContract(Web3.BSC);
+
+    await testNetworkConnection(Web3.POL);
+    await testWalletBalances(Web3.POL);
     
     console.log("\n🎉 All Web3 tests completed!");
 }

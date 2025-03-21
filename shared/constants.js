@@ -11,6 +11,7 @@
 const NET_VTRU  = "VTRU";
 const NET_ETH   = "ETH";
 const NET_BSC   = "BSC";
+const NET_POL   = "POL";
 
 // Section Titles
 const SEC_VTRU_HELD   = "VTRU Held";
@@ -31,6 +32,7 @@ const SEC_USDC_ETH    = "USDC ETH";
 const SEC_USDC_BSC    = "USDC BSC";
 const SEC_ETH         = "ETH";
 const SEC_BNB         = "BNB";
+const SEC_POL         = "POL";
 
 // Section mapping for details popups
 const detailType = {
@@ -60,6 +62,7 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
+        SEC_POL,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
         SEC_USDC_POL,
@@ -68,6 +71,7 @@ if (typeof module !== 'undefined' && module.exports) {
         NET_VTRU,
         NET_ETH,
         NET_BSC,
+        NET_POL,
         detailType,
         hasGroups
     };
@@ -89,6 +93,7 @@ if (typeof window !== "undefined") {
         SEC_SEVOX,
         SEC_ETH,
         SEC_BNB,
+        SEC_POL,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
         SEC_USDC_POL,
@@ -97,6 +102,7 @@ if (typeof window !== "undefined") {
         NET_VTRU,
         NET_ETH,
         NET_BSC,
+        NET_POL,
         detailType,
         hasGroups
     };

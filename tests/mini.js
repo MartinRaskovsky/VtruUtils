@@ -8,6 +8,8 @@ require ("dotenv").config();
 const VTRU = "vtru";
 const BSC = "bsc";
 const ETH = "eth";
+const POL = "pol";
+
 const WVTRU = "wVTRU";
 const VTRUBridged = "VTRUBridged";
 const USDC = "USDC";
@@ -16,12 +18,14 @@ const rpcUrls = {
     [VTRU]: "https://rpc.vitruveo.xyz",
     [BSC]: "https://bsc-dataseed.binance.org",
     [ETH]: "https://rpc.mevblocker.io",
+    [POL]: "https://polygon-rpc.com",
 };
 
 const jsonPaths = {
     [VTRU]: "CONFIG_JSON_FILE_PATH",
     [BSC]: "CONFIG_JSON_BSC_PATH",
     [ETH]: "CONFIG_JSON_ETH_PATH",
+    [POL]: "CONFIG_JSON_POL_PATH",
 };
 
 const labels = {
@@ -31,12 +35,13 @@ const labels = {
 };
 
 const TARGET_TOKEN = USDC;
-const TARGET_NETWORK = VTRU;
+const TARGET_NETWORK = POL;
 
 const ABI = labels[TARGET_TOKEN];;
 
 const ETH_ADDRESS = '0x7070F01A2040bD06109C6fC478cd139b323459af';
-const USDC_ADDRESS = '0xbCfB3FCa16b12C7756CD6C24f1cC0AC0E38569CF';
+//const USDC_ADDRESS = '0xbCfB3FCa16b12C7756CD6C24f1cC0AC0E38569CF';
+const USDC_ADDRESS = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359';
 const ADDRESS = USDC_ADDRESS;
 
 const PROVIDER = rpcUrls[TARGET_NETWORK];
