@@ -26,7 +26,7 @@ my %explorers = (
     'BSC'  => "https://bscscan.com/address/",
     'ETH'  => "https://etherscan.io/address/",
     'VTRU' => "https://explorer.vitruveo.xyz/address/",
-    'POL'  => "https://polygonscan.com",
+    'POL'  => "https://polygonscan.com/address/",
 );
 
 # Define network branding color

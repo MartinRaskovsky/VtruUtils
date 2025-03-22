@@ -12,16 +12,16 @@ const VtruVault = require("../lib/vtruVault");
 const TokenUsdc = require("../lib/tokenUsdc");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_USDC_POL } = require('../shared/constants');
+const { SEC_USDC_VTRU } = require('../shared/constants');
 
-const TITLE = SEC_USDC_POL;
+const TITLE = SEC_USDC_VTRU;
 const KEYS = ['wallet', 'balance'];
 
 /**
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log("\nUsage: getBalanceUsdcPol.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceUsdcVtru.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -38,7 +38,7 @@ function showUsage() {
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const net = new Web3(Web3.POL);
+        const net = new Web3(Web3.VTRU);
         const token = new TokenUsdc(net);
 
         // Retrieve associated wallets if vault address is provided

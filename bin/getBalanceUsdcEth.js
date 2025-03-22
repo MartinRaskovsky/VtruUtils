@@ -9,7 +9,7 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenUsdcEth = require("../lib/tokenUsdcEth");
+const TokenUsdc = require("../lib/tokenUsdc");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_USDC_ETH } = require('../shared/constants');
@@ -39,7 +39,7 @@ function showUsage() {
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
         const net = new Web3(Web3.ETH);
-        const token = new TokenUsdcEth(net);
+        const token = new TokenUsdc(net);
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(net, vaultAddress, wallets);

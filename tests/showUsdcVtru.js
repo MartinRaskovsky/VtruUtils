@@ -4,19 +4,19 @@
  * Author: Dr. Martín Raskovsky
  * Date: March 2025
  *
- * Active test for the tokenUsdcPol class.
+ * Active test for the tokenUsdc Vtru class.
  */
 
 const Web3 = require("../lib/libWeb3");
-const TokenUsdcPol = require("../lib/tokenUsdcPol");
+const TokenUsdc = require("../lib/tokenUsdc");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 
-async function getBalanceUsdcPol(wallet) {
+async function getBalanceUsdcVtru(wallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
-        const token = new TokenUsdcPol(web3);
+        const token = new TokenUsdc(web3);
 
-        const balance = await token.getUsdcPolBalance(wallet);
+        const balance = await token.getUsdcVtruBalance(wallet);
 
         if (balance) {
             console.log(`${wallet} ${formatVusdNumber(balance, 2)} USDC POL`);
@@ -30,12 +30,12 @@ async function getBalanceUsdcPol(wallet) {
 async function main() {
     const wallet = process.argv[2];
     if (!wallet) {
-        console.error("Usage: showUsdcPol.js <wallet_address>");
+        console.error("Usage: showUsdcVtru.js <wallet_address>");
         process.exit(1);
     }
 
     try {
-        await getBalanceUsdcPol(wallet);
+        await getBalanceUsdcVtru(wallet);
     } catch (error) {
         console.error('Error:', error.message);
     }

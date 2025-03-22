@@ -6,6 +6,7 @@ use JSON;
 use lib '.';
 use Defs qw ( getDetailType getExplorerURL getBrandingColor);
 use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
+use SectionSummary qw(getSectionSummary);
 
 use Exporter 'import';
 our @EXPORT_OK = qw(renderPage renderSections );
@@ -150,15 +151,290 @@ sub generateTotal {
     return generateTotalRow($section, $brandColor, $result->{$diff_totals}[$index], $result->{$total_key});
 }
 
+#sub generateTotals {
+#    my ($result) = @_;
+#    my $html = "";
+#
+#    # Build a mapping from title to index
+#    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
+#
+#    #for my $index (0 .. $#{$result->{sectionTitles}}) {
+#     # Sort titles alphabetically and process by their original index
+#    for my $title (sort keys %title_to_index) {
+#        my $index = $title_to_index{$title};
+#        $html .= generateTotal($result, $index, 1);
+#    }
+#    return $html;
+#}
+
 sub generateTotals {
     my ($result) = @_;
-    my $html = "";
-    for my $index (0 .. $#{$result->{sectionTitles}}) {
-        $html .= generateTotal($result, $index, 1);
+    my $html = '';
+
+    my $sectionSummary = getSectionSummary();
+
+    # Map title (e.g., 'VTRU', 'VIBE') => index
+    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
+
+    foreach my $section (@$sectionSummary) {
+        my $section_html = '';
+
+        foreach my $title (@{ $section->{sections} }) {
+            next unless exists $title_to_index{$title};
+            my $index = $title_to_index{$title};
+            $section_html .= generateTotal($result, $index, 1);
+        }
+
+        if ($section_html ne '') {
+            my $ref = $section->{name};
+            $html .= "<tr class='summary-section'><td colspan='3'><a href='#$ref'>$ref</a></td></tr>\n";
+            $html .= $section_html;
+        }
     }
+
     return $html;
 }
 
+use lib 'src/perl-lib';
+use SectionSummary qw(getSectionSummary);
+
+# Generates section header row
+sub generateSectionHeader {
+    my ($title, $brandColor) = @_;
+    return <<"END_HTML";
+<tr class='section-header' id="$title">
+  <td colspan='2'>$title</td>
+  <td style="text-align: right;">
+    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
+  </td>
+</tr>
+END_HTML
+}
+
+# Adds an empty spacer row between subsections
+sub generateSubsectionSpacer {
+    return "<tr class='spacer-row'><td colspan='3'></td></tr>";
+}
+
+# Generates the header row for each subsection
+sub generateSubsectionTableHeader {
+    my ($title, $brandColor) = @_;
+    return <<"END_HTML";
+<tr class='section-header' id="$title">
+  <td colspan='2'>$title</td>
+  <td style="text-align: right;">
+    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
+  </td>
+</tr>
+END_HTML
+}
+
+# Generates all wallet rows for a given subsection
+sub generateWalletRows {
+    my ($vault, $wallets, $result, $section_key, $networkKey) = @_;
+    my $rows = '';
+
+    for my $wallet_index (0 .. $#{$result->{wallets}}) {
+        my $wallet = $result->{wallets}[$wallet_index];
+        my $balance = $result->{$section_key}[$wallet_index] || "0.00";
+
+        my $diff_section = "diff_$section_key"; 
+        my $diff_display = $result->{$diff_section}[$wallet_index] // '';
+        my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet));
+        $address = (lc($vault) eq $wallet) ? "<strong>$address</strong>" : $address;
+        $rows .= generateBalanceRow($address, $diff_display, $balance);
+    }
+
+    return $rows;
+}
+
+# Generates total row, group toggle, and detail button if applicable
+sub generateSubsectionFooter {
+    my ($vault, $wallets, $result, $title, $section_index) = @_;
+    my $footer_html = '';
+
+    # Add Total Row
+    $footer_html .= generateTotal($result, $section_index, 0);
+
+    # Add Group Toggle if applicable
+    my $type = getDetailType($title);
+    if ($type eq "stake") {
+        $footer_html .= <<"END_HTML";
+        <tr class='total-row'>
+          <td colspan='3'>
+            <div class="group-container">
+              <span class="group-label">Grouped by:</span>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
+                <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
+                <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
+                <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+END_HTML
+    }
+
+    # Add Details Button if applicable
+    if ($type ne "") {
+        my $wallets_str = join(" ", @$wallets);
+        my $group = "'none'";
+        if ($type eq "stake") {
+            $group = "document.querySelector('input[name=grouping]:checked')?.value";
+        }
+        $footer_html .= <<"END_HTML";
+        <tr class='total-row'>
+          <td colspan='3'>
+            <div class="stake-btn-container">
+              <button onclick="openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
+                View $title Details
+              </button>
+            </div>
+          </td>
+        </tr>
+END_HTML
+    }
+
+    return $footer_html;
+}
+
+## Generates one table per subsection
+sub generateTableForSubsections {
+    my ($vault, $wallets, $result, $subsections, $title_to_index) = @_;
+    my $table_html = "";
+
+    foreach my $title (@$subsections) {
+        next unless exists $title_to_index->{$title};  # Skip if title not found
+        my $section_index = $title_to_index->{$title};
+        my $section_key = $result->{sectionKeys}[$section_index];
+        my $networkKey  = $result->{networkKeys}[$section_index];
+        my $brandColor  = getBrandingColor($networkKey);
+
+        # Ensure we have valid data
+        next unless defined $section_key;
+
+        # Generate the table for this subsection
+        my $sub_html = "<table class='section-table'>
+        <tbody>";
+
+        # Add section header
+        $sub_html .= generateSubsectionTableHeader($title, $brandColor);
+
+        # Generate wallet rows
+        my $walletRows = generateWalletRows($vault, $wallets, $result, $section_key, $networkKey);
+        $sub_html .= $walletRows if $walletRows ne "";
+
+        # Add subsection footer (totals, buttons)
+        $sub_html .= generateSubsectionFooter($vault, $wallets, $result, $title, $section_index);
+        
+        $sub_html .= "</tbody></table>";
+
+        # Append this section's table to the final output
+        $table_html .= $sub_html;
+    }
+
+    return $table_html;
+}
+
+
+# Counts only non-zero balance rows per subsection, plus title, totals, buttons
+sub countSubsectionRows {
+    my ($result, $subsections, $title_to_index) = @_;
+    my %row_counts;
+    my $total_rows = 0;
+
+    foreach my $title (@$subsections) {
+        next unless exists $title_to_index->{$title};
+        my $section_index = $title_to_index->{$title};
+        my $section_key = $result->{sectionKeys}[$section_index];
+
+        # Start with 1 row for section title
+        my $row_count = 1;
+
+        # Count only non-zero balance rows
+        if (exists $result->{$section_key}) {
+            foreach my $balance (@{$result->{$section_key}}) {
+                next if $balance eq "0.00" || $balance eq "0";
+                $row_count++;
+            }
+        } else {
+            debugLog($MODULE, "Missing section key: $section_key");
+        }
+
+        # Add 1 row for total row
+        $row_count++;
+
+        my $type = getDetailType($title);
+        # Check if section has a group toggle
+        if ($type eq "stake") {
+            $row_count += 2;  # Group toggle counts as 2 rows
+        }
+
+        # Check if section has a button
+        if ($type ne "") {
+            $row_count += 2;  # Buttons count as 2 rows
+        }
+
+        $row_counts{$title} = $row_count;
+        $total_rows += $row_count;
+    }
+
+    return (\%row_counts, $total_rows);
+}
+
+# Splits subsections into two groups, balancing by row count
+sub splitSubsectionsByRowCount {
+    my ($subsections_ref, $row_counts, $total_rows) = @_;
+    my @subsections = @$subsections_ref;  # ✅ Correctly dereferencing the array reference
+    my @left_subsections;
+    my @right_subsections;
+    my $top_index = 0;
+    my $bottom_index = $#subsections;
+    my $left_count = 0;
+    my $right_count = 0;
+
+    while ($top_index <= $bottom_index) {
+        # Allocate from the top to the left
+        if ($left_count <= $right_count) {
+            my $title = $subsections[$top_index++];
+            push @left_subsections, $title;
+            $left_count += $row_counts->{$title};
+        } else {
+            my $title = $subsections[$bottom_index--];
+            push @right_subsections, $title;
+            $right_count += $row_counts->{$title};
+        }
+    }
+
+    return (\@left_subsections, \@right_subsections);
+}
+
+# Generates a section with multiple tables, balancing by row count
+sub generateSectionTables {
+    my ($vault, $wallets, $result, $section, $title_to_index) = @_;
+
+    my @subsections = @{ $section->{sections} };
+
+    # Get row counts and split subsections into two columns
+    my ($row_counts, $total_rows) = countSubsectionRows($result, \@subsections, $title_to_index);
+    my ($left_subsections, $right_subsections) = splitSubsectionsByRowCount(\@subsections, $row_counts, $total_rows);
+
+    # Generate tables for each column
+    my $left_tables  = generateTableForSubsections($vault, $wallets, $result, $left_subsections, $title_to_index);
+    my $right_tables = generateTableForSubsections($vault, $wallets, $result, $right_subsections, $title_to_index);
+
+    my $ref = $section->{name};
+    return <<"END_HTML";
+    <div class='section-title' id='$ref'>$ref</div>
+    <div class='section-container'>
+        <div class='section-column'>$left_tables</div>
+        <div class='section-column'>$right_tables</div>
+    </div>
+END_HTML
+}
+
+# Main function rendering sections
 sub renderSections {
     my ($vault, $wallets, $result) = @_;
     my $name = $result->{name} // "";
@@ -166,116 +442,35 @@ sub renderSections {
     my $plural = ($count == 1) ? "" : "es";
     my $title = "$name<br>Analysed $count address$plural";
 
-    # Count total sections to determine split point
-    my $total_sections = scalar @{$result->{sectionTitles}};
-    my $half = int(($total_sections + 1) / 2); # Ensure even distribution
- 
-    my $html = "<h2 class='table-title'>$title</h2>";
+    my $sectionSummary = getSectionSummary();
 
-    # Summary table
+    # Create a lookup from section title to index
+    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
+
+    my $html = <<END_HTML;
+<h2 class='table-title'>$title</h2>
+<div class='section-title'>Summary</div>
+END_HTML
+
+    # Generate the summary table
     my $totals = generateTotals($result);
     $html .=<<END_HTML;
     <p><center><table class="summary-table">
-    <thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead>
-    <!--tr class="section-header"><td colspan="3">Summary</td></tr-->
+    <!--thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead-->
     <tbody>
     $totals
     </tbody></table></center>
 END_HTML
 
-    # Start table container
+    # Container for section tables
     $html .= "<div class='table-container'>";
-    
-    my $table_open = 0;
 
-    for my $index (0 .. $#{$result->{sectionTitles}}) {
-        # Open new table if needed
-        if ($index == 0 || $index == $half) {
-            $html .= "<table class='stake-table'>
-            <thead><tr><th>WALLET</th><th>CHANGE</th><th>BALANCE</th></tr></thead>
-            <tbody>";
-            $table_open = 1;
-        }
-
-        my $section     = $result->{sectionTitles}[$index];
-        my $total_key   = $result->{totalKeys}[$index];
-        my $section_key = $result->{sectionKeys}[$index];
-        my $networkKey  = $result->{networkKeys}[$index];
-        my $brandColor  = getBrandingColor($networkKey);
-        my $controls = "";
-
-        if ($section eq "VTRU Staked") {
-            $controls = <<"END_HTML";
-      <div class="group-container">
-        <span class="group-label">Grouped by:</span>
-        <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
-          <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
-          <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
-          <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
-        </div>
-      </div>
-END_HTML
-        }
-
-        $html .=<<END_HTML;
-<tr class='section-header' id="$section">
-  <td colspan='2'>$section</td>
-  <td style="text-align: right;">
-    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
-  </td>
-</tr>
-END_HTML
-
-
-        for my $wallet_index (0 .. $#{$result->{wallets}}) {
-            my $wallet = $result->{wallets}[$wallet_index];
-            my $balance = $result->{$section_key}[$wallet_index] || "0.00";
-            my $diff_section = "diff_$section_key"; 
-            my $diff_display = $result->{$diff_section}[$wallet_index] // '';
-            my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet));
-            if (lc($vault) eq $wallet) {
-                $address = "<strong>$address</strong>";
-            }
-            $html .= generateBalanceRow($address, $diff_display, $balance);
-        }
-
-        $html .= generateTotal($result, $index, 0);
-
-        my $type = getDetailType($section);
-        if ($type ne "") {
-
-            my $wallets_str = join(" ", @$wallets);
-            my $group = "'none'";
-            if ($type eq "stake") {
-                $group = "document.querySelector('input[name=grouping]:checked')?.value";
-            }
-            $html .= <<END_HTML;
-            <tr class='total-row'>
-              <td colspan='3'>
-                <div class='stake-controls'>
-$controls
-              </div>
-              <div class="stake-btn-container">
-                  <button onclick="openModal('$type', $group, '$vault', '$wallets_str')" class="stake-btn">
-                    View $section Details
-                  </button>
-                </div>
-              </td>
-            </tr>
-END_HTML
-        }
-
-        $html .= "<tr class='spacer-row'><td colspan='3'></td></tr>";
-
-         # Close table at half and end
-        if ($index == $half - 1 || $index == $#{$result->{sectionTitles}}) {
-            $html .= "</tbody></table>";
-            $table_open = 0; 
-        }
+    # Loop through ordered sections, generating paired tables
+    foreach my $section (@$sectionSummary) {
+        $html .= generateSectionTables($vault, $wallets, $result, $section, \%title_to_index);
     }
 
-       # Close container
+    # Close container
     $html .= "</div>";
 
     return $html;

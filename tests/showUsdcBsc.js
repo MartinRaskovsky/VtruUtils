@@ -4,17 +4,17 @@
  * Author: Dr. Martín Raskovsky
  * Date: March 2025
  *
- * Active test for the tokenUsdcBsc class.
+ * Active test for the tokenUsdc Bsc class.
  */
 
 const Web3 = require("../lib/libWeb3");
-const TokenUsdcBsc = require("../lib/tokenUsdcBsc");
+const TokenUsdc = require("../lib/tokenUsdc");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 
 async function getBalanceUsdcBsc(wallet) {
     try {
         const web3 = await Web3.create(Web3.BSC);
-        const token = new TokenUsdcBsc(web3);
+        const token = new TokenUsdc(web3);
 
         const balance = await token.getUsdcBscBalance(wallet);
 

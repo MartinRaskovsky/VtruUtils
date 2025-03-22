@@ -104,6 +104,11 @@ td, th, .total-row  {
     white-space: nowrap;
 }
 
+.total-row td {
+    border-left: none;
+    border-right: none;
+}
+
 th {
     border-top: none;
     color: white;
@@ -120,11 +125,11 @@ td:first-child, th:first-child, .section-header {
     font-weight: bold;
     text-align: left;
     padding: 2px;
-    background-color: #482d5b;
+    background-color: #6a0dad;
 }
 
 .section-header, td {
-    border-color: #482d5b;
+    border-color: #6a0dad;
 }
 
 td:first-child {
@@ -134,6 +139,10 @@ td:first-child {
 th:last-child,
 td:last-child {
     text-align: right;
+}
+
+.summary-section td {
+    text-align: center;
 }
 
 .wallet-cell {
@@ -152,10 +161,35 @@ td:last-child {
     min-width: 80px; /* Ensure consistent width */
 }
 
+/* Ensure the spacer row blends seamlessly */
 .spacer-row td {
-    height: 50px; /* Adds space without visible row */
-    border: none !important; /* Remove any table gridlines */
+    height: 12px; /* Define the gap */
+    background-color: #6a0dad !important; /* Match section background */
+    border: none !important;
+    padding: 0;
 }
+
+/* Round the bottom corners of the last row before the gap */
+tr:not(.spacer-row) + .spacer-row {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Round the top corners of the first row after the gap */
+.spacer-row + tr {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.spacer-row {
+    background-color: #6a0dad !important; /* Match section background */
+}
+
+.spacer-row td {
+    background-color: inherit !important; /* Ensure it follows the row's color */
+}
+
+
 
 pre {
     color: #dcdcdc;
@@ -335,7 +369,7 @@ button, .stake-btn {
     margin: 20px auto 80px auto; /* Adds 40px bottom margin */
 }
 
-body, .spacer-row td {
+body {
     background-color: #4B0082; /* Purple background */
 }
 
@@ -623,7 +657,7 @@ th, td {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
 }
 
     .table-container {
@@ -642,7 +676,7 @@ th, td {
         border: none;
         border-spacing: 0;
         box-sizing: border-box;
-        margin-top: 0;
+        /*margin-top: 0;*/
     }
     
     /* Normalize first row alignment */
@@ -798,8 +832,107 @@ input#email, input#code {
         opacity: 0.6;
     }
 
+/* ========================= */
+/* ✅ Summary Table Titles (Used inside summary table) */
+/* ========================= */
+.summary-section {
+    text-align: center !important; 
+    font-size: 16px !important;
+    font-weight: bold;
+    padding: 6px;
+    /*background-color: #6a0dad;*/
+    color: white;
+}
 
-    /* ✅ Larger Tablets (max-width: 768px) */
+/* ========================= */
+/* ✅ Section Titles in Detailed Data Tables */
+/* ========================= */
+.section-title {
+    text-align: center !important;
+    font-size: 20px !important;
+    font-weight: bold;
+    padding: 10px 0;
+    background-color: transparent !important; /* Match page background */
+    color: white;
+    border-radius: 5px;
+    margin-top: 30px;
+    width: 100%;  /* Ensure full width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.section-title::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: white; /* Adjust color if needed */
+    position: absolute;
+    top: -10px; /* Positions the line above the title */
+    left: 0;
+}
+
+
+/* ========================= */
+/* ✅ Section Layout Fix (Two Columns for Sections) */
+/* ========================= */
+.section-container {
+    display: flex;
+    flex-wrap: wrap;  /* Ensures wrapping when needed */
+    justify-content: center; /* Centers in one-column mode */
+    align-items: flex-start; /* Keeps alignment natural */
+    gap: 20px; /* Adds spacing between columns */
+    width: 100%; /* Ensures it stretches properly */
+}
+
+.section-column {
+    flex: 1;
+    min-width: 320px; /* Prevents it from being too narrow */
+    max-width: 48%; /* Keeps two-column structure when space allows */
+}
+
+/* Ensure all tables have a proper layout */
+.section-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 50px; /* Creates a visible gap between tables */
+    border-radius: 12px; /* Ensure rounding applies */
+    overflow: hidden;
+    margin-top: -20px;
+}
+
+/* Round the first row (title row) */
+.section-table tbody tr:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Round the last row (total row) */
+.section-table tbody tr:last-child {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Remove borders only for the section header */
+.section-header td {
+    border: none !important;
+}
+
+/* Keep borders within data rows */
+.section-table tbody tr:not(:first-child) td {
+    border-top: solid 1px #6a0dad; /* Ensures proper row separation */
+}
+
+
+/* Ensure the gap has the same background as the page */
+.section-table + .section-table {
+    margin-top: 50px; /* Controls the gap between sections */
+}
+
+/* ✅ Larger Tablets (max-width: 768px) */
 /*@media (max-width: 768px) {
     .table-container {
         overflow-x: auto;
@@ -930,8 +1063,9 @@ input#email, input#code {
 /*
 body {
     max-width: 768px;
-}
+}*/
 
+/*
 button, .stake-btn{ background: red;}
 
 @media (max-width: 768px) { button, .stake-btn { background: green;} }

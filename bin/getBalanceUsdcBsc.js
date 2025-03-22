@@ -9,7 +9,7 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenUsdc = require("../lib/tokenUsdcBsc");
+const TokenUsdc = require("../lib/tokenUsdc");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_USDC_BSC } = require('../shared/constants');

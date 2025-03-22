@@ -4,17 +4,17 @@
  * Author: Dr. Martín Raskovsky
  * Date: March 2025
  *
- * Active test for the tokenUsdcEth class.
+ * Active test for the tokenUsdc Eth class.
  */
 
 const Web3 = require("../lib/libWeb3");
-const TokenUsdcEth = require("../lib/tokenUsdcEth");
+const TokenUsdc = require("../lib/tokenUsdc");
 const { formatRawNumber, formatNumber } = require("../lib/vtruUtils");
 
 async function getBalanceUsdcEth(wallet) {
     try {
         const web3 = await Web3.create(Web3.ETH);
-        const token = new TokenUsdcEth(web3);
+        const token = new TokenUsdc(web3);
 
         const balance = await token.getUsdcEthBalance(wallet);
 

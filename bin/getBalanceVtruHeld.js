@@ -12,9 +12,9 @@ const VtruVault = require("../lib/vtruVault");
 const TokenWallet = require("../lib/tokenWallet");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_VTRU_HELD } = require('../shared/constants');
+const { SEC_VTRU } = require('../shared/constants');
 
-const TITLE = SEC_VTRU_HELD;
+const TITLE = SEC_VTRU;
 const KEYS = ['wallet', 'balance'];
 
 /**
