@@ -8,6 +8,7 @@
  */
 
 const Web3 = require('../lib/libWeb3');
+const { getBlockDate } = require("../lib/libWeb3Timer");
 const tokenStakedSevoX = require('../lib/tokenStakedSevoX');
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
@@ -29,26 +30,14 @@ function showUsage() {
 }
 
 /**
- * Formats a blockchain timestamp into DD-MM-YYYY format.
- *
- * @param {Object} bsc - BSC network provider.
- * @param {number} stamp - Blockchain timestamp.
- * @return {Promise<string>} - Formatted date string.
- */
-async function formatStamp(bsc, stamp) {
-    const block = await bsc.getProvider().getBlock(stamp);
-    const date = new Date(block.timestamp * 1000);
-    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
-}
-
-/**
  * Fetches and formats staking details for the given wallets.
  *
  * @param {string|null} vaultAddress - Vault address, if specified.
  * @param {Array<string>} wallets - List of wallet addresses.
  * @param {boolean} formatOutput - Whether to format output as a table.
+ * @param {string|null} groupBy - Grouping option.
  */
-async function runDetails(vaultAddress, wallets, formatOutput) {
+async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
     try {
         const bsc = new Web3(Web3.BSC);
         const token = new tokenStakedSevoX(bsc);
@@ -74,7 +63,7 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
                     wallet: row.wallet,
                     unlocked: formatRawNumber(unlocked),
                     locked: formatRawNumber(row.locked),
-                    date: await formatStamp(bsc, row.stamp),
+                    date: await getBlockDate(bsc, row.stamp),
                 });
             })
         );
@@ -101,6 +90,7 @@ function main() {
     let vaultAddress = null;
     let walletAddresses = [];
     let formatOutput = false;
+    let groupBy = null;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -114,6 +104,10 @@ function main() {
                 break;
             case '-f':
                 formatOutput = true;
+                break;
+            case '-g':
+                groupBy = ['day', 'month', 'year'].includes(args[i + 1]) ? args[i + 1] : null;
+                i++;
                 break;
             case '-h':
                 showUsage();
@@ -129,7 +123,7 @@ function main() {
         showUsage();
     }
 
-    runDetails(vaultAddress, walletAddresses, formatOutput).catch(error => {
+    runDetails(vaultAddress, walletAddresses, formatOutput, groupBy).catch(error => {
         console.error("❌ Unexpected error:", error.message);
     });
 }

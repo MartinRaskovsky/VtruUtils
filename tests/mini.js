@@ -13,6 +13,7 @@ const POL = "pol";
 const WVTRU = "wVTRU";
 const VTRUBridged = "VTRUBridged";
 const USDC = "USDC";
+const SEVO = "SEVO";
 
 const rpcUrls = {
     [VTRU]: "https://rpc.vitruveo.xyz",
@@ -32,17 +33,18 @@ const labels = {
     [WVTRU]: "wVTRU",
     [VTRUBridged]: "VTRUBridged",
     [USDC]: "USDC",
+    [SEVO]: "SEVO",
 };
 
-const TARGET_TOKEN = USDC;
-const TARGET_NETWORK = POL;
+const TARGET_TOKEN = SEVO;
+const TARGET_NETWORK = VTRU;
 
 const ABI = labels[TARGET_TOKEN];;
 
 const ETH_ADDRESS = '0x7070F01A2040bD06109C6fC478cd139b323459af';
-//const USDC_ADDRESS = '0xbCfB3FCa16b12C7756CD6C24f1cC0AC0E38569CF';
 const USDC_ADDRESS = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359';
-const ADDRESS = USDC_ADDRESS;
+const SEVO_ADDRESS = '0x2A34059DF3D60B1864f10F10492746bd26d3D24a';
+const ADDRESS = SEVO_ADDRESS;
 
 const PROVIDER = rpcUrls[TARGET_NETWORK];
 

@@ -4,7 +4,7 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( getDetailType getExplorerURL getBrandingColor);
+use Defs qw ( getDetailType getIsGrouperType getExplorerURL getBrandingColor);
 use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
 use SectionSummary qw(getSectionSummary);
 
@@ -258,7 +258,8 @@ sub generateSubsectionFooter {
 
     # Add Group Toggle if applicable
     my $type = getDetailType($title);
-    if ($type eq "stake") {
+    my $isGroupper = getIsGrouperType($title);
+    if ($isGroupper) {
         $footer_html .= <<"END_HTML";
         <tr class='total-row'>
           <td colspan='3'>
@@ -280,7 +281,7 @@ END_HTML
     if ($type ne "") {
         my $wallets_str = join(" ", @$wallets);
         my $group = "'none'";
-        if ($type eq "stake") {
+        if ($isGroupper) {
             $group = "document.querySelector('input[name=grouping]:checked')?.value";
         }
         $footer_html .= <<"END_HTML";

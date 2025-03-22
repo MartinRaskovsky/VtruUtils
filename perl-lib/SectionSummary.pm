@@ -15,8 +15,9 @@ sub getSectionSummary {
     { name => 'Native Coins', sections => [ 'BNB', 'ETH', 'POL', 'VTRU' ] },
     { name => 'VTRU Bridged', sections => [ 'VTRU on BSC', 'VTRU on ETH' ] },
     { name => 'USDC', sections => [ 'USDC on VTRU(USDC.pol)', 'USDC on ETH', 'USDC on BSC', 'USDC on POL' ] },
-    { name => 'Staked', sections => [ 'SEVO-X Staked', 'VTRU Staked' ] },
+    { name => 'Staked', sections => [ 'VTRU Staked', 'SEVO-X Staked' ] },
     { name => 'Vitruveo Coins & Tokens', sections => [ 'VERSE', 'VIBE', 'VORTEX', 'VTRO', 'VUSD', 'wVTRU' ] },
+    { name => 'Sabong', sections => [ 'SEVO', 'SEVO-X' ] },
     { name => 'Vitruveo Exchange', sections => [ 'V3DEX', 'VITDEX' ] }
 ];
 }

@@ -2,7 +2,7 @@ package Defs;
 use strict;
 use warnings;
 use Exporter 'import';
-our @EXPORT_OK = qw(getScriptForType getDetailType getExplorerURL getRenderFunction getBrandingColor);
+our @EXPORT_OK = qw(getScriptForType getDetailType getIsGrouperType getExplorerURL getRenderFunction getBrandingColor);
 
 # Define script mapping
 my %script_map = (
@@ -19,6 +19,12 @@ my %detail_type_map = (
     "VIBE"         => "vibe",
     "VORTEX"       => "vortex",
     "SEVO-X Staked"=> "bsc"
+);
+
+# Define grouppers type
+my %group_type_map = (
+    "VTRU Staked"  => 1,
+    "SEVO-X Staked"=> 0,
 );
 
 # Define explorers mapping
@@ -57,6 +63,12 @@ sub getScriptForType {
 sub getDetailType {
     my ($detail) = @_;
     return exists $detail_type_map{$detail} ? $detail_type_map{$detail} : "";
+}
+
+# Retrieve detail type
+sub getIsGrouperType {
+    my ($detail) = @_;
+    return exists $group_type_map{$detail} ? $group_type_map{$detail} : 0;
 }
 
 # Retrieve explorer URL

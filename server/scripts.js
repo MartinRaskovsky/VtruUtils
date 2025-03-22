@@ -10,7 +10,7 @@ const path = require('path');
 const fs = require('fs');
 
 const { SEC_VTRU, SEC_VTRU_STAKED, SEC_VUSD, SEC_VTRO, SEC_WVTRU, SEC_VERSE, SEC_VIBE, SEC_VORTEX, 
-        SEC_V3DEX, SEC_VITDEX, SEC_SEVOX, SEC_VTRU_ETH, SEC_VTRU_BSC, SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_ETH, SEC_BNB , SEC_POL
+        SEC_V3DEX, SEC_VITDEX, SEC_SEVO, SEC_SEVOX, SEC_SEVOX_STAKED, SEC_VTRU_ETH, SEC_VTRU_BSC, SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_ETH, SEC_BNB , SEC_POL
     } = require('../shared/constants');
 
 const logsDir = path.join(__dirname, '../public/data');

@@ -32,8 +32,8 @@ const SEC_USDC_BSC    = "USDC on BSC";
 const SEC_USDC_POL    = "USDC on POL";
 
 // Staked
-const SEC_SEVOX       = "SEVO-X Staked";
-const SEC_VTRU_STAKED = "VTRU Staked";
+const SEC_VTRU_STAKED  = "VTRU Staked";
+const SEC_SEVOX_STAKED = "SEVO-X Staked";
 
 // Vitruveo Coins & Tokens
 const SEC_VERSE       = "VERSE";
@@ -42,6 +42,10 @@ const SEC_VORTEX      = "VORTEX";
 const SEC_VTRO        = "VTRO";
 const SEC_VUSD        = "VUSD";
 const SEC_WVTRU       = "wVTRU";
+
+// Sabong
+const SEC_SEVO        = "SEVO";
+const SEC_SEVOX       = "SEVO-X";
 
 // Vitruveo Exchange
 const SEC_V3DEX       = "V3DEX";
@@ -52,21 +56,24 @@ const sectionSummary = [
     { name: 'Native Coins',            sections: [SEC_BNB, SEC_ETH, SEC_POL, SEC_VTRU] },
     { name: 'VTRU Bridged',            sections: [SEC_VTRU_BSC, SEC_VTRU_ETH] },
     { name: 'USDC',                    sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL] },
-    { name: 'Staked',                  sections: [SEC_SEVOX, SEC_VTRU_STAKED] },
-    { name: 'Vitruveo Coins & Tokens & Coins', sections: [SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_VTRO, SEC_VUSD, SEC_WVTRU] },
-    { name: 'Vitruveo Exchange',       sections: [SEC_V3DEX, SEC_VITDEX] }
+    { name: 'Staked',                  sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
+    { name: 'Vitruveo Coins & Tokens', sections: [SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_VTRO, SEC_VUSD, SEC_WVTRU] },
+    { name: 'Sabong',                  sections: [SEC_SEVO, SEC_SEVOX ]},
+    { name: 'Vitruveo Exchange',       sections: [SEC_V3DEX, SEC_VITDEX] },
   ];
 
 // Section mapping for details popups
 const detailType = {
     [SEC_VTRU_STAKED]: "stake",
+    [SEC_SEVOX_STAKED]: "bsc",
     [SEC_VIBE]: "vibe",
     [SEC_VORTEX]: "vortex",
-    [SEC_SEVOX]: "bsc"
 };
 
+// These groupping defs are needed also in perl-lib/Defs.pm: %group_type_map
 const hasGroups = {
-    [SEC_VTRU_STAKED]: true
+    [SEC_VTRU_STAKED]: true,
+    [SEC_SEVOX_STAKED]: false,
 };
 
 // Export for Node.js (CommonJS)
@@ -82,7 +89,9 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_VORTEX,
         SEC_V3DEX,
         SEC_VITDEX,
+        SEC_SEVO,
         SEC_SEVOX,
+        SEC_SEVOX_STAKED,
         SEC_ETH,
         SEC_BNB,
         SEC_POL,
@@ -115,7 +124,9 @@ if (typeof window !== "undefined") {
         SEC_VORTEX,
         SEC_V3DEX,
         SEC_VITDEX,
+        SEC_SEVO,
         SEC_SEVOX,
+        SEC_SEVOX_STAKED,
         SEC_ETH,
         SEC_BNB,
         SEC_POL,
