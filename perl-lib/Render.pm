@@ -439,39 +439,38 @@ END_HTML
 sub renderSections {
     my ($vault, $wallets, $result) = @_;
     my $name = $result->{name} // "";
-    my $count = 1 + $#{$result->{wallets}};
+    my $count = scalar @{ $result->{wallets} // [] };
     my $plural = ($count == 1) ? "" : "es";
     my $title = "$name<br>Analysed $count address$plural";
 
-    my $sectionSummary = getSectionSummary();
-
-    # Create a lookup from section title to index
-    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
-
     my $html = <<END_HTML;
 <h2 class='table-title'>$title</h2>
-<div class='section-title'>Summary</div>
 END_HTML
 
-    # Generate the summary table
+    # Early return if there are no wallets
+    if ($count == 0) {
+        $html .= "<p style='text-align:center;'>No wallet data available.</p>";
+        return $html;
+    }
+
+    my $sectionSummary = getSectionSummary();
+    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
+
+    # Summary totals
+    $html .= "<div class='section-title'>Summary</div>";
     my $totals = generateTotals($result);
-    $html .=<<END_HTML;
+    $html .= <<END_HTML;
     <p><center><table class="summary-table">
-    <!--thead><tr><th>SUMMARY</th><th>CHANGE</th><th>TOTAL</th></tr></thead-->
     <tbody>
     $totals
     </tbody></table></center>
 END_HTML
 
-    # Container for section tables
+    # Section tables
     $html .= "<div class='table-container'>";
-
-    # Loop through ordered sections, generating paired tables
     foreach my $section (@$sectionSummary) {
         $html .= generateSectionTables($vault, $wallets, $result, $section, \%title_to_index);
     }
-
-    # Close container
     $html .= "</div>";
 
     return $html;
