@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
+use File::Path qw(make_path);
 use Cwd 'abs_path';
 
 my %config = (
@@ -61,6 +62,12 @@ sub get {
 sub log_message {
     my ($message) = @_;
     my $log_file = get('LOG_FILE');
+
+    # Ensure the directory exists
+    my $log_dir = dirname($log_file);
+    unless (-d $log_dir) {
+        make_path($log_dir) or warn "Could not create log directory $log_dir: $!";
+    }
     
     open my $fh, '>>', $log_file or warn "Could not open $log_file: $!";
     print $fh scalar(localtime) . " - $message\n";
