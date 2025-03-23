@@ -266,10 +266,10 @@ sub generateSubsectionFooter {
             <div class="group-container">
               <span class="group-label">Grouped by:</span>
               <div class="radio-group">
-                <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+                <label class="radio-label"><input type="radio" name="grouping$type" value="none" checked> None</label>
+                <label class="radio-label"><input type="radio" name="grouping$type" value="day"> Day</label>
+                <label class="radio-label"><input type="radio" name="grouping$type" value="month"> Month</label>
+                <label class="radio-label"><input type="radio" name="grouping$type" value="year"> Year</label>
               </div>
             </div>
           </td>
@@ -282,7 +282,7 @@ END_HTML
         my $wallets_str = join(" ", @$wallets);
         my $group = "'none'";
         if ($isGroupper) {
-            $group = "document.querySelector('input[name=grouping]:checked')?.value";
+            $group = "document.querySelector('input[name=grouping$type]:checked')?.value";
         }
         $footer_html .= <<"END_HTML";
         <tr class='total-row'>
@@ -550,11 +550,12 @@ END_HTML
 sub renderBscStaked {
     my ($grouping, $data) = @_;
     my $type = "bsc";
+    my ($title) = ($grouping eq 'none') ? 'Wallet' : '#Stakes';
     my $close = closeModal($type);
     my $html =<<END_HTML;
     $close
     <h2>SEVO-X Staked Details</h2><table class='stake-table'>
-    <thead><tr><th>Wallet</th><th>Date</th><th>Locked</th><th>Unlocked</th></tr></thead><tbody>
+    <thead><tr><th>$title</th><th>Date</th><th>Locked</th><th>Unlocked</th></tr></thead><tbody>
 END_HTML
 
     foreach my $row (@$data) {

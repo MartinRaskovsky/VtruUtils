@@ -24,7 +24,7 @@ my %detail_type_map = (
 # Define grouppers type
 my %group_type_map = (
     "VTRU Staked"  => 1,
-    "SEVO-X Staked"=> 0,
+    "SEVO-X Staked"=> 1,
 );
 
 # Define explorers mapping
@@ -65,6 +65,7 @@ sub getDetailType {
     return exists $detail_type_map{$detail} ? $detail_type_map{$detail} : "";
 }
 
+# These groupping defs are needed also in constants.js
 # Retrieve detail type
 sub getIsGrouperType {
     my ($detail) = @_;

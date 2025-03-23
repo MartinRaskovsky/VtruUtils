@@ -85,6 +85,7 @@ function renderDetailContent(type, grouping, data) {
         case "bsc":     return renderBscStakeDetails(grouping, data);
         case "vibe":    return renderVibeDetails(grouping, data);
         case "vortex":  return renderVortexDetails(grouping, data);
+        case "bsc":     return renderBscStakeDetails(grouping, data);
         default:        return renderVtruStakeDetails(grouping, data);
     }
 }

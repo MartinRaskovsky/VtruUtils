@@ -73,7 +73,7 @@ const detailType = {
 // These groupping defs are needed also in perl-lib/Defs.pm: %group_type_map
 const hasGroups = {
     [SEC_VTRU_STAKED]: true,
-    [SEC_SEVOX_STAKED]: false,
+    [SEC_SEVOX_STAKED]: true,
 };
 
 // Export for Node.js (CommonJS)

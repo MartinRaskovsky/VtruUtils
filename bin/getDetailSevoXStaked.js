@@ -9,6 +9,7 @@
 
 const Web3 = require('../lib/libWeb3');
 const VtruVault = require("../lib/vtruVault");
+const { getGroupKey } = require("../lib/vtruUtils");
 const { getBlockDate } = require("../lib/libWeb3Timer");
 const tokenStakedSevoX = require('../lib/tokenStakedSevoX');
 const { formatRawNumber } = require("../lib/vtruUtils");
@@ -52,13 +53,6 @@ async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
         if (!stakingDetails) {
             console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);
-        }
-
-        // Helper to group by day/month/year
-        function getGroupKey(date, groupBy) {
-            if (groupBy === "year") return date.getFullYear().toString();
-            if (groupBy === "month") return `${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
-            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear().toString().slice(-2)}`;
         }
 
         const groupedData = {};

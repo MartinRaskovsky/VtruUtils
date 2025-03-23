@@ -205,10 +205,10 @@ function generateSection(title, networkKey, vault, wallets, values, total) {
         if (hasGroups[title]) {
             groupControls = `
             <span class="group-label">Grouped by:</span>
-                <label class="radio-label"><input type="radio" name="grouping" value="none" checked> None</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="day"> Day</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="month"> Month</label>
-                <label class="radio-label"><input type="radio" name="grouping" value="year"> Year</label>
+                <label class="radio-label"><input type="radio" name="grouping${type}" value="none" checked> None</label>
+                <label class="radio-label"><input type="radio" name="grouping${type}" value="day"> Day</label>
+                <label class="radio-label"><input type="radio" name="grouping${type}" value="month"> Month</label>
+                <label class="radio-label"><input type="radio" name="grouping${type}" value="year"> Year</label>
                 `;
         }
         stakeControls = `
@@ -241,7 +241,7 @@ function generateSection(title, networkKey, vault, wallets, values, total) {
 // Handle Grouping Toggle Events
 let selectedGrouping = "none";
 document.body.addEventListener("change", function (event) {
-    if (event.target.name === "grouping") {
+    if (event.target.name.startsWith("grouping")) {
         selectedGrouping = event.target.value;
     }
 });

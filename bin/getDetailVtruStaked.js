@@ -9,6 +9,7 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
+const { getGroupKey } = require("../lib/vtruUtils");
 const TokenStakedVtru = require("../lib/tokenStakedVtru");
 const { formatNumber, formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
@@ -26,19 +27,6 @@ function showUsage() {
     console.log("  -g [day|month|year] Group results by maturity day, month, or year.");
     console.log("  -h                  Show this usage information.");
     process.exit(0);
-}
-
-/**
- * Generates a grouping key based on a given date and grouping option.
- * 
- * @param {Date} date - The date object.
- * @param {string} groupBy - Grouping option ('day', 'month', 'year').
- * @return {string} - Grouped key.
- */
-function getGroupKey(date, groupBy) {
-    if (groupBy === "year") return date.getFullYear().toString();
-    if (groupBy === "month") return `${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
-    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear().toString().slice(-2)}`;
 }
 
 /**
