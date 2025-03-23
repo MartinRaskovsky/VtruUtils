@@ -20,7 +20,7 @@ const KEYS = ['amount', 'reward', 'totalStaked', 'availableToUnstake', 'estimate
 function showUsage() {
     console.log("\nUsage: getDetailVtruStaked.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
-    console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
+    console.log("  -v <vaultAddress>   Specify an optional vault address to retrieve associated wallets.");
     console.log("  -b                  Use balance instead of staking details.");
     console.log("  -f                  Format output as an aligned table.");
     console.log("  -g [day|month|year] Group results by maturity day, month, or year.");
@@ -143,6 +143,7 @@ async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
 
     } catch (error) {
         console.error("❌ Error:", error.message);
+        console.error(error.stack); // 👈 This will show the actual failing line
     }
 }
 

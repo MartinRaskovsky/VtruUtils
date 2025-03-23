@@ -4,10 +4,11 @@
  * Retrieves and formats BSC staking details for given wallet addresses.
  *
  * Author: Dr. Martín Raskovsky
- * Date: February 2025
+ * Date: March 2025
  */
 
 const Web3 = require('../lib/libWeb3');
+const VtruVault = require("../lib/vtruVault");
 const { getBlockDate } = require("../lib/libWeb3Timer");
 const tokenStakedSevoX = require('../lib/tokenStakedSevoX');
 const { formatRawNumber } = require("../lib/vtruUtils");
@@ -23,8 +24,9 @@ const KEYS = ['wallet', 'unlocked', 'locked', 'date'];
 function showUsage() {
     console.log(`\nUsage: getDetailsSevoXStaked.js [options] <wallet1> <wallet2> ... <walletN>\n`);
     console.log(`Options:`);
-    console.log("  -v <vaultAddress>   (Ignored)");
+    console.log("  -v <vaultAddress>   Specify an optional vault address to retrieve associated wallets.");
     console.log(`  -f                  Format output as an aligned table.`);
+    console.log("  -g [day|month|year] Group date results by day, month, or year.");
     console.log(`  -h                  Show this usage information.`);
     process.exit(0);
 }
@@ -39,48 +41,97 @@ function showUsage() {
  */
 async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
     try {
+        const vtru = new Web3(Web3.VTRU);
         const bsc = new Web3(Web3.BSC);
         const token = new tokenStakedSevoX(bsc);
 
-        const stakingDetails = await token.getDetails(wallets);
+        // Retrieve associated wallets if vault address is provided
+        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+
+        const stakingDetails = await token.getDetails(merged);
         if (!stakingDetails) {
             console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);
         }
 
+        // Helper to group by day/month/year
+        function getGroupKey(date, groupBy) {
+            if (groupBy === "year") return date.getFullYear().toString();
+            if (groupBy === "month") return `${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear().toString().slice(-2)}`;
+        }
+
+        const groupedData = {};
         let totalUnlocked = 0n;
         let totalLocked = 0n;
         const formattedData = [];
 
-        // Process staking data, sort by timestamp
-        await Promise.all(
-            stakingDetails.sort((a, b) => Number(a.stamp) - Number(b.stamp)).map(async row => {
-                const unlocked = ((row.locked * 100n) / 95n) - row.locked;
-                totalUnlocked += unlocked;
-                totalLocked += row.locked;
+        // Sort data by stamp (ascending)
+        stakingDetails.sort((a, b) => Number(a.stamp) - Number(b.stamp));
 
+        // Iterate and group if needed
+        for (const row of stakingDetails) {
+            const unlocked = ((row.locked * 100n) / 95n) - row.locked;
+            totalUnlocked += unlocked;
+            totalLocked += row.locked;
+        
+            // Fetch the actual block to get the timestamp
+            const provider = bsc.getProvider();
+            const block = await provider.getBlock(Number(row.stamp));
+            const rawDate = new Date(block.timestamp * 1000); // Now a correct JS Date object
+            const groupKey = getGroupKey(rawDate, groupBy);
+            const formattedDate = await getBlockDate(bsc, row.stamp); // Only used for non-grouped mode
+        
+            if (groupBy) {
+                if (!groupedData[groupKey]) {
+                    groupedData[groupKey] = {
+                        walletCount: 0,
+                        unlocked: 0n,
+                        locked: 0n,
+                        date: groupKey // Or keep formatted if needed, but this matches grouping
+                    };
+                }
+        
+                groupedData[groupKey].walletCount++;
+                groupedData[groupKey].unlocked += unlocked;
+                groupedData[groupKey].locked += row.locked;
+            } else {
                 formattedData.push({
                     wallet: row.wallet,
                     unlocked: formatRawNumber(unlocked),
                     locked: formatRawNumber(row.locked),
-                    date: await getBlockDate(bsc, row.stamp),
+                    date: formattedDate,
                 });
-            })
-        );
+            }
+        }
 
-        // Append totals row
+        if (groupBy) {
+            for (const [key, group] of Object.entries(groupedData)) {
+                formattedData.push({
+                    wallet: group.walletCount.toString(),
+                    unlocked: formatRawNumber(group.unlocked),
+                    locked: formatRawNumber(group.locked),
+                    date: group.date
+                });
+            }
+        }
+
+        // Totals row
         formattedData.push({
             wallet: 'Total',
             unlocked: formatRawNumber(totalUnlocked),
             locked: formatRawNumber(totalLocked),
-            date: "",
+            date: ""
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
+
     } catch (error) {
         console.error("❌ Error retrieving staking details:", error.message);
-    }
+        console.error(error.stack); // 👈 This will show the actual failing line
+    }    
 }
+
 
 /**
  * Parses command-line arguments and initiates staking data retrieval.
@@ -116,11 +167,6 @@ function main() {
                 walletAddresses.push(args[i]);
                 break;
         }
-    }
-
-    if (walletAddresses.length === 0) {
-        console.error("❌ Error: No wallet addresses provided.");
-        showUsage();
     }
 
     runDetails(vaultAddress, walletAddresses, formatOutput, groupBy).catch(error => {
