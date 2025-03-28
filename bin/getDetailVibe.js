@@ -10,6 +10,7 @@
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
 const TokenVibe = require("../lib/tokenVibe");
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { formatNumber, formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_VIBE } = require('../shared/constants');
@@ -43,7 +44,8 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
-        const details = await tokenVibe.getDetails(merged);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
+        const details = await tokenVibe.getDetails(evm);
 
         let totalNoTokens = 0n;
         let totalBalance = 0n;

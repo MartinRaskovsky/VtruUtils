@@ -11,6 +11,7 @@ const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
 const { getGroupKey } = require("../lib/vtruUtils");
 const TokenStakedVtru = require("../lib/tokenStakedVtru");
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { formatNumber, formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_VTRU_STAKED } = require("../shared/constants");
@@ -44,8 +45,9 @@ async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
 
-        let result = await tokenStakedVtru.getDetails(merged);
+        let result = await tokenStakedVtru.getDetails(evm);
         if (!Array.isArray(result)) result = [result];
 
         result.sort((a, b) => a.maturityDays - b.maturityDays);

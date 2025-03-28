@@ -1,0 +1,26 @@
+:root {
+  --accent-color-1: #6f42c1;
+  --accent-color-2: #4B0082;
+  --accent-color-muted: #9472ac;
+  --accent-color-3: #5a0ca3;
+  --accent-color-4: #5a34a3;
+  --accent-color-faded: #b090c8;
+  --overlay-light-1: rgba(255, 255, 255, 0.1);
+  --overlay-light-2: rgba(255, 255, 255, 0.2);
+  --overlay-light-3: rgba(255, 255, 255, 0.4);
+  --overlay-light-4: rgba(255, 255, 255, 0.5);
+  --overlay-blue: rgba(0, 0, 255, 0.1);
+  --overlay-red: rgba(255, 0, 0, 0.1);
+  --overlay-dark: rgba(0, 0, 0, 0.6);
+  --alt-bg-1: rgb(75, 0, 130);
+  --alt-bg-2: rgb(53, 6, 82);
+  --text-primary: #FFFFFF;
+  --tag-purple: #c586c0;
+  --tag-blue: #569cd6;
+  --tag-green: #b5cea8;
+  --tag-cyan: #9cdcfe;
+  --tag-orange: #ce9178;
+  --tag-forest: #3b6c3b;
+  --tag-red: #b63c3c;
+  --border-light: #dcdcdc;
+}

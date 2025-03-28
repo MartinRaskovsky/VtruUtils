@@ -12,7 +12,7 @@ our @EXPORT_OK = qw(getSectionSummary);
 
 sub getSectionSummary {
     return [
-    { name => 'Native Coins', sections => [ 'BNB', 'ETH', 'POL', 'VTRU' ] },
+    { name => 'Native Coins', sections => [ 'BNB', 'ETH', 'POL', 'VTRU', 'SOL', 'TEZ' ] },
     { name => 'VTRU Bridged', sections => [ 'VTRU on BSC', 'VTRU on ETH' ] },
     { name => 'USDC', sections => [ 'USDC on VTRU(USDC.pol)', 'USDC on ETH', 'USDC on BSC', 'USDC on POL' ] },
     { name => 'Staked', sections => [ 'VTRU Staked', 'SEVO-X Staked' ] },

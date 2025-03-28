@@ -8,8 +8,8 @@
  */
 
 const Web3 = require("../lib/libWeb3");
-const TokenWallet = require("../lib/tokenWallet");
-const { formatRawNumber } = require("../lib/vtruUtils");
+const EvmBlockchain = require("../lib/evmBlockchain");
+const { formatNativeBalance } = require("../lib/libEvm");
 
 /**
  * Retrieves and displays the VTRU balance for a given wallet.
@@ -19,9 +19,10 @@ const { formatRawNumber } = require("../lib/vtruUtils");
 async function getBalance(wallet) {
     try {
         const web3 = new Web3(Web3.VTRU);
-        const token = new TokenWallet(web3);
+        const evmProvider = web3.getProvider();
+        const token = new EvmBlockchain(evmProvider);
         const balance = await token.getBalance(wallet);
-        console.log(formatRawNumber(balance));
+        console.log(`${wallet} balance=${formatNativeBalance(balance)}`);
     } catch (error) {
         console.error("❌ Error retrieving balance:", error.message);
     }

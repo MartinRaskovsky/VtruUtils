@@ -15,8 +15,7 @@ async function getDetailVibe(wallet) {
     try {
         const web3 = await Web3.create(Web3.VTRU);
         const tokenVibe = new TokenVibe(web3);
-
-        
+ 
         const { balance, noTokens, claimed, unclaimed } = await tokenVibe.getVibeDetail(wallet);
         console.log(`Wallet: ${wallet}`);
         console.log(`Vibe Balance: ${formatNumber(balance, 0)}`);

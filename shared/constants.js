@@ -12,6 +12,8 @@ const NET_VTRU  = "VTRU";
 const NET_ETH   = "ETH";
 const NET_BSC   = "BSC";
 const NET_POL   = "POL";
+const NET_SOL   = "SOL";
+const NET_TEZ   = "TEZ";
 
 // Section Titles
 
@@ -20,6 +22,8 @@ const SEC_BNB         = "BNB";
 const SEC_ETH         = "ETH";
 const SEC_POL         = "POL";
 const SEC_VTRU        = "VTRU";
+const SEC_SOL         = "SOL";
+const SEC_TEZ         = "TEZ";
 
 // VTRU bridged
 const SEC_VTRU_BSC    = "VTRU on BSC";
@@ -53,7 +57,7 @@ const SEC_VITDEX      = "VITDEX";
 
 // Section mapping for summary with subsections
 const sectionSummary = [
-    { name: 'Native Coins',            sections: [SEC_BNB, SEC_ETH, SEC_POL, SEC_VTRU] },
+    { name: 'Native Coins',            sections: [SEC_BNB, SEC_ETH, SEC_POL, SEC_VTRU, SEC_SOL, SEC_TEZ] },
     { name: 'VTRU Bridged',            sections: [SEC_VTRU_BSC, SEC_VTRU_ETH] },
     { name: 'USDC',                    sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL] },
     { name: 'Staked',                  sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
@@ -95,6 +99,8 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_ETH,
         SEC_BNB,
         SEC_POL,
+        SEC_SOL,
+        SEC_TEZ,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
         SEC_USDC_VTRU,
@@ -105,6 +111,8 @@ if (typeof module !== 'undefined' && module.exports) {
         NET_ETH,
         NET_BSC,
         NET_POL,
+        NET_SOL,
+        NET_TEZ,
         detailType,
         hasGroups,
         sectionSummary
@@ -130,6 +138,8 @@ if (typeof window !== "undefined") {
         SEC_ETH,
         SEC_BNB,
         SEC_POL,
+        SEC_SOL,
+        SEC_TEZ,
         SEC_VTRU_ETH,
         SEC_VTRU_BSC,
         SEC_USDC_VTRU,
@@ -140,6 +150,8 @@ if (typeof window !== "undefined") {
         NET_ETH,
         NET_BSC,
         NET_POL,
+        NET_SOL,
+        NET_TEZ,
         detailType,
         hasGroups,
         sectionSummary

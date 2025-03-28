@@ -71,6 +71,7 @@ testStakedContract.js
 
 ✅ testGetStakedBalance passed.
 ✅ testGetStakedBalances passed.
+getStakedDetail wallet= 0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE
 ✅ testGetStakedDetail passed.
 ✅ testGetStakedDetails passed.
 🎉 All TokenStakedVtru tests passed successfully!
@@ -171,8 +172,6 @@ testVibeContract.js
 Running unit tests for TokenVibe.js...
 ✅ testGetVibeBalanceValid passed.
 ✅ testGetVibeBalanceEmpty passed.
-❌ Error fetching VIBE balance for wallet 0x0000000000000000000000000000000000000003: Contract call failed
-✅ testGetVibeBalanceFailure passed.
 ✅ testGetVibeBalances passed.
 ✅ testGetVibeBalancesFailures passed.
 🎉 All TokenVibe tests passed successfully!
@@ -181,8 +180,6 @@ Running unit tests for TokenVibe.js...
 testWalletDetails.js
 
 Running unit tests for Sections.js...
-✅ testGetWithoutFullAndWithoutBSC passed.
-✅ testGetWithFullAndWithBSC passed.
 ✅ testConstructorValidation passed.
 🎉 All Sections tests passed successfully!
 ===========================================================
@@ -192,9 +189,6 @@ testWeb3.js
 Running unit tests for Web3.js...
 ✅ testGettersAndConnection passed.
 ✅ testGetWalletRawBalance passed.
-✅ testGetWalletRawBalances passed.
-❌ Error fetching balance for wallet 0xWalletError: Simulated provider error
-✅ testGetWalletRawBalanceError passed.
 🎉 All Web3 tests passed successfully!
 ===========================================================
 

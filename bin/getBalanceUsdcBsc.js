@@ -38,11 +38,12 @@ function showUsage() {
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
+        const vtru = new Web3(Web3.VTRU);
         const net = new Web3(Web3.BSC);
         const token = new TokenUsdc(net);
 
         // Retrieve associated wallets if vault address is provided
-        const { merged } = await VtruVault.mergeWallets(net, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
         const balances = await token.getBalances(merged);
         let totalBalance = 0n;
         const formattedData = [];
@@ -62,7 +63,7 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
     } catch (error) {
-        console.error("❌ Error retrieving USDC held balances:", error.message);
+        console.error(`❌ Error retrieving USDC held balances: ${error.message} ${error.stack}`);
     }
 }
 

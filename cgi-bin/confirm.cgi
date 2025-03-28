@@ -48,6 +48,7 @@ print <<HTML;
 <html>
 <head>
     <title>Confirm Login</title>
+    <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/common.css">
 </head>
 <body>

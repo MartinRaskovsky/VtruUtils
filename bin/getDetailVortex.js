@@ -10,6 +10,7 @@
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
 const TokenVortex = require("../lib/tokenVortex");
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { groupByWalletAndKind } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_VORTEX } = require('../shared/constants');
@@ -43,7 +44,8 @@ async function runDetails(vaultAddress, wallets, formatOutput) {
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
-        const details = await tokenVortex.getDetails(merged);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
+        const details = await tokenVortex.getDetails(evm);
         const groups = groupByWalletAndKind(details);
 
         let totalCount = 0;

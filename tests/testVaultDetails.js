@@ -64,14 +64,14 @@ sinon.stub(vtruUtils, "formatNumber").callsFake((n, decimals) => n.toString());
 // -----------------------------------------------------------------------------
 function bigIntReplacer(key, value) {
   return typeof value === "bigint" ? value.toString() : value;
-}
+};
 
 // -----------------------------------------------------------------------------
 // 6. Create a Dummy Configuration Object
 // -----------------------------------------------------------------------------
 const dummyConfig = {
   getAbi: () => [], // Return an empty ABI array
-  getContractAddress: () => "0xDummyContractAddress"
+  getContractAddress: () => "0xDummyContractAddress",
 };
 
 // -----------------------------------------------------------------------------
@@ -79,6 +79,7 @@ const dummyConfig = {
 // These objects must implement getProvider(), getWalletRawBalance(), getConfig(), and also expose a "config" property.
 // -----------------------------------------------------------------------------
 const dummyVtru = { 
+  getId: () => 0,//Web3.VTRU,
   getProvider: () => ({}),
   getWalletRawBalance: async (wallet) => 1000000000000000000n, // e.g., 1 totalETH in wei
   getConfig: () => dummyConfig,

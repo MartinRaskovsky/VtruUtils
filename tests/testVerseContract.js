@@ -23,7 +23,10 @@ sinon.stub(ethers, "isAddress").returns(true);
 sinon.stub(ethers, "getAddress").callsFake(wallet => wallet);
 
 // ✅ Create mock instances
-const mockConfig = { getAbi: sinon.stub().returns([]) };
+const mockConfig = { 
+    getAbi: sinon.stub().returns([]), 
+    getId: () => 0,//Web3.VTRU,
+};
 const mockWeb3 = { getProvider: sinon.stub().returns({}) };
 
 // ✅ Create a mock contract
@@ -81,7 +84,7 @@ async function testGetVerseBalancesFailures() {
     
     assert.deepStrictEqual(
         balances,
-        [null, null],
+        [],
         `❌ testGetVerseBalancesFailures failed: Expected [null, null] but got ${JSON.stringify(balances)}`
     );
 

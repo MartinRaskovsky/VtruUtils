@@ -39,14 +39,17 @@ sub decorateUnclaimed {
 
 sub getLabel {
     my ($network, $grouping, $data) = @_;
+    if (!defined $data) {
+        debugLog($MODULE, "Undefined data for $network $grouping");
+    }
     return $data if $grouping ne 'none';
     return $data if $grouping eq 'none' && $data eq 'Total';
     return getExplorerURL($network, $data, truncateAddress($data));
 }
 
 sub truncateAddress {
-    my ($address) = @_;
-    return substr($address, 0, 6) . "..." . substr($address, -4);
+    my ($wallet) = @_;
+    return substr($wallet, 0, 6) . "..." . substr($wallet, -4);
 }
 
 sub printErrorResponse {

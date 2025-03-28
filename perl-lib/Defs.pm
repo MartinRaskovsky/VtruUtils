@@ -2,7 +2,7 @@ package Defs;
 use strict;
 use warnings;
 use Exporter 'import';
-our @EXPORT_OK = qw(getScriptForType getDetailType getIsGrouperType getExplorerURL getRenderFunction getBrandingColor);
+our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getExplorerURL getRenderFunction getChainMarker getNetworkChain);
 
 # Define script mapping
 my %script_map = (
@@ -33,16 +33,58 @@ my %explorers = (
     'ETH'  => "https://etherscan.io/address/",
     'VTRU' => "https://explorer.vitruveo.xyz/address/",
     'POL'  => "https://polygonscan.com/address/",
+    "SOL"  => "https://explorer.solana.com/address/",
+    "TEZ"  => "https://tzkt.io/",
+);
+
+my @chains = (
+    "EVM", 
+    "SOL", 
+    "TEZ"
+);
+
+my %net_to_chain = (
+    'BSC'  => "EVM",
+    'ETH'  => "EVM",
+    'VTRU' => "EVM",
+    'POL'  => "EVM",
+    "SOL"  => "SOL",
+    "TEZ"  => "TEZ",   
 );
 
 # Define network branding color
 my %branding = (
-    'BSC'  => "#F3BA2F",
-    'ETH'  => "#627EEA",
-    'VTRU' => "#8247E5",
-    'POL'  => "#282A36"
+    'BSC'  => {
+        color => "#F3BA2F",
+        icon  => "bsc.png",
+        emoji => '🟡',
+    },
+    'ETH'  => {
+        color => "#627EEA",
+        icon  => "eth.png",
+        emoji => '💠',
+    },
+    'VTRU' => {
+        color => "#8247E5",
+        icon  => "vtru.png",
+        emoji => '🟣',
+    },
+    'POL'  => {
+        color => "#282A36",
+        icon  => "pol.png",
+        emoji => '🔗',
+    },
+    'SOL'  => {
+        color => "#9945FF",
+        icon  => "sol.png",
+        emoji => '🌿',
+    },
+    'TEZ'  => {
+        color => "#2C7DF7",
+        icon  => "tez.png",
+        emoji => '🔷',
+    },
 );
-
 
 # Define render function mapping
 my %render_map = (
@@ -72,9 +114,21 @@ sub getIsGrouperType {
     return exists $group_type_map{$detail} ? $group_type_map{$detail} : 0;
 }
 
+my %wanted = map { uc($_) => 1 } @chains;
+sub isChain {
+    my ($chain) = @_;
+    return $wanted{uc($chain)} // 0;
+}
+
+sub getNetworkChain {
+    my ($net) = @_;
+    return exists $net_to_chain{$net} ? $net_to_chain{$net} : "EVM";
+}
+
 # Retrieve explorer URL
 sub getExplorerURL {
     my ($network, $address, $label) = @_;
+    if (!defined $network) { return ''; }
     $label ||= $address;
     return exists $explorers{$network} 
         ? "<a target=\"_blank\" href='$explorers{$network}$address'>$label</a>"
@@ -87,10 +141,34 @@ sub getRenderFunction {
     return $render_map{$type} // die "Unknown render function for type: $type";
 }
 
-# Retrieve branding color for network
-sub getBrandingColor {
-    my ($network) = @_;
-    return $branding{$network} // die "Unknown render function for network: $network";
+sub getChainMarker {
+    my ($chainId, $prefer) = @_;
+    if (!defined $chainId) { return ''; }
+    $prefer ||= 'icon';  # default to icon if available
+
+    my $entry = $branding{$chainId};
+    return '' unless $entry;
+
+    if ($prefer eq 'icon' && $entry->{icon}) {
+        return qq{
+            <img src="/icons/$entry->{icon}" alt="$chainId" width="16" height="16" 
+                 style="display:inline-block;vertical-align:middle;">
+
+        };
+    }
+    elsif ($prefer eq 'emoji' && $entry->{emoji}) {
+        return qq{
+            <span style="font-size:16px;">$entry->{emoji}</span>
+        };
+    }
+    elsif ($entry->{color}) {
+        return qq{
+            <div style="width: 16px; height: 16px; background-color: $entry->{color}; 
+                        border-radius: 50%; display: inline-block;"></div>
+        };
+    }
+
+    return ''; # fallback empty if all else fails
 }
 
 

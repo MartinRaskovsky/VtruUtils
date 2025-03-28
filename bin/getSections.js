@@ -11,6 +11,7 @@ const Web3 = require("../lib/libWeb3");
 const Network = require("../lib/libNetwork");
 const VtruVault = require('../lib/vtruVault');
 const WalletSections = require('../lib/libWalletSections');
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { prettyfier2 } = require("../lib/libPrettyfier");
 
 /**
@@ -23,6 +24,32 @@ function abort(message) {
     process.exit(1);
 }
 
+async function mergeData(chain, net, data, wallets, formatOutput, toLower) {
+    if (wallets.length === 0) return 0;
+
+    const network = new Network(net);
+    const walletSections = new WalletSections(network);
+    const result = await walletSections.get(wallets, toLower);
+
+    if (result && typeof result === 'object') {
+
+        if (result.errors != "" && data.errors == "") data.errors = result.errors; 
+        data[chain] = result;
+
+        if (formatOutput) {
+            const sectionTitles = walletSections.getSectionTitles(); 
+            const totalKeys = walletSections.getTotalKeys(); 
+            const keys = walletSections.getSectionKeys(); 
+            const columns = ['wallet', 'balance'];
+
+            console.log(chain, net);
+            keys.forEach((key, index) => {
+                prettyfier2(result['wallets'], result[key], result[totalKeys[index]], sectionTitles[index], columns);
+            });
+        }
+    }
+}
+    
 /**
  * Fetches and formats details from a vault or a list of wallets.
  *
@@ -32,8 +59,7 @@ function abort(message) {
  */
 async function getSections(vaultAddress, wallets, formatOutput) {
     try {
-        const network = new Network(Web3.networkIds);
-        const vtru = network.get(Web3.VTRU);
+        const vtru = new Web3(Web3.VTRU);
 
         // Retrieve default vault and wallets if none are provided
         if (!vaultAddress && wallets.length === 0) {
@@ -51,24 +77,20 @@ async function getSections(vaultAddress, wallets, formatOutput) {
 
         // Merge vault wallets with provided wallets
         const { merged, vault } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
-        const walletSections = new WalletSections(network);
-        const data = await walletSections.get(merged);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
+        
+        let data = { errors: "" };
+   
+        await mergeData(Web3.CHAIN_EVM, Web3.NET_EVM, data, evm, formatOutput, 1);
+        await mergeData(Web3.CHAIN_SOL, Web3.NET_SOL, data, sol, formatOutput, 0);
+        await mergeData(Web3.CHAIN_TEZ, Web3.NET_TEZ, data, tez, formatOutput, 0);
 
         if (!data) {
             abort("No wallets data found.");
         }
 
-        if (formatOutput) {
-            const columns = ['wallet', 'balance'];
-            const sectionTitles = walletSections.getSectionTitles();
-            const totalKeys = walletSections.getTotalKeys();
-            const keys = walletSections.getSectionKeys();
+        if (!formatOutput) {
 
-            keys.forEach((key, index) => {
-                prettyfier2(data['wallets'], data[key], data[totalKeys[index]], sectionTitles[index], columns);
-            });
-        } else {
-            // Preserve JSON format
             console.log(JSON.stringify({
                 address: vault ? vault.address : "",
                 name: vault ? await vault.getName() : "",

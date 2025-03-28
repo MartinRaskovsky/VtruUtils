@@ -1,0 +1,16 @@
+{
+    "mainnet": {
+        "USDC": "KT1PrRMmpmbWmPb9XJ9BHVp4HxbfSWd9HBwM"
+    },
+    "abi": {
+            "USDC": [
+              {
+                "constant": true,
+                "inputs": [{ "name": "_owner", "type": "address" }],
+                "name": "balanceOf",
+                "outputs": [{ "name": "balance", "type": "uint256" }],
+                "type": "function"
+              }
+            ]
+        }
+}

@@ -1,6 +1,6 @@
 /* Ensure the page uses flexbox to center elements */
 body {
-    background-color: rgb(75, 0, 130);
+    background-color: var(--alt-bg-1);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,7 +15,7 @@ body {
 /* Ensure the title is at the very top */
 h1 {
     font-size: 26px;
-    color: white;
+    color: var(--text-primary);
     position: absolute;
     top: 20px;
     left: 50%;
@@ -24,7 +24,7 @@ h1 {
 
 /* Common container for login and confirmation box */
 .box-container {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--overlay-light-1);
     padding: 20px;
     border-radius: 10px;
     width: 90%; /* Adaptive width */
@@ -37,7 +37,7 @@ h1 {
 /* Left-align labels */
 label {
     display: block;
-    color: white;
+    color: var(--text-primary);
     font-size: 16px; /* Slightly larger for better readability */
     margin-bottom: 5px;
 }
@@ -54,9 +54,9 @@ input[type="number"] {
     border-radius: 6px;
     border: none;
     font-size: 16px; /* Better touch usability */
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-    caret-color: white;
+    background: var(--overlay-light-2) !important;
+    color: var(--text-primary) !important;
+    caret-color: var(--text-primary);
     height: 48px;
 }
 
@@ -72,8 +72,8 @@ button {
     width: 100%;
     padding: 12px;
     border-radius: 6px;
-    background-color: #6A0DAD;
-    color: white;
+    background-color: var(--accent-color-1);
+    color: var(--text-primary);
     border: none;
     cursor: pointer;
     margin-top: 12px;
@@ -82,26 +82,26 @@ button {
 }
 
 button:hover {
-    background-color: #7E22CE;
+    background-color: var(--accent-color-2);
 }
 
 /* Make cancel link more visible */
 .cancel-link {
-    color: white;
+    color: var(--text-primary);
     text-decoration: underline;
     font-size: 16px;
     margin-top: 12px;
     display: block;
 }
 
-/* Prevent white autofill background */
+/* Prevent var(--text-primary) autofill background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-    -webkit-text-fill-color: white !important;
+    background-color: var(--overlay-light-2) !important;
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
     transition: background-color 5000s ease-in-out 0s; /* Prevents the browser from overriding styles */
 }
 

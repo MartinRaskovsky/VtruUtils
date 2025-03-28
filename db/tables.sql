@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS wallets;
 CREATE TABLE wallets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    wallet_address VARCHAR(42) NOT NULL,
+    wallet_address VARCHAR(64) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_wallets_email (email),
     INDEX idx_wallets_address (wallet_address)

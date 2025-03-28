@@ -12,6 +12,7 @@ const VtruVault = require("../lib/vtruVault");
 const { getGroupKey } = require("../lib/vtruUtils");
 const { getBlockDate } = require("../lib/libWeb3Timer");
 const tokenStakedSevoX = require('../lib/tokenStakedSevoX');
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_SEVOX } = require('../shared/constants');
@@ -48,8 +49,9 @@ async function runDetails(vaultAddress, wallets, formatOutput, groupBy) {
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
 
-        const stakingDetails = await token.getDetails(merged);
+        const stakingDetails = await token.getDetails(evm);
         if (!stakingDetails) {
             console.error("❌ Failed to retrieve staked SEVO-X data.");
             process.exit(1);

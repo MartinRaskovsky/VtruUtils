@@ -4,7 +4,7 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( getDetailType getIsGrouperType getExplorerURL getBrandingColor);
+use Defs qw ( getDetailType getIsGrouperType isChain getExplorerURL getChainMarker getNetworkChain);
 use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
 use SectionSummary qw(getSectionSummary);
 
@@ -12,6 +12,11 @@ use Exporter 'import';
 our @EXPORT_OK = qw(renderPage renderSections );
 
 my $MODULE = "Render";
+
+sub getBrand {
+    my ($key) = @_;
+    return getChainMarker($key, 'icon');#'emoji', 'icon', or 'color'
+}
 
 sub renderPage {
     my ($header, $body_content, $type) = @_;
@@ -34,6 +39,7 @@ END_HTML
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Query Results</title>
+    <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/styles.css">
     <script src="/public/scripts.js" defer></script>  <!-- Ensures scripts run after DOM loads -->
 </head>
@@ -119,7 +125,8 @@ sub generateTotalRow {
     my ($section, $brandColor, $diff, $value) = @_;
     my $brand = "";
     if ($brandColor ne "") {
-       $brand = "<div style='width: 12px; height: 12px; background-color: $brandColor; border-radius: 50%; display: inline-block; margin-right: 8px;'></div>";
+       #$brand = "<div style='width: 12px; height: 12px; background-color: $brandColor; border-radius: 50%; display: inline-block; margin-right: 8px;'></div>";
+       $brand = $brandColor;
     }
     $diff = $diff // "";
     if ($diff eq "") { $diff = "&nbsp;" }
@@ -142,47 +149,64 @@ END_HTML
 }
 
 sub generateTotal {
-    my ($result, $index, $branded) = @_;
+    my ($data, $index, $branded) = @_;
     my $diff_totals = "diff_totals";
-    my $section = $branded ? $result->{sectionTitles}[$index]: "";
-    my $total_key = $result->{totalKeys}[$index];
-    my $networkKey  = $result->{networkKeys}[$index];
-    my $brandColor  = $branded ? getBrandingColor($networkKey): "";
-    return generateTotalRow($section, $brandColor, $result->{$diff_totals}[$index], $result->{$total_key});
+    my $section = $branded ? $data->{sectionTitles}[$index]: "";
+    my $total_key = $data->{totalKeys}[$index];
+    my $networkKey  = $data->{networkKeys}[$index];
+    my $brandColor =  getBrand($networkKey);
+
+    return generateTotalRow($section, $brandColor, $data->{$diff_totals}[$index], $data->{$total_key});
 }
 
-#sub generateTotals {
-#    my ($result) = @_;
-#    my $html = "";
-#
-#    # Build a mapping from title to index
-#    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
-#
-#    #for my $index (0 .. $#{$result->{sectionTitles}}) {
-#     # Sort titles alphabetically and process by their original index
-#    for my $title (sort keys %title_to_index) {
-#        my $index = $title_to_index{$title};
-#        $html .= generateTotal($result, $index, 1);
-#    }
-#    return $html;
-#}
+sub build_title_index {
+    my ($chains) = @_;
+    my %map;
+
+    foreach my $chain (keys %$chains) {
+        next unless isChain($chain);
+        my $titles = $chains->{$chain}->{sectionTitles};
+
+        next unless ref $titles eq 'ARRAY';
+
+        for (my $i = 0; $i <= $#$titles; $i++) {
+            my $title = $titles->[$i];
+
+            # Store chain and index for this title
+            $map{$title} = {
+                chain => $chain,
+                index => $i,
+            };
+        }
+    }
+
+    return \%map;
+}
+
+sub find_title_in_index {
+    my ($index_map, $title) = @_;
+
+    return exists $index_map->{$title} ? $index_map->{$title} : undef;
+}
+
 
 sub generateTotals {
-    my ($result) = @_;
+    my ($chains, $index_map) = @_;
     my $html = '';
 
     my $sectionSummary = getSectionSummary();
-
-    # Map title (e.g., 'VTRU', 'VIBE') => index
-    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
 
     foreach my $section (@$sectionSummary) {
         my $section_html = '';
 
         foreach my $title (@{ $section->{sections} }) {
-            next unless exists $title_to_index{$title};
-            my $index = $title_to_index{$title};
-            $section_html .= generateTotal($result, $index, 1);
+            my $info = find_title_in_index($index_map, $title);
+            if ($info) {
+                my $chain   = $info->{chain};
+                my ($index) = $info->{index};
+                my ($data) = $chains->{$chain};
+                $section_html .= generateTotal($data, $index, 1);
+            }
         }
 
         if ($section_html ne '') {
@@ -204,8 +228,9 @@ sub generateSectionHeader {
     return <<"END_HTML";
 <tr class='section-header' id="$title">
   <td colspan='2'>$title</td>
-  <td style="text-align: right;">
-    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
+  <td style="text-align: right; font-size: 16px;">
+    <!--td style="text-align: right; font-size: 16px;">$brandColor</td-->
+    $brandColor
   </td>
 </tr>
 END_HTML
@@ -222,8 +247,9 @@ sub generateSubsectionTableHeader {
     return <<"END_HTML";
 <tr class='section-header' id="$title">
   <td colspan='2'>$title</td>
-  <td style="text-align: right;">
-    <div style="width: 16px; height: 16px; background-color: $brandColor; border-radius: 50%; display: inline-block;"></div>
+  <td style="text-align: right; font-size: 16px;">
+    <!--td style="text-align: right; font-size: 16px;">$brandColor</td-->
+    $brandColor
   </td>
 </tr>
 END_HTML
@@ -231,17 +257,20 @@ END_HTML
 
 # Generates all wallet rows for a given subsection
 sub generateWalletRows {
-    my ($vault, $wallets, $result, $section_key, $networkKey) = @_;
+    my ($data, $vault, $section_key, $networkKey) = @_;
     my $rows = '';
 
-    for my $wallet_index (0 .. $#{$result->{wallets}}) {
-        my $wallet = $result->{wallets}[$wallet_index];
-        my $balance = $result->{$section_key}[$wallet_index] || "0.00";
-
+    for my $i (0 .. $#{$data->{wallets}}) {
+        my $wallet = $data->{wallets}[$i];
+        if (!defined $wallet) {
+            debugLog($MODULE, "Check me, early break in generateWalletRows for $networkKey");
+            return $rows;
+        }
+        my $balance = $data->{$section_key}[$i] || "0.00";
         my $diff_section = "diff_$section_key"; 
-        my $diff_display = $result->{$diff_section}[$wallet_index] // '';
+        my $diff_display = $data->{$diff_section}[$i] // '';
         my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet));
-        $address = (lc($vault) eq $wallet) ? "<strong>$address</strong>" : $address;
+        $address = (lc($vault) eq lc($wallet)) ? "<strong>$address</strong>" : $address;
         $rows .= generateBalanceRow($address, $diff_display, $balance);
     }
 
@@ -250,11 +279,11 @@ sub generateWalletRows {
 
 # Generates total row, group toggle, and detail button if applicable
 sub generateSubsectionFooter {
-    my ($vault, $wallets, $result, $title, $section_index) = @_;
+    my ($data, $vault, $title, $index) = @_;
     my $footer_html = '';
 
     # Add Total Row
-    $footer_html .= generateTotal($result, $section_index, 0);
+    $footer_html .= generateTotal($data, $index, 0);
 
     # Add Group Toggle if applicable
     my $type = getDetailType($title);
@@ -279,7 +308,7 @@ END_HTML
 
     # Add Details Button if applicable
     if ($type ne "") {
-        my $wallets_str = join(" ", @$wallets);
+        my $wallets_str = join(" ", $data->{wallets});
         my $group = "'none'";
         if ($isGroupper) {
             $group = "document.querySelector('input[name=grouping$type]:checked')?.value";
@@ -302,15 +331,19 @@ END_HTML
 
 ## Generates one table per subsection
 sub generateTableForSubsections {
-    my ($vault, $wallets, $result, $subsections, $title_to_index) = @_;
+    my ($chains, $map, $vault, $subsections) = @_;
     my $table_html = "";
 
     foreach my $title (@$subsections) {
-        next unless exists $title_to_index->{$title};  # Skip if title not found
-        my $section_index = $title_to_index->{$title};
-        my $section_key = $result->{sectionKeys}[$section_index];
-        my $networkKey  = $result->{networkKeys}[$section_index];
-        my $brandColor  = getBrandingColor($networkKey);
+        my $info = find_title_in_index($map, $title);
+        next unless $info;
+        my $index = $info->{index};
+        my $chain = $info->{chain};
+        my $data  = $chains->{$chain};
+        my $wallets = $data->{wallets};
+        my $section_key = $data->{sectionKeys}[$index];
+        my $networkKey  = $data->{networkKeys}[$index];
+        my $brandColor  = getBrand($networkKey);
 
         # Ensure we have valid data
         next unless defined $section_key;
@@ -323,11 +356,11 @@ sub generateTableForSubsections {
         $sub_html .= generateSubsectionTableHeader($title, $brandColor);
 
         # Generate wallet rows
-        my $walletRows = generateWalletRows($vault, $wallets, $result, $section_key, $networkKey);
+        my $walletRows = generateWalletRows($data, $vault, $section_key, $networkKey);
         $sub_html .= $walletRows if $walletRows ne "";
 
         # Add subsection footer (totals, buttons)
-        $sub_html .= generateSubsectionFooter($vault, $wallets, $result, $title, $section_index);
+        $sub_html .= generateSubsectionFooter($data, $vault, $title, $index);
         
         $sub_html .= "</tbody></table>";
 
@@ -341,21 +374,29 @@ sub generateTableForSubsections {
 
 # Counts only non-zero balance rows per subsection, plus title, totals, buttons
 sub countSubsectionRows {
-    my ($result, $subsections, $title_to_index) = @_;
+    my ($chains, $map, $subsections) = @_;
     my %row_counts;
     my $total_rows = 0;
 
     foreach my $title (@$subsections) {
-        next unless exists $title_to_index->{$title};
-        my $section_index = $title_to_index->{$title};
-        my $section_key = $result->{sectionKeys}[$section_index];
+       my $info = find_title_in_index($map, $title);
+        if (!defined $info) {
+            $row_counts{$title} = 0;
+            #debugLog($MODULE, "countSubsectionRows: Undefined row_counts->{$title})");
+            next;
+        }
+        #next unless $info;
+        my $index = $info->{index};
+        my $chain = $info->{chain};
+        my $data  = $chains->{$chain};
+        my $section_key = $data->{sectionKeys}[$index];
 
         # Start with 1 row for section title
         my $row_count = 1;
 
         # Count only non-zero balance rows
-        if (exists $result->{$section_key}) {
-            foreach my $balance (@{$result->{$section_key}}) {
+        if (exists $data->{$section_key}) {
+            foreach my $balance (@{$data->{$section_key}}) {
                 next if $balance eq "0.00" || $balance eq "0";
                 $row_count++;
             }
@@ -379,6 +420,7 @@ sub countSubsectionRows {
 
         $row_counts{$title} = $row_count;
         $total_rows += $row_count;
+
     }
 
     return (\%row_counts, $total_rows);
@@ -400,10 +442,18 @@ sub splitSubsectionsByRowCount {
         if ($left_count <= $right_count) {
             my $title = $subsections[$top_index++];
             push @left_subsections, $title;
+            #if (!defined $row_counts->{$title}) {
+            #    debugLog($MODULE, "Left undefined row_counts->{$title})");
+            #    $row_counts->{$title} = 0;
+            #}
             $left_count += $row_counts->{$title};
         } else {
             my $title = $subsections[$bottom_index--];
             push @right_subsections, $title;
+            #if (!defined $row_counts->{$title}) {
+            #    debugLog($MODULE, "Right ndefined row_counts->{$title}");
+            #    $row_counts->{$title} = 0;
+            #}
             $right_count += $row_counts->{$title};
         }
     }
@@ -413,17 +463,17 @@ sub splitSubsectionsByRowCount {
 
 # Generates a section with multiple tables, balancing by row count
 sub generateSectionTables {
-    my ($vault, $wallets, $result, $section, $title_to_index) = @_;
+    my ($chains, $map, $vault, $section) = @_;
 
     my @subsections = @{ $section->{sections} };
 
     # Get row counts and split subsections into two columns
-    my ($row_counts, $total_rows) = countSubsectionRows($result, \@subsections, $title_to_index);
+    my ($row_counts, $total_rows) = countSubsectionRows($chains, $map, \@subsections);
     my ($left_subsections, $right_subsections) = splitSubsectionsByRowCount(\@subsections, $row_counts, $total_rows);
 
     # Generate tables for each column
-    my $left_tables  = generateTableForSubsections($vault, $wallets, $result, $left_subsections, $title_to_index);
-    my $right_tables = generateTableForSubsections($vault, $wallets, $result, $right_subsections, $title_to_index);
+    my $left_tables  = generateTableForSubsections($chains, $map, $vault, $left_subsections);
+    my $right_tables = generateTableForSubsections($chains, $map, $vault, $right_subsections);
 
     my $ref = $section->{name};
     return <<"END_HTML";
@@ -437,9 +487,9 @@ END_HTML
 
 # Main function rendering sections
 sub renderSections {
-    my ($vault, $wallets, $result) = @_;
-    my $name = $result->{name} // "";
-    my $count = scalar @{ $result->{wallets} // [] };
+    my ($vault, $wallets, $chains) = @_;
+    my $name = $chains->{name} // "";
+    my $count = scalar @{ $chains->{wallets} // [] };
     my $plural = ($count == 1) ? "" : "es";
     my $title = "$name<br>Analysed $count address$plural";
 
@@ -454,11 +504,13 @@ END_HTML
     }
 
     my $sectionSummary = getSectionSummary();
-    my %title_to_index = map { $result->{sectionTitles}[$_] => $_ } 0 .. $#{$result->{sectionTitles}};
+
+    # Map title (e.g., 'VTRU', 'VIBE') => {chain, index}
+    my $map = build_title_index($chains);
 
     # Summary totals
     $html .= "<div class='section-title'>Summary</div>";
-    my $totals = generateTotals($result);
+    my $totals = generateTotals($chains, $map);
     $html .= <<END_HTML;
     <p><center><table class="summary-table">
     <tbody>
@@ -469,7 +521,7 @@ END_HTML
     # Section tables
     $html .= "<div class='table-container'>";
     foreach my $section (@$sectionSummary) {
-        $html .= generateSectionTables($vault, $wallets, $result, $section, \%title_to_index);
+        $html .= generateSectionTables($chains, $map, $vault, $section);
     }
     $html .= "</div>";
 
@@ -485,7 +537,7 @@ END_HTML
 }
 
 sub renderVtruStaked {
-    my ($grouping, $data) = @_;
+    my ($grouping, $rows) = @_;
     my $type = "stake";
     my ($title) = ($grouping eq 'none') ? 'Wallet' : '#Stakes';
     my $close = closeModal($type);
@@ -496,7 +548,7 @@ sub renderVtruStaked {
     <thead><tr><th>$title</th><th>Amount</th><th>Reward</th><th>Locked</th><th>Available</th><th>Maturity</th></tr></thead><tbody>
 END_HTML
 
-    foreach my $row (@$data) {
+    foreach my $row (@$rows) {
         my ($label) = getLabel('VTRU', $grouping, $row->{wallet});
         $html .= "<tr>";
         $html .= "<td>$label</td>";
@@ -515,7 +567,7 @@ END_HTML
 
 # 🔹 Additional Details Rendering Functions
 sub renderVibeDetails {
-    my ($grouping, $data) = @_;
+    my ($grouping, $rows) = @_;
     my $type = "vibe";
     my $close = closeModal($type);
     my $html =<<END_HTML;
@@ -525,10 +577,11 @@ sub renderVibeDetails {
     <thead><tr><th>Wallet</th><th>#Tokens</th><th>Balance</th><th>Claimed</th><th>Unclaimed</th></tr></thead><tbody>
 END_HTML
 
-    foreach my $row (@$data) {
+    foreach my $row (@$rows) {
+        my $balance   = $row->{balance} // "0.00";
+        next if $balance eq "0.00" || $balance eq "0";
         my $wallet    = $row->{wallet} // "";
         my $noTokens  = $row->{noTokens} // "0.00";
-        my $balance   = $row->{balance} // "0.00";
         my $claimed   = $row->{claimed} // "0.00";
         my $unclaimed = $row->{unclaimed} // "0.00";
         my ($label)   = getLabel('VTRU', $grouping, $wallet);
@@ -548,7 +601,7 @@ END_HTML
 }
 
 sub renderBscStaked {
-    my ($grouping, $data) = @_;
+    my ($grouping, $rows) = @_;
     my $type = "bsc";
     my ($title) = ($grouping eq 'none') ? 'Wallet' : '#Stakes';
     my $close = closeModal($type);
@@ -558,7 +611,7 @@ sub renderBscStaked {
     <thead><tr><th>$title</th><th>Date</th><th>Locked</th><th>Unlocked</th></tr></thead><tbody>
 END_HTML
 
-    foreach my $row (@$data) {
+    foreach my $row (@$rows) {
         my ($label) = getLabel('BSC', $grouping, $row->{wallet});
         $html .= "<tr>";
         $html .= "<td>$label</td>";
@@ -573,7 +626,7 @@ END_HTML
 }
 
 sub renderVortexDetails {
-   my ($grouping, $data) = @_;
+   my ($grouping, $rows) = @_;
     my $type = "vortex";
     my $close = closeModal($type);
     my $html =<<END_HTML;
@@ -583,7 +636,7 @@ sub renderVortexDetails {
     <thead><tr><th>Wallet</th><th>Rarity</th><th>Count</th></tr></thead><tbody>
 END_HTML
 
-    foreach my $row (@$data) {
+    foreach my $row (@$rows) {
         my ($label) = getLabel('VTRU', $grouping, $row->{wallet});
         $html .= "<tr>";
         $html .= "<td class='wallet-cell'>$label</td>";

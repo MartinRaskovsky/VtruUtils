@@ -26,6 +26,13 @@ build/
 # Test artifacts
 coverage/
 *.test.js.snap
+public/test.html
+public/test_files
+public/common.css-orig
+public/common.css-vars
+public/styles.css-orig
+public/styles.css-vars
+public/theme-editor.html
 
 # Ignore temporary and backup files
 *.tmp
