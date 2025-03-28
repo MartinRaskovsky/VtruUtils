@@ -48,7 +48,7 @@ sub sendConfirmationEmail {
     <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
     <li>Supports multiple networks:
       <ul>
-        <li><b>Native Coins</b>: VTRU, ETH, BNB, and POL.</li>
+        <li><b>Native Coins</b>: VTRU, ETH, BNB, POL, SOL, and TEZ.</li>
         <li><b>VTRU Bridged</b>: VTRU on BSC and ETH.</li>
         <li><b>USDC</b>: Tracked across VTRU, ETH, BSC, and POL networks.</li>
         <li><b>Staked</b>: VTRU Staked and SEVO-X Staked on BSC.</li>
