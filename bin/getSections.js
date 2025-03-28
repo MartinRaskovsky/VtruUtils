@@ -80,6 +80,10 @@ async function getSections(vaultAddress, wallets, formatOutput) {
         const { evm, sol, tez, invalid } = categorizeAddresses(merged);
         
         let data = { errors: "" };
+
+        if (invalid.length > 0) {
+            data.errors= `Invalid wallet addresses: ${invalid.join("<br>")}`;
+        }
    
         await mergeData(Web3.CHAIN_EVM, Web3.NET_EVM, data, evm, formatOutput, 1);
         await mergeData(Web3.CHAIN_SOL, Web3.NET_SOL, data, sol, formatOutput, 0);

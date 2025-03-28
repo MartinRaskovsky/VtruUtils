@@ -71,9 +71,28 @@
     </div>
 
     <script>
-        function isValidWeb3Address(address) {
-            //return /^0x[a-fA-F0-9]{40}$/.test(address.trim());
-            return true;
+        function getAddressType(address) {
+            address = address.trim();
+        
+            // ✅ Tezos: starts with known prefix, exactly 36 chars
+            if (/^(tz1|tz2|tz3|KT1)[1-9A-HJ-NP-Za-km-z]{33}$/.test(address)) {
+                return "tezos";
+            }
+        
+            // ✅ EVM: 0x + 40 hex
+            if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
+                return "evm";
+            }
+        
+            // ✅ Solana: 32–44 Base58, but must NOT start with tz1, tz2, tz3, or KT1
+            if (
+                /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address) &&
+                !/^(tz1|tz2|tz3|KT1)/.test(address)
+            ) {
+                return "solana";
+            }
+        
+            return null;
         }
 
         function validateForm() {
@@ -86,9 +105,9 @@
             const vaultAddress = vaultInput.value.trim();
             const walletAddresses = walletInput.value.trim();
 
-            let isValidVault = vaultAddress.length === 0 || isValidWeb3Address(vaultAddress);
+            let isValidVault = vaultAddress.length === 0 || getAddressType(vaultAddress);
             let walletList = walletAddresses.split(/\s+/).map(addr => addr.trim()).filter(addr => addr !== '');
-            let isValidWallets = walletList.length === 0 || walletList.every(isValidWeb3Address);
+            let isValidWallets = walletList.length === 0 || walletList.every(getAddressType);
 
             button.disabled = !(vaultAddress || walletAddresses) || !isValidVault || !isValidWallets;
         }
