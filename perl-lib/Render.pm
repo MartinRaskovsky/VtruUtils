@@ -308,7 +308,7 @@ END_HTML
 
     # Add Details Button if applicable
     if ($type ne "") {
-        my $wallets_str = join(" ", $data->{wallets});
+        my $wallets_str = join(" ", @{ $data->{wallets} });
         my $group = "'none'";
         if ($isGroupper) {
             $group = "document.querySelector('input[name=grouping$type]:checked')?.value";
