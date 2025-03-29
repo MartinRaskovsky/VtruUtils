@@ -34,6 +34,8 @@ const SEC_USDC_VTRU   = "USDC on VTRU(USDC.pol)";
 const SEC_USDC_ETH    = "USDC on ETH";
 const SEC_USDC_BSC    = "USDC on BSC";
 const SEC_USDC_POL    = "USDC on POL";
+const SEC_USDC_SOL    = "USDC on SOL";
+const SEC_USDC_TEZ    = "USDC on TEZ";
 
 // Staked
 const SEC_VTRU_STAKED  = "VTRU Staked";
@@ -59,7 +61,7 @@ const SEC_VITDEX      = "VITDEX";
 const sectionSummary = [
     { name: 'Native Coins',            sections: [SEC_BNB, SEC_ETH, SEC_POL, SEC_VTRU, SEC_SOL, SEC_TEZ] },
     { name: 'VTRU Bridged',            sections: [SEC_VTRU_BSC, SEC_VTRU_ETH] },
-    { name: 'USDC',                    sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL] },
+    { name: 'USDC',                    sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_USDC_SOL] },
     { name: 'Staked',                  sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
     { name: 'Vitruveo Coins & Tokens', sections: [SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_VTRO, SEC_VUSD, SEC_WVTRU] },
     { name: 'Sabong',                  sections: [SEC_SEVO, SEC_SEVOX ]},
@@ -106,7 +108,9 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_USDC_VTRU,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
-        SEC_USDC_POL,
+        SEC_USDC_POL, 
+        SEC_USDC_SOL, 
+        SEC_USDC_TEZ,
         NET_VTRU,
         NET_ETH,
         NET_BSC,
@@ -145,7 +149,9 @@ if (typeof window !== "undefined") {
         SEC_USDC_VTRU,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
-        SEC_USDC_POL,
+        SEC_USDC_POL, 
+        SEC_USDC_SOL, 
+        SEC_USDC_TEZ,
         NET_VTRU,
         NET_ETH,
         NET_BSC,
