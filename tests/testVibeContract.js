@@ -37,7 +37,7 @@ const mockContract = {
     getVibeNFTSharesByOwner: sinon.stub(),
 };
 
-// ✅ Stub `VtruContract.getContract()` to return the mock contract
+// ✅ Stub `libContractProvider.getContract()` to return the mock contract
 sinon.stub(TokenVibe.prototype, "getContract").returns(mockContract);
 
 // ✅ Create the `TokenVibe` instance with mocks

@@ -9,7 +9,8 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenWVtru = require("../lib/tokenWVtru");
+const TokenWVtru = require("../lib/tokenWVtru");//tokenCommonEvm // tokenWVtru
+const { categorizeAddresses } = require('../lib/addressCategorizer');
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_vVTRU_HELD } = require('../shared/constants');
@@ -39,15 +40,16 @@ function showUsage() {
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
         const vtru = new Web3(Web3.VTRU);
-        const token = new TokenWVtru(vtru);
+        const token = new TokenWVtru(vtru, "wVTRU");
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
-        const balances = await token.getBalances(merged);
+        const { evm, sol, tez, invalid } = categorizeAddresses(merged);
+        const balances = await token.getBalances(evm);
         let totalBalance = 0n;
         const formattedData = [];
 
-        merged.forEach((wallet, index) => {
+        evm.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
                 formattedData.push({ wallet, balance: formatRawNumber(balance, 4) });

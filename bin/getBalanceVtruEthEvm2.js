@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves USDC balances for given wallet addresses.
+ * Retrieves vtru eth held balance for given wallet addresses.
  *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -9,19 +9,19 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenUsdc = require("../lib/tokenCommonEvm");//tokenUsdc
+const TokenVtruEth = require("../lib/tokenCommonEvm");
 const { formatRawNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_USDC_BSC } = require('../shared/constants');
+const { SEC_SEC_VTRU_ETH_HELD } = require('../shared/constants');
 
-const TITLE = SEC_USDC_BSC;
+const TITLE = SEC_SEC_VTRU_ETH_HELD;
 const KEYS = ['wallet', 'balance'];
 
 /**
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log("\nUsage: getBalanceUsdcBsc.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceVtruEthHeld.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -39,8 +39,8 @@ function showUsage() {
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
         const vtru = new Web3(Web3.VTRU);
-        const net = new Web3(Web3.BSC);
-        const token = new TokenUsdc(net, "USDC");
+        const eth = new Web3(Web3.ETH);
+        const token = new TokenVtruEth(eth, 'VTRU');
 
         // Retrieve associated wallets if vault address is provided
         const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
@@ -51,19 +51,19 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
         merged.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
-                formattedData.push({ wallet, balance: formatRawNumber(balance) });
+                formattedData.push({ wallet, balance: formatRawNumber(balance, 2) });
                 totalBalance += balance;
             }
         });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totalBalance),
+            balance: formatRawNumber(totalBalance, 2),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
     } catch (error) {
-        console.error(`❌ Error retrieving USDC held balances: ${error.message} ${error.stack}`);
+        console.error("❌ Error retrieving vtru eth balances:", error.message);
     }
 }
 

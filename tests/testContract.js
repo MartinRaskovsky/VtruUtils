@@ -4,14 +4,14 @@
  * Author: Dr Martín Raskovsky
  * Date: January 2025
  *
- * Unit tests for the VtruContract class.
+ * Unit tests for the libContractProvider class.
  * These tests use the actual class and do not rely on mocks.
  */
 
 const assert = require("assert");
 const Config = require("../lib/libConfig");
 const Web3 = require("../lib/libWeb3");
-const VtruContract = require("../lib/vtruContract");
+const libContractProvider = require("../lib/libContractProvider");
 
 async function runTests() {
     // Initialize required instances
@@ -19,10 +19,10 @@ async function runTests() {
     const config = web3.getConfig();
     const contractName = "TestContract";
 
-    // Create the VtruContract instance
-    const vtruContract = new VtruContract(web3, contractName);
+    // Create the libContractProvider instance
+    const vtruContract = new libContractProvider(web3, contractName);
 
-    console.log("Running unit tests for VtruContract.js...");
+    console.log("Running unit tests for libContractProvider.js...");
 
     /**
      * Test getAddress method
@@ -102,7 +102,7 @@ async function runTests() {
     testGetContract();
     testGetContractFailure();
 
-    console.log("🎉 All VtruContract tests passed successfully!");
+    console.log("🎉 All libContractProvider tests passed successfully!");
 }
 
 // Execute the test runner

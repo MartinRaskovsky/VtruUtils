@@ -18,7 +18,7 @@ Running unit tests for Config.js...
 
 testContract.js
 
-Running unit tests for VtruContract.js...
+Running unit tests for libContractProvider.js...
 ❌ Contract address for 'NonExistentContract' does not exist.
 ❌ Contract address for 'NonExistentContract' does not exist.
 ✅ testGetAddress passed.
@@ -26,7 +26,7 @@ Running unit tests for VtruContract.js...
 ❌ Contract address for 'TestContract' does not exist.
 ❌ Failed to create contract instance due to missing ABI or address.
 ✅ testGetContractFailure passed.
-🎉 All VtruContract tests passed successfully!
+🎉 All libContractProvider tests passed successfully!
 ===========================================================
 
 testNetwork.js

@@ -1,73 +1,134 @@
 #!/usr/bin/env node
 
-const { ethers, Contract } = require("ethers");
-const config = require("../data/vtru-contracts.json");
+/* TODO
 
-require ("dotenv").config();
+Add decimals from config and format balances into human-readable units.
 
-const VTRU = "vtru";
-const BSC = "bsc";
-const ETH = "eth";
-const POL = "pol";
+Loop over multiple wallets for a given token.
 
-const WVTRU = "wVTRU";
-const VTRUBridged = "VTRUBridged";
-const USDC = "USDC";
-const SEVO = "SEVO";
+Test on more chains and tokens (just expand your wallet/config).
 
-const rpcUrls = {
-    [VTRU]: "https://rpc.vitruveo.xyz",
-    [BSC]: "https://bsc-dataseed.binance.org",
-    [ETH]: "https://rpc.mevblocker.io",
-    [POL]: "https://polygon-rpc.com",
+Add gas estimation / cost per call (handy for optimizations).
+
+Save test results to a timestamped JSON for audit or diffing.
+*/
+
+const fs = require("fs");
+const path = require("path");
+const { ethers } = require("ethers");
+const { createPublicClient, http } = require("viem");
+const { resolveViemChain } = require("../lib/viemChains");
+
+require("dotenv").config();
+
+const nativeTokens = new Set(['VTRU', 'ETH', 'BSC', 'POL', 'TEZ', 'SOL']);
+
+const rpcs = {
+  VTRU: "https://rpc.vitruveo.xyz",
+  BSC: "https://bsc-dataseed.binance.org",
+  ETH: "https://rpc.mevblocker.io",
+  POL: "https://polygon-rpc.com",
+  SOL: "https://api.mainnet-beta.solana.com",
+  TEZ: "https://mainnet.api.tez.ie",
 };
 
-const jsonPaths = {
-    [VTRU]: "CONFIG_JSON_FILE_PATH",
-    [BSC]: "CONFIG_JSON_BSC_PATH",
-    [ETH]: "CONFIG_JSON_ETH_PATH",
-    [POL]: "CONFIG_JSON_POL_PATH",
+const wallets = {
+  ETH: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+  //VTRU: "0xa857dFB740396db406d91aEA65256da4d21721e4",
+  VTRU: "0xa857dFB740396db406d91aEA65256da4d21721e4",
 };
+wallets["wVTRU"] = wallets["VTRU"];
 
-const labels = {
-    [WVTRU]: "wVTRU",
-    [VTRUBridged]: "VTRUBridged",
-    [USDC]: "USDC",
-    [SEVO]: "SEVO",
-};
+function usage() {
+  console.log("Usage: miniTest.js -c <chain> -t <token> [-v for viem]");
+  process.exit(1);
+}
 
-const TARGET_TOKEN = SEVO;
-const TARGET_NETWORK = VTRU;
+async function test(chain, token, useViem = false) {
+  const wallet = wallets[token] || wallets[chain];
+  const rpc = rpcs[chain];
+  if (!wallet || !rpc) {
+    console.error("Invalid wallet or RPC for", chain, token);
+    return;
+  }
 
-const ABI = labels[TARGET_TOKEN];;
+  // Load config based on chain
+  const configPath = path.join(__dirname, `../data/${chain.toLowerCase()}-contracts.json`);
+  const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  const abi = config.abi[token];
+  const address = config.mainnet[token];
 
-const ETH_ADDRESS = '0x7070F01A2040bD06109C6fC478cd139b323459af';
-const USDC_ADDRESS = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359';
-const SEVO_ADDRESS = '0x2A34059DF3D60B1864f10F10492746bd26d3D24a';
-const ADDRESS = SEVO_ADDRESS;
+  if (!abi || !address) {
+    console.error("Missing ABI or contract address for", token, "on", chain);
+    return;
+  }
 
-const PROVIDER = rpcUrls[TARGET_NETWORK];
+  console.log(`🧪 Testing ${token} on ${chain} using ${useViem ? "viem" : "ethers"}`);
+  console.log(`📬 Contract: ${address}`);
+  console.log(`👛 Wallet:   ${wallet}`);
 
-const DECIMALS = Math.pow(10, 18);
-const provider = new ethers.JsonRpcProvider(PROVIDER);
-const contract_address = ADDRESS;
-const abi = config.abi[ABI];
+  try {
+    if (useViem) {
+        const client = createPublicClient({
+          chain: resolveViemChain(chain),
+          transport: http(rpc),
+        });
+      
+        let balance;
+        if (nativeTokens.has(token)) {
+          balance = await client.getBalance({ address: wallet });
+          console.log(`📦 Native Balance: ${balance} (via viem)`);
+        } else {
+          balance = await client.readContract({
+            address,
+            abi,
+            functionName: "balanceOf",
+            args: [wallet],
+          });
+          console.log(`📦 Token Balance: ${balance} (via viem)`);
+        }
+      } else {
+        const provider = new ethers.JsonRpcProvider(rpc);
+      
+        let balance;
+        if (nativeTokens.has(token)) {
+          balance = await provider.getBalance(wallet);
+          console.log(`📦 Native Balance: ${balance} (via ethers)`);
+        } else {
+          const contract = new ethers.Contract(address, abi, provider);
+          balance = await contract.balanceOf(wallet);
+          console.log(`📦 Token Balance: ${balance} (via ethers)`);
+        }
+      }
+      
+  } catch (err) {
+    console.error("❌ Error:", err.message);
+  }
+}
 
-//const wallet = '0xd07d220d7e43eca35973760f8951c79deebe0dcc';
-const wallet = '0xa857dFB740396db406d91aEA65256da4d21721e4';
+function main() {
+  const args = process.argv.slice(2);
+  let chain = "VTRU";
+  let token = "VTRU";
+  let useViem = false;
 
-(async () => {
- 
-    try {
-	const contract = new Contract(contract_address, abi, provider);
-	const balance = await contract.balanceOf(wallet);
-    console.log(`Network=${TARGET_NETWORK}`);
-    console.log(`Contract=${contract_address}`);
-    console.log(`Token=${TARGET_TOKEN}`);
-    console.log(`Wallet=${wallet}`);
-
-	console.log(balance);
-    } catch(e) {
-        console.log(e);
+  for (let i = 0; i < args.length; i++) {
+    switch (args[i]) {
+      case "-c":
+        chain = args[++i];
+        break;
+      case "-t":
+        token = args[++i];
+        break;
+      case "-v":
+        useViem = true;
+        break;
+      default:
+        usage();
     }
-})();
+  }
+
+  test(chain, token, useViem);
+}
+
+main();

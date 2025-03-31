@@ -28,7 +28,7 @@ const mockContract = {
     ]),
 };
 
-// ✅ Stub `VtruContract.getContract()` to return the mock contract
+// ✅ Stub `libContractProvider.getContract()` to return the mock contract
 sinon.stub(VtruVaultFactory.prototype, "getContract").returns(mockContract);
 
 // ✅ Fully mock `VtruVault`

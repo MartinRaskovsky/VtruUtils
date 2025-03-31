@@ -34,7 +34,7 @@ const mockContract = {
     getVerseNFTByOwner: sinon.stub(),
 };
 
-// ✅ Stub `VtruContract.getContract()` to return the mock contract
+// ✅ Stub `libContractProvider.getContract()` to return the mock contract
 sinon.stub(TokenVerse.prototype, "getContract").returns(mockContract);
 
 // ✅ Create the `TokenVerse` instance with mocks

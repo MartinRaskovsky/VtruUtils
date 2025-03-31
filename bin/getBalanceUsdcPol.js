@@ -50,14 +50,14 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
         merged.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
-                formattedData.push({ wallet, balance: formatVusdNumber(balance) });
+                formattedData.push({ wallet, balance: formatVusdNumber(balance,6) });
                 totalBalance += balance;
             }
         });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatVusdNumber(totalBalance),
+            balance: formatVusdNumber(totalBalance,6),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);

@@ -2,12 +2,23 @@
     "mainnet": {
         "totalETH": "0x26f6448253fdF3883f9510C3b119a8BFdaC069FF",
         "VTRUBridged": "0x7070F01A2040bD06109C6fC478cd139b323459af",
+        "VTRU": "0x7070F01A2040bD06109C6fC478cd139b323459af",
         "VEO": "0x3153F488233132c429175b5FD8199eb775b6C6Ff",
         "USDC": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     },
     "abi": {
             "totalETH":[
             ],
+            "VTRU": [
+              {
+                "constant": true,
+                "inputs": [{ "name": "owner", "type": "address" }],
+                "name": "balanceOf",
+                "outputs": [{ "name": "balance", "type": "uint256" }],
+                "type": "function",
+                "stateMutability": "view"
+              }
+            ],            
             "VTRUBridged": [
               {
                 "type": "constructor",
