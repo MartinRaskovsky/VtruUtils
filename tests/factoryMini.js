@@ -18,6 +18,7 @@ require("dotenv").config();
 const wallets = {
   ETH: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
   VTRU: "0xa857dFB740396db406d91aEA65256da4d21721e4",
+  USDC: "7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV",
 };
 wallets["wVTRU"] = wallets["VTRU"];
 
@@ -66,6 +67,8 @@ async function test(chain, token, useViem = false) {
       const viemInfo = contract.getViemContract();
       const client = viemInfo.client;
       let balance;
+      console.log("isNativeToken:", contract.isNativeToken && contract.isNativeToken());
+
       if (contract.isNativeToken && contract.isNativeToken()) {
         balance = await client.getBalance({ address: wallet });
         console.log(`📦 Native Balance: ${balance} (via viem)`);

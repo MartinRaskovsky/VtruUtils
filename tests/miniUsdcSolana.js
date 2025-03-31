@@ -20,7 +20,7 @@ async function getUsdcBalance(walletAddress) {
 
         const ata = await getAssociatedTokenAddress(USDC_MINT, owner);
 
-        console.log(`🔍 Checking ATA for ${walletAddress}: ${ata.toBase58()}`);
+        //console.log(`🔍 Checking ATA for ${walletAddress}: ${ata.toBase58()}`);
         const info = await connection.getAccountInfo(ata);
         if (!info) {
             console.log(`🔍 No USDC account found for ${walletAddress}`);
@@ -28,16 +28,18 @@ async function getUsdcBalance(walletAddress) {
         }
 
         const tokenAccount = await getAccount(connection, ata);
-        const balance = Number(tokenAccount.amount) / 1e6;
-        console.log(`USDC Balance for ${walletAddress}: ${balance}`);
-        return balance;
+        //const balance = Number(tokenAccount.amount) / 1e6;
+        //console.log(`USDC Balance for ${walletAddress}: ${balance}`);
+	console.log(`Wallet:  ${walletAddress}`);
+    	console.log(`Balance: ${tokenAccount.amount} lamports`);
+        //return balance;
     } catch (error) {
         console.error(`❌ Error fetching for ${walletAddress}:`, error.message);
         return null;
     }    
 }
 
-getUsdcBalance('CKCPbSG7Zre8mN8Xar9NoEMjeKfozJ7Lip14cSv2BTHR');
+//getUsdcBalance('CKCPbSG7Zre8mN8Xar9NoEMjeKfozJ7Lip14cSv2BTHR');
 getUsdcBalance('7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV');
-getUsdcBalance('3hqfpZ775LMcG5WUrMCQLFeY1ABRnCYD2zr2UYaQSBVF');
+//getUsdcBalance('3hqfpZ775LMcG5WUrMCQLFeY1ABRnCYD2zr2UYaQSBVF');
 
