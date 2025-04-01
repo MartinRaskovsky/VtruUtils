@@ -13,6 +13,7 @@ our @EXPORT_OK = qw(
     getEmailFromCode getEmailFromSession putConfirmationCode putSessionId 
     getWallets putVaultAndWallets getVaultAndWallets deleteVaultAndWallets
     getKeepLoggedIn updateKeepLoggedIn
+    saveVaultSet getVaultSet deleteVaultSet listVaultSets
 );
 
 my $MODULE = "DBUtils";
@@ -224,6 +225,90 @@ sub putSessionId {
     $sth->execute($session_id, $email);
     debugLog($MODULE, "session_id stored successfully");
 }
+
+# Save a vault/wallet set
+sub saveVaultSet {
+    my ($email, $name, $vault, $wallets) = @_;
+    return unless $email && $name && $wallets;
+
+    my $wallet_str = join("\n", @$wallets);
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare(q{
+        INSERT INTO vault_sets (email, name, vault_address, wallet_addresses)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE vault_address = VALUES(vault_address), wallet_addresses = VALUES(wallet_addresses)
+    });
+    $sth->execute($email, $name, $vault // '', $wallet_str);
+    $sth->finish;
+    $dbh->disconnect;
+}
+
+# Retrieve a vault/wallet set by name
+sub getVaultSet {
+    my ($email, $name) = @_;
+    return unless $email && $name;
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare(q{
+        SELECT vault_address, wallet_addresses
+        FROM vault_sets
+        WHERE email = ? AND name = ?
+    });
+    $sth->execute($email, $name);
+    my $row = $sth->fetchrow_hashref;
+    $sth->finish;
+    $dbh->disconnect;
+
+    return unless $row;
+    my @wallets = split(/\s+/, $row->{wallet_addresses} // '');
+    return ($row->{vault_address}, \@wallets);
+}
+
+# Delete a saved vault/wallet set by name
+sub deleteVaultSet {
+    my ($email, $name) = @_;
+    return unless $email && $name;
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare(q{
+        DELETE FROM vault_sets
+        WHERE email = ? AND name = ?
+    });
+    $sth->execute($email, $name);
+    $sth->finish;
+    $dbh->disconnect;
+
+    return 1;  # Success
+}
+
+# List all set names for a user
+sub listVaultSets {
+    my ($email) = @_;
+    return unless $email;
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth = $dbh->prepare(q{
+        SELECT name FROM vault_sets WHERE email = ? ORDER BY created_at DESC
+    });
+    $sth->execute($email);
+    my @names;
+    while (my ($name) = $sth->fetchrow_array()) {
+        push @names, $name;
+    }
+    $sth->finish;
+    $dbh->disconnect;
+
+    return @names;
+}
+
 
 1;
 

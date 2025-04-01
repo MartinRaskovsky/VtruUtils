@@ -21,11 +21,13 @@ sub getWalletsHtml {
     my $html =<<END_HTML;
         <label for="vaultAddress">Vault:</label>
         <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="validateForm()" value="$vault">
-
         <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
         <textarea id="walletAddresses" name="wallets" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()">$wallets</textarea>
-
-        <button type="submit" id="getDetailsBtn" $state>Get Details</button>
+        <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+            <button type="button" id="loadSetBtn">Load</button>
+            <button type="button" id="saveSetsBtn" $state>Save</button>
+        </div>
+         <button type="submit" id="getDetailsBtn" $state>Get Details</button>
 END_HTML
     #debugLog($MODULE, "getWalletsHtml=$html");
     return $html;

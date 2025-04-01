@@ -50,6 +50,7 @@ print <<HTML;
     <title>Confirm Login</title>
     <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/common.css">
+     <link rel="stylesheet" href="/public/box.css">
 </head>
 <body>
     <h1>Vault & Wallet Details</h1>  <!-- ✅ Ensure the title is at the top -->

@@ -39,6 +39,7 @@ eval {
         <title>Login</title>
         <link rel="stylesheet" href="/public/variables.css">
         <link rel="stylesheet" href="/public/common.css">
+        <link rel="stylesheet" href="/public/box.css">
     </head>
     <body>
         <h1>Vault & Wallet Details</h1>  <!-- ✅ Title properly positioned -->
@@ -46,7 +47,7 @@ eval {
             <h2 style="color: white; text-align: center;">Login</h2>
             <form action="login.cgi" method="GET">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
                 <div class="checkbox-container">
                     <input type="checkbox" name="keepLoggedIn" value="1">

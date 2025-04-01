@@ -6,6 +6,8 @@
     <title>Vault & Wallet Details</title>
     <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/public/common.css">
+    <link rel="stylesheet" href="/public/box.css">
     
     <style>
         html, body {
@@ -56,7 +58,11 @@
                     <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="validateForm()">
                     <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
                     <textarea id="walletAddresses" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()"></textarea>
-                    <button type="submit" id="getDetailsBtn" disabled>Get Details</button>
+                    <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                        <button type="button" id="loadSetBtn">Load</button>
+                        <button type="button" id="saveSetsBtn" $state>Save</button>
+                    </div>
+                     <button type="submit" id="getDetailsBtn" $state>Get Details</button>                
 <!--main-input-END-->
                 </div>
             </form>
@@ -69,6 +75,54 @@
             <button onclick="closeModal()" class="stake-btn">Close</button>
         </div>
     </div>
+
+    <div id="saveSetsModal" class="modal" style="display: none;">
+        <div class="box-container">
+            <h2 style="color: white; text-align: center;">Save Address Set</h2>
+            <label for="saveSetName">Set Name:</label>
+            <input type="text" id="saveSetName" placeholder="Enter a name for this set" style="margin-top: 10px;" />
+            <div style="margin-top: 20px;">
+                <button onclick="saveSets()">Save</button>
+                <button onclick="closeLoadSetsModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="LoadSetsModal" class="modal" style="display: none;">
+        <div class="box-container">
+            <h2 class="load-title">Load Address Set</h2>
+    
+            <div class="select-row">
+                <button class="icon-button" id="deleteSetIcon" title="Delete Set" onclick="showDeleteConfirmation()">
+                    <img src="/public/icons/bin.png" alt="Delete" />
+                  </button>
+                  
+              
+                <div class="select-wrapper">
+                  <select id="savedSetSelect">
+                    <option disabled selected>Loading...</option>
+                  </select>
+                </div>
+              </div>                               
+    
+            <div style="margin-top: 20px; text-align: center;">
+                <button onclick="LoadSet()">Load</button>
+                <button onclick="closeLoadSet()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <div id="confirmDeleteModal" class="modal" style="display: none;">
+        <div class="box-container">
+            <h3 style="text-align: center;">Delete Address Set</h3>
+            <p style="text-align: center; margin-top: 10px;">Are you sure you want to delete <span id="deleteSetNameLabel" style="font-weight: bold;"></span>?</p>
+            <div style="margin-top: 20px; text-align: center;">
+                <button id="confirmDeleteBtn">Yes, Delete</button>
+                <button onclick="closeConfirmDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>    
 
     <script>
         function getAddressType(address) {
@@ -194,6 +248,7 @@
 
     </script>
     <script src="/public/scripts.js"></script> 
+    <script src="/public/dashboard-sets.js"></script>
     
 </body>
 </html>

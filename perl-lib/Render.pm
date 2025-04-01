@@ -41,6 +41,7 @@ END_HTML
     <title>Query Results</title>
     <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/public/box.css">
     <script src="/public/scripts.js" defer></script>  <!-- Ensures scripts run after DOM loads -->
 </head>
 <body class="rendered-page" id="rendered-page">

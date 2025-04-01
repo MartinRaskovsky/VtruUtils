@@ -29,3 +29,14 @@ CREATE TABLE wallets (
     INDEX idx_wallets_address (wallet_address)
 );
 
+DROP TABLE IF EXISTS vault_sets;
+CREATE TABLE vault_sets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    vault_address VARCHAR(42) DEFAULT '',
+    wallet_addresses TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user_set (email, name),
+    INDEX idx_email (email)
+);

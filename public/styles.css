@@ -39,6 +39,7 @@ label {
     margin-top: 15px;
     margin-bottom: 10px;
     align-self: flex-start;
+    text-align: left;
 }
 
 /* Ensure vaultAddress and walletAddresses input fields are always wide enough */
@@ -284,6 +285,13 @@ button {
     margin-top: 15px;
 }
 
+#saveSetsBtn,
+#loadSetBtn {
+    min-width: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 button, .stake-btn {
     display: inline-block;
     align-items: center;
@@ -300,8 +308,44 @@ button, .stake-btn {
     font-weight: bold;
     transition: 0.3s;
     padding: 8px;
-    border: 1px solid #492853;
+    border: 2px solid var(--text-primary);
 }
+
+#saveSetsModal,
+#LoadSetsModal {
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 200px;
+    max-width: 90%;
+    text-align: center;
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+    padding: 8px;
+    /*border: 2px solid var(--text-primary);*/
+    
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    padding: 0px;
+    border-radius: 10px;
+    align-items: center;
+}
+
+#saveSetsModal.active,
+#LoadSetsModal.active {
+    display: flex !important;
+}
+
+
 
 /* ✅ Radio Buttons - Uniform Alignment */
 .radio-label {
@@ -406,11 +450,11 @@ pre {
 }
 
 .stake-btn:hover {
-    background-color: var(--accent-color-3);
+    background-color: var(--accent-color-4);
 }
 
 button:active, .stake-btn:active {
-    background-color: #4a2a91; /* A slightly darker shade to indicate pressing */
+    background-color: var(--accent-color-3); /* A slightly darker shade to indicate pressing */
     transform: scale(0.98); /* Slightly reduce the size for a pressed effect */
     box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.3); /* Add an inset shadow for depth */
 }
@@ -437,14 +481,6 @@ input:focus, textarea:focus {
     background: var(--accent-color-1);
 }
 
-.modal {
-   background-color: var(--overlay-dark);
-}
-
-.modal-content {
-    background-color: #2a1f3a;
-}
-
 .scrollable {
     background: var(--accent-color-1);
 }
@@ -461,7 +497,16 @@ input:focus, textarea:focus {
     background: var(--overlay-light-2);
 }
 
-/* Modal related */
+/* Modal related
+
+.modal {
+   background-color: var(--overlay-dark);
+}
+
+.modal-content {
+    background-color: #2a1f3a;
+}
+
 
 .modal {
     visibility: hidden;
@@ -522,13 +567,12 @@ input:focus, textarea:focus {
     background: var(--alt-bg-2);
 }
 
-/* ✅ TABLE HEADER BACKGROUND */
 .modal-content table thead th {
     background-color: var(--accent-color-1) !important;
-    color: var(--text-primary) !important; /* ✅ Ensure contrast */
+    color: var(--text-primary) !important;
     padding: 6px;
     text-align: left;
-}
+}*/
 
 .scrollable {
     max-height: 60vh;
@@ -569,7 +613,7 @@ input:focus, textarea:focus {
 }
 
 .close:hover {
-    background: var(--overlay-light-3);
+    background: var(--overlay-light-4);
 }
 
 .table-title {
@@ -825,7 +869,9 @@ input#email, input#code {
     }
 
     /* Grey out the disabled button */
-    #getDetailsBtn:disabled {
+    #getDetailsBtn:disabled,
+    #saveSetsBtn:disabled,
+    #loadSetBtn:disabled  {
         background-color: #cccccc; /* Light grey */
         color: #666666; /* Darker grey text */
         cursor: not-allowed;
@@ -983,11 +1029,11 @@ input#email, input#code {
         text-align: right;
     }
 
-    .modal-content {
+    /*.modal-content {
         max-width: 95vw;
         max-height: 90vh;
         padding: 10px;
-    }
+    }*/
 
     .close {
         top: 5px;
@@ -1036,9 +1082,9 @@ input#email, input#code {
         font-size: 10px;
     }
 
-    .modal-content {
+    /*.modal-content {
         padding: 8px;
-    }
+    }*/
 
     /* ✅ Ensure stake controls remain centered */
     .stake-controls {
@@ -1056,40 +1102,8 @@ input#email, input#code {
         font-size: 10px;
     }
 
-    .modal { width: 250px; }
+    /*.modal { width: 250px; }*/
 
 }
 
-/* Debug colors */ 
 
-/*
-body {
-    max-width: 768px;
-}*/
-
-/*
-button, .stake-btn{ background: red;}
-
-@media (max-width: 768px) { button, .stake-btn { background: green;} }
-@media (max-width: 600px) { button, .stake-btn { background: blue;}  }
-@media (max-width: 480px) { button, .stake-btn { background: var(--text-primary);} }
-
-.form-container {
-    border: 2px solid green !important;
-    background: var(--overlay-red);
-}
-
-.table-container {
-    border: 2px solid red !important;
-    background: var(--overlay-red);
-}
-.table {
-    border: 2px solid green !important;
-    background: var(--overlay-blue);   
-}
-
-.table-container table {
-    border: 2px solid blue !important;
-    background: var(--overlay-blue);
-}
-*/

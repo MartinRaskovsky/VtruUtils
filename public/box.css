@@ -1,0 +1,285 @@
+.box-container {
+    background-color: var(--accent-color-2);/*var(--overlay-light-1);*/
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+    margin: auto;
+    color: var(--text-primary);
+    border: 2px solid var(--text-primary);
+}
+
+/* Button styles */
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: var(--accent-color-1);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: var(--accent-color-4);
+}
+
+/* Prevent var(--text-primary) autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    background-color: var(--overlay-light-2) !important;
+    color: var(--text-primary) !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    transition: background-color 5000s ease-in-out 0s; /* Prevents the browser from overriding styles */
+}
+
+select {
+    background-color: var(--overlay-light-2) !important;
+    color: var(--text-primary) !important;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none; /* default hidden */
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4); /* semi-transparent dark overlay */
+    z-index: 1000;
+  }  
+
+.load-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.load-title {
+    flex: 1;
+    text-align: center;
+    color: white;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+#extraMenuBtn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+}
+#extraMenuBtn {
+    color: white;
+}
+
+#deleteSetIcon {
+    color: #ff6666;
+}
+
+.select-wrapper {
+    flex: 1;
+  }
+  
+ 
+.select-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: auto;
+    width: 100%;
+    max-width: 360px; /* Matches Load/Cancel button width */
+    /*box-sizing: border-box;*/
+  }
+  
+  .select-row select {
+    width: 100%;
+    /*padding: 10px 12px;*/
+    padding: 10px 16px; /* Match horizontal padding */
+    border-radius: 0;
+    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--accent-color-muted);
+    color: white;
+    font-size: 1rem;
+    appearance: auto;
+    box-sizing: border-box;
+    min-height: 40px;
+  }
+  
+  #deleteSetIcon {
+    all: unset;
+    width: 44px;
+    height: 48px; /* Match the select height exactly */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  
+  #deleteSetIcon img {
+    width: 26px;
+    height: 26px;
+    display: block;
+    margin-top: 12px;
+  }
+  
+  .select-row {
+    align-items: stretch;
+  }
+  
+  
+  .select-row select {
+    flex: 1;
+    height: 40px; /* match button height */
+    padding: 0 12px;
+    border-radius: 0px;
+    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--accent-color-muted);
+    color: white;
+    font-size: 1rem;
+    appearance: auto;
+    box-sizing: border-box;
+  }
+  
+  /*button, select {
+    max-width: 100%;
+  }*/
+  
+    
+@media (max-width: 768px) {
+
+    .box-container {
+        width: 95%;
+        max-width: 340px; /* Slightly smaller for tablets */
+        padding: 18px;
+    }
+
+}
+
+
+/* Mobile-Specific Adjustments */
+@media (max-width: 600px) {
+
+    /* Ensure vaultAddress and walletAddresses input fields are always wide enough */
+    input#vaultAddress, textarea#walletAddresses {
+        font-size: 12px;
+    }
+
+    /* Ensure textareas remain fixed-width but allow scrolling */
+    textarea#walletAddresses {
+        font-size: 12px;
+    }
+}
+
+
+/* Mobile-Specific Adjustments */
+@media (max-width: 480px) {
+
+    .box-container {
+        width: 100%;
+        max-width: 320px; /* Smaller for mobile */
+        padding: 16px;
+    }
+
+    /* Ensure vaultAddress and walletAddresses input fields are always wide enough */
+    input#vaultAddress, textarea#walletAddresses {
+        font-size: 12px;
+    }
+
+    /* Ensure textareas remain fixed-width but allow scrolling */
+    textarea#walletAddresses {
+        font-size: 12px;
+    }
+}
+
+/* Debug colors */ 
+
+
+/*
+button, .stake-btn{ background: red;}
+
+@media (max-width: 768px) { button, .stake-btn { background: green;} }
+@media (max-width: 600px) { button, .stake-btn { background: blue;}  }
+@media (max-width: 480px) { button, .stake-btn { background: red;} }
+
+.form-container {
+    border: 2px solid green !important;
+    background: var(--overlay-red);
+}
+
+.table-container {
+    border: 2px solid red !important;
+    background: var(--overlay-red);
+}
+.table {
+    border: 2px solid green !important;
+    background: var(--overlay-blue);   
+}
+
+.table-container table {
+    border: 2px solid blue !important;
+    background: var(--overlay-blue);
+}
+*/
+
+/*
+.select-row {
+    background-color: rgba(255, 0, 0, 0.2); 
+}
+
+#deleteSetIcon {
+    background-color: rgba(0, 255, 0, 0.2); 
+}
+
+.select-wrapper {
+    background-color: rgba(0, 0, 255, 0.2);
+}
+
+select#savedSetSelect {
+    background-color: rgba(255, 255, 0, 0.2); 
+}
+
+.caret-icon {
+    background-color: rgba(255, 0, 255, 0.2); 
+}
+
+*/
+
+/*
+.select-row {
+    border: 1px dashed white;
+  }
+  #deleteSetIcon {
+    background: rgba(255, 0, 0, 0.1);
+  }
+  #savedSetSelect {
+    background: rgba(0, 255, 0, 0.1);
+  }
+
+
+  * {
+    outline: 1px solid red !important;
+  }
+    
+*/
+   
+   
