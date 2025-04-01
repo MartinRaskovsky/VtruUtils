@@ -497,7 +497,7 @@ input:focus, textarea:focus {
     background: var(--overlay-light-2);
 }
 
-/* Modal related
+/* Modal related */
 
 .modal {
    background-color: var(--overlay-dark);
@@ -572,7 +572,7 @@ input:focus, textarea:focus {
     color: var(--text-primary) !important;
     padding: 6px;
     text-align: left;
-}*/
+}
 
 .scrollable {
     max-height: 60vh;
