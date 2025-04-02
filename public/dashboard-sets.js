@@ -90,7 +90,7 @@ function LoadSet() {
             document.getElementById('vaultAddress').value = initialVaultValue;
             document.getElementById('walletAddresses').value = initialWalletValue;
   
-            validateForm();
+            window.validateForm();
             closeLoadSet();
         })
         .catch(() => {
@@ -102,7 +102,6 @@ function markVaultNameAsEdited() {
     const vaultInput = document.getElementById('vaultAddress');
     const walletInput = document.getElementById('walletAddresses');
     const currentSetElement = document.getElementById('currentSetName');
-    console.log("markVaultNameAsEdited");
 
     // Check if the current value differs from the initial value (i.e., it was edited)
     if (vaultInput.value !== initialVaultValue || walletInput.value !== initialWalletValue) {
@@ -186,22 +185,6 @@ function confirmDeleteSet() {
         });
 }
 
-
-// Extend validateForm to control Save button too
-const origValidateForm = validateForm;
-validateForm = function () {
-    origValidateForm();
-
-    const vault = document.getElementById('vaultAddress').value.trim();
-    const wallets = document.getElementById('walletAddresses').value.trim();
-    const saveBtn = document.getElementById('saveSetsBtn');
-    const getBtn = document.getElementById('getDetailsBtn');
-
-    if (saveBtn && getBtn) {
-        saveBtn.disabled = getBtn.disabled;
-    }
-};
-
 document.addEventListener("DOMContentLoaded", () => {
     const saveBtn = document.getElementById('saveSetsBtn');
     const getBtn = document.getElementById('loadSetBtn');
@@ -231,10 +214,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     getBtn.removeAttribute('disabled');
                 }
+                window.validateForm();
             })
             .catch(() => {
                 console.log("⚠️ Could not load saved sets list");
                 getBtn.setAttribute('disabled', 'disabled');
+                window.validateForm();
             });
     }
    
