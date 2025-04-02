@@ -1,8 +1,13 @@
 function openSaveAddressSetModal() {
     const modal = document.getElementById('saveSetsModal');
+    const input = document.getElementById('saveSetName');
+
     if (modal) {
         modal.classList.add('active');
-        //console.log("✅ Save modal activated");
+    }
+
+    if (input) {
+        input.value = ''; // Ensure blank input on open
     }
 }
 
@@ -112,12 +117,17 @@ function saveSets() {
         .then(data => {
             if (data.success) {
                 closeLoadSetsModal();
+
+                // ✅ Enable the Load button quietly if it was disabled
+                const getBtn = document.getElementById('loadSetBtn');
+                if (getBtn) getBtn.removeAttribute('disabled');
             } else {
                 alert(data.message || 'Failed to save set.');
             }
         })
         .catch(() => alert('Error saving set.'));
 }
+
 
 function showDeleteConfirmation() {
     const selected = document.getElementById('savedSetSelect').value;

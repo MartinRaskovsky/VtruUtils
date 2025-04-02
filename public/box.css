@@ -28,6 +28,7 @@ button:hover {
 }
 
 /* Prevent var(--text-primary) autofill background */
+input[type="text"],
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -35,6 +36,7 @@ input:-webkit-autofill:active {
     background-color: var(--overlay-light-2) !important;
     color: var(--text-primary) !important;
     -webkit-text-fill-color: var(--text-primary) !important;
+    -webkit-box-shadow: 0 0 0 1000px var(--overlay-light-2) inset !important;
     transition: background-color 5000s ease-in-out 0s; /* Prevents the browser from overriding styles */
 }
 
