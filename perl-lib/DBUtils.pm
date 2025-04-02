@@ -11,9 +11,9 @@ use Utils qw(debugLog logError);
 use Exporter 'import';
 our @EXPORT_OK = qw(
     getEmailFromCode getEmailFromSession putConfirmationCode putSessionId 
-    getWallets putVaultAndWallets getVaultAndWallets deleteVaultAndWallets
+    getWallets putVaultAndWallets deleteVaultAndWallets
     getKeepLoggedIn updateKeepLoggedIn
-    saveVaultSet getVaultSet deleteVaultSet listVaultSets
+    saveVaultSet getSetByName deleteVaultSet listVaultSets
 );
 
 my $MODULE = "DBUtils";
@@ -144,30 +144,31 @@ sub putVaultAndWallets {
     }
 }
 
-sub getVaultAndWallets {
+# This function retrieves the current set from the current table.
+sub getCurrentSet {
     my ($email) = @_;
-    debugLog($MODULE, "getVaultAndWallets($email)");
-    
+    debugLog($MODULE, "getCurrentSet($email)");
+
     my $dbh = getDbh();
     return unless $dbh;
-    
-    my $sth_vault = $dbh->prepare("SELECT vault_address FROM vaults WHERE email = ?");
-    $sth_vault->execute($email);
-    my ($vault) = $sth_vault->fetchrow_array();
-    $vault = $vault // '';
-    
-    my $sth_wallets = $dbh->prepare("SELECT wallet_address FROM wallets WHERE email = ?");
-    $sth_wallets->execute($email);
-    my @wallets;
-    while (my ($wallet) = $sth_wallets->fetchrow_array()) {
-        push @wallets, $wallet;
-    }
-    
-    my $N;
-    $N = @wallets;
-    debugLog($MODULE, "getVaultAndWallets=($vault, wallets: $N)");
-    return ($vault, \@wallets);
+
+    # Fetch the current set's vault and wallet information
+    my $sth = $dbh->prepare("SELECT set_name, vault_address, wallet_addresses
+                             FROM current WHERE email = ?");
+    $sth->execute($email);
+    my ($set_name, $vault, $wallet_addresses) = $sth->fetchrow_array();
+
+    # Default to empty string if vault or wallet_addresses are NULL
+    $vault = $vault // '';  # If vault is NULL, default to empty string
+    $wallet_addresses = $wallet_addresses // '';  # If wallet_addresses is NULL, default to empty string
+
+    # Split wallet addresses into an array, default to empty array if no wallets
+    my @wallets = $wallet_addresses ? split(",", $wallet_addresses) : ();
+
+    debugLog($MODULE, "getCurrentSet=($set_name, $vault, wallets: " . scalar(@wallets) . ")");
+    return ($set_name, $vault, \@wallets);  # Return the set name, vault, and wallet addresses
 }
+
 
 sub deleteVaultAndWallets {
     my ($email) = @_;
@@ -195,11 +196,11 @@ sub getWallets {
     $email = $email // "";
     debugLog($MODULE, "getWallets($email)");
     if ($email eq "") { return (0, 0); }
-    my ($vault, $wallets) = getVaultAndWallets($email);
+    my ($set_name, $vault, $wallets) = getCurrentSet($email);
     if (!defined $vault) { return (0, 0); }
     my $wallets_str = join(" ", @$wallets);
-    debugLog($MODULE, "getWallets=($vault,...)");
-    return ($vault, $wallets_str);
+    debugLog($MODULE, "getWallets=($set_name, $vault, ...)");
+    return ($set_name, $vault, $wallets_str);
 }
 
 sub putConfirmationCode {
@@ -226,61 +227,71 @@ sub putSessionId {
     debugLog($MODULE, "session_id stored successfully");
 }
 
-# Save a vault/wallet set
+# 1 Insert the set into the sets table.
+# 2 Update the current table to reflect the new "current" set.
 sub saveVaultSet {
-    my ($email, $name, $vault, $wallets) = @_;
-    return unless $email && $name && $wallets;
+    my ($email, $set_name, $vault, $wallets) = @_;
+    return unless $email && $set_name && $wallets;
 
-    my $wallet_str = join("\n", @$wallets);
+    my $wallet_str = join(",", @$wallets);  # Comma-separated list of wallet addresses
     my $dbh = getDbh();
     return unless $dbh;
 
-    my $sth = $dbh->prepare(q{
-        INSERT INTO vault_sets (email, name, vault_address, wallet_addresses)
-        VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE vault_address = VALUES(vault_address), wallet_addresses = VALUES(wallet_addresses)
-    });
-    $sth->execute($email, $name, $vault // '', $wallet_str);
-    $sth->finish;
+    # 1️⃣ Save the set to the `sets` table (this saves all sets, including current ones)
+    my $sth_set = $dbh->prepare("INSERT INTO sets (email, set_name, vault_address, wallet_addresses)
+                                VALUES (?, ?, ?, ?)
+                                ON DUPLICATE KEY UPDATE vault_address = VALUES(vault_address), wallet_addresses = VALUES(wallet_addresses)");
+    $sth_set->execute($email, $set_name, $vault, $wallet_str);
+    $sth_set->finish;
+
+    # 2️⃣ Update the `current` table to set the new set as the current set
+    my $sth_current = $dbh->prepare("REPLACE INTO current (email, set_name, vault_address, wallet_addresses)
+                                     VALUES (?, ?, ?, ?)");
+    $sth_current->execute($email, $set_name, $vault, $wallet_str);
+    $sth_current->finish;
+
     $dbh->disconnect;
 }
 
-# Retrieve a vault/wallet set by name
-sub getVaultSet {
-    my ($email, $name) = @_;
-    return unless $email && $name;
+# Retrieve a set from the sets table based on both the email and set_name.
+sub getSetByName {
+    my ($email, $set_name) = @_;
+    debugLog($MODULE, "getSetByName($email, $set_name)");
 
     my $dbh = getDbh();
     return unless $dbh;
 
-    my $sth = $dbh->prepare(q{
-        SELECT vault_address, wallet_addresses
-        FROM vault_sets
-        WHERE email = ? AND name = ?
-    });
-    $sth->execute($email, $name);
-    my $row = $sth->fetchrow_hashref;
-    $sth->finish;
-    $dbh->disconnect;
+    # Fetch the set's vault address and wallet addresses by email and set_name
+    my $sth = $dbh->prepare("SELECT vault_address, wallet_addresses
+                             FROM sets WHERE email = ? AND set_name = ?");
+    $sth->execute($email, $set_name);
 
-    return unless $row;
-    my @wallets = split(/\s+/, $row->{wallet_addresses} // '');
-    return ($row->{vault_address}, \@wallets);
+    my ($vault, $wallet_addresses) = $sth->fetchrow_array();
+
+    # Return default values if the vault or wallet_addresses are NULL
+    $vault = $vault // '';  # Default to empty string if vault is NULL
+    $wallet_addresses = $wallet_addresses // '';  # Default to empty string if wallet_addresses is NULL
+
+    # Split wallet addresses into an array, default to an empty array if there are no wallets
+    my @wallets = $wallet_addresses ? split(",", $wallet_addresses) : ();
+
+    debugLog($MODULE, "getSetByName=($vault, $set_name, wallets: " . scalar(@wallets) . ")");
+    return ($vault, \@wallets);  # Return the vault and wallet addresses
 }
 
-# Delete a saved vault/wallet set by name
+# Delete a saved vault/wallet set by set_name
 sub deleteVaultSet {
-    my ($email, $name) = @_;
-    return unless $email && $name;
+    my ($email, $set_name) = @_;
+    return unless $email && $set_name;
 
     my $dbh = getDbh();
     return unless $dbh;
 
     my $sth = $dbh->prepare(q{
-        DELETE FROM vault_sets
-        WHERE email = ? AND name = ?
+        DELETE FROM sets
+        WHERE email = ? AND set_name = ?
     });
-    $sth->execute($email, $name);
+    $sth->execute($email, $set_name);
     $sth->finish;
     $dbh->disconnect;
 
@@ -296,12 +307,12 @@ sub listVaultSets {
     return unless $dbh;
 
     my $sth = $dbh->prepare(q{
-        SELECT name FROM vault_sets WHERE email = ? ORDER BY created_at DESC
+        SELECT set_name FROM sets WHERE email = ? ORDER BY created_at DESC
     });
     $sth->execute($email);
     my @names;
-    while (my ($name) = $sth->fetchrow_array()) {
-        push @names, $name;
+    while (my ($set_name) = $sth->fetchrow_array()) {
+        push @names, $set_name;
     }
     $sth->finish;
     $dbh->disconnect;
@@ -309,6 +320,28 @@ sub listVaultSets {
     return @names;
 }
 
+# This function retrieves all sets from the sets table for a user.
+sub getAllSets {
+    my ($email) = @_;
+    debugLog($MODULE, "getAllSets($email)");
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    # Fetch all sets for the user
+    my $sth = $dbh->prepare("SELECT set_name, vault_address, wallet_addresses
+                             FROM sets WHERE email = ?");
+    $sth->execute($email);
+    
+    my @sets;
+    while (my ($set_name, $vault, $wallet_addresses) = $sth->fetchrow_array()) {
+        my @wallets = split(",", $wallet_addresses // '');  # Split into wallet addresses
+        push @sets, { set_name => $set_name, vault => $vault, wallets => \@wallets };
+    }
+
+    debugLog($MODULE, "getAllSets=(@sets)");
+    return @sets;  # Return an array of sets
+}
 
 1;
 

@@ -8,17 +8,19 @@ use DBUtils qw(getWallets);
 use Utils qw(debugLog);
 
 use Exporter 'import';
-our @EXPORT_OK = qw(loadDashboard getWalletsHtml getMainWrapper);
+our @EXPORT_OK = qw(loadDashboard getMainWrapper);
 
 my $MODULE = "Dashboard";
 
 sub getWalletsHtml {
-    my ($vault, $wallets) = @_;
+    my ($set_name, $vault, $wallets) = @_;
     if (!defined $vault   || $vault   eq "0") { $vault = '' ; }
     if (!defined $wallets || $wallets eq "0") { $wallets = '' ; }
+    if (!defined $set_name || $set_name eq "0") { $set_name = '' ; }
     my $state = ($vault ne "" || $wallets ne '')? "" : "disabled"; # assumes if given they are valid
     debugLog($MODULE, "getWalletsHtml(state=$state; vault=$vault)");
     my $html =<<END_HTML;
+        <div id="currentSetName" style="font-weight: bold; margin-bottom: 10px;">$set_name</div>
         <label for="vaultAddress">Vault:</label>
         <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="validateForm()" value="$vault">
         <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
@@ -38,8 +40,8 @@ sub getMainWrapper {
     $email = $email // "";
     debugLog($MODULE, "getMainWrapper($email)");
     if ($email eq "") {return "";}
-    my ($vault, $wallets) = getWallets($email);
-    return getWalletsHtml($vault, $wallets);
+    my ($set_name, $vault, $wallets) = getWallets($email);
+    return getWalletsHtml($set_name, $vault, $wallets);
 }
 
 sub loadDashboard {

@@ -6,7 +6,7 @@ use CGI;
 use JSON;
 use lib '../perl-lib';
 
-use DBUtils qw(getEmailFromSession getVaultSet);
+use DBUtils qw(getEmailFromSession getSetByName);
 use Utils qw(debugLog logError);
 use CGI::Carp qw(fatalsToBrowser);
 
@@ -40,7 +40,7 @@ unless ($name) {
 }
 
 eval {
-    my ($vault, $wallets_ref) = getVaultSet($email, $name);
+    my ($vault, $wallets_ref) = getSetByName($email, $name);
 
     unless (defined $vault || @$wallets_ref) {
         print encode_json({ success => \0, message => "Set not found" });
@@ -50,7 +50,8 @@ eval {
     print encode_json({
         success => \1,
         vault   => $vault,
-        wallets => $wallets_ref
+        wallets => $wallets_ref,
+        name    => $name
     });
 };
 

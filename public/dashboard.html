@@ -26,7 +26,7 @@
         }
 
         #main-wrapper {
-            width: 80%;
+            width: 95%;
             max-width: 768px;
             margin: 0 auto;
             min-height: 100vh;
@@ -54,6 +54,7 @@
             <form id="detailsForm">
                 <div class="form-container">
 <!--main-input-BEGIN-->
+                    <div id="currentSetName" style="font-weight: bold; margin-bottom: 10px;"></div>
                     <label for="vaultAddress">Vault:</label>
                     <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="validateForm()">
                     <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
@@ -171,6 +172,7 @@
             
             const vaultAddress = document.getElementById('vaultAddress').value.trim();
             const walletAddresses = document.getElementById('walletAddresses').value.trim();
+            const currentSetName = document.getElementById('currentSetName').value.trim();
             const contentDiv = document.getElementById('content');
             const backBtn = document.getElementById('backBtn');
             const getDetailsBtn = document.getElementById('getDetailsBtn');
@@ -178,6 +180,7 @@
 
             if (vaultAddress) params.append('vault', vaultAddress);
             if (walletAddresses) params.append('wallets', walletAddresses);
+            if (currentSetName) params.append('set_name', currentSetName);
 
             // **🔹 Show "Loading..." and disable the button**
             getDetailsBtn.disabled = true;

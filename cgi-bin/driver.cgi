@@ -10,9 +10,8 @@ use Defs qw(getScriptForType getRenderFunction );
 use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
-use Dashboard qw(getWalletsHtml);
 use Utils qw(debugLog logError trimSpaces processWallets );
-use DBUtils qw(putVaultAndWallets);
+use DBUtils qw(saveVaultSet);
 use LoginManagment qw(getSessionEmail);
 
 my $MODULE = "driver.cgi";
@@ -45,6 +44,7 @@ my $cgi = CGI->new;
 my $type     = $cgi->param('type')     // 'sections';
 my $vault    = trimSpaces(scalar $cgi->param('vault'))  // '';
 my $wallets  = trimSpaces(scalar $cgi->param('wallets'))  // '';
+my $set_name =  trimSpaces(scalar $cgi->param('set_name'))  // '';
 my $grouping = $cgi->param('grouping') // 'none';
 my $format   = $cgi->param('format')   // 'html';
 
@@ -95,7 +95,7 @@ if ($type eq 'sections') {
     $vault = $result->{address};
     $wallets = $result->{wallets};
     if ($email) {
-        putVaultAndWallets($email, $vault, $wallets);
+        saveVaultSet($email, $set_name, $vault, $wallets);
     }
 
     my $signature = getSignature($email, $vault, $wallets);

@@ -62,6 +62,19 @@ function closeLoadSet() {
     }
 }
 
+let initialVaultValue = '';   // Store initial vault address
+let initialWalletValue = '';  // Store initial wallet addresses
+
+function resetInitialValues(vault, wallets) {
+    initialVaultValue = vault; 
+    initialWalletValue = wallets;
+}
+
+function updateCurrentSetName(name) {
+    const currentSetElement = document.getElementById('currentSetName');
+    currentSetElement.textContent = name;
+}
+
 function LoadSet() {
     const selected = document.getElementById('savedSetSelect').value;
     if (!selected) return;
@@ -69,8 +82,14 @@ function LoadSet() {
     fetch(`loadset.cgi?name=${encodeURIComponent(selected)}`)
         .then(res => res.json())
         .then(data => {
-            document.getElementById('vaultAddress').value = data.vault;
-            document.getElementById('walletAddresses').value = data.wallets.join('\n');
+ 
+            resetInitialValues(data.vault, data.wallets.join('\n'));
+            updateCurrentSetName(data.name)
+
+            // Set the vault and wallet values
+            document.getElementById('vaultAddress').value = initialVaultValue;
+            document.getElementById('walletAddresses').value = initialWalletValue;
+  
             validateForm();
             closeLoadSet();
         })
@@ -79,29 +98,24 @@ function LoadSet() {
         });
 }
 
-/*function DeleteSet() {
-    const selected = document.getElementById('savedSetSelect').value;
-    if (!selected) return;
+function markVaultNameAsEdited() {
+    const vaultInput = document.getElementById('vaultAddress');
+    const walletInput = document.getElementById('walletAddresses');
+    const currentSetElement = document.getElementById('currentSetName');
+    console.log("markVaultNameAsEdited");
 
-    if (!confirm(`Are you sure you want to delete the set "${selected}"?`)) {
-        return;
+    // Check if the current value differs from the initial value (i.e., it was edited)
+    if (vaultInput.value !== initialVaultValue || walletInput.value !== initialWalletValue) {
+        currentSetElement.textContent = currentSetElement.textContent.replace(" (edited)", "") + " (edited)";
+    } else {
+        // Remove the (edited) mark if no changes were made
+        currentSetElement.textContent = currentSetElement.textContent.replace(" (edited)", "");
     }
+}
 
-    fetch(`deleteset.cgi?name=${encodeURIComponent(selected)}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Optionally reload the list
-                alert(`Set "${selected}" deleted.`);
-                closeLoadSet();
-            } else {
-                alert(data.message || 'Failed to delete the set.');
-            }
-        })
-        .catch(() => {
-            alert('Error deleting set.');
-        });
-}*/
+// Listen for changes on the vault and wallet inputs
+document.getElementById('vaultAddress').addEventListener('input', markVaultNameAsEdited);
+document.getElementById('walletAddresses').addEventListener('input', markVaultNameAsEdited);
 
 function saveSets() {
     const name = document.getElementById('saveSetName').value.trim();
@@ -121,13 +135,15 @@ function saveSets() {
                 // ✅ Enable the Load button quietly if it was disabled
                 const getBtn = document.getElementById('loadSetBtn');
                 if (getBtn) getBtn.removeAttribute('disabled');
+                
+                resetInitialValues(vault,  wallets);
+                updateCurrentSetName(name);
             } else {
                 alert(data.message || 'Failed to save set.');
             }
         })
         .catch(() => alert('Error saving set.'));
 }
-
 
 function showDeleteConfirmation() {
     const selected = document.getElementById('savedSetSelect').value;
@@ -153,6 +169,11 @@ function confirmDeleteSet() {
             if (data.success) {
                 closeConfirmDeleteModal();
                 closeLoadSet();
+
+                const currentSetElement = document.getElementById('currentSetName');
+                if (name === currentSetElement) {
+                    updateCurrentSetName("");
+                }
 
                 // Refresh the list
                 setTimeout(() => openLoadSetsModal(), 100);

@@ -5,7 +5,7 @@ use CGI;
 
 use lib '../perl-lib';
 use Utils qw(debugLog trimSpaces);
-use Dashboard qw(getMainWrapper loadDashboard);
+use Dashboard qw(loadDashboard);
 use LoginManagment qw(createSession);
 use DBUtils qw(getKeepLoggedIn);
 use Cookies qw(setSessionCookie);
@@ -31,7 +31,6 @@ if ($confirmation_code) {
             debugLog($MODULE, "Login successful. Redirecting to dashboard.");
             print $cgi->header('text/html');
             print "<!--Success-->\n";
-            #print getMainWrapper($email_verified);  # ✅ Load the dashboard correctly
             loadDashboard($email_verified);
             exit;
         } else {

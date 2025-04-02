@@ -6,7 +6,30 @@ CREATE TABLE users (
     session_id CHAR(64) NULL,
     keep_logged_in BOOLEAN DEFAULT FALSE
 );
-ALTER TABLE users ADD COLUMN keep_logged_in BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE current (
+    email VARCHAR(255) NOT NULL,
+    set_name VARCHAR(100) NOT NULL,  -- Name of the current set
+    vault_address VARCHAR(42) NOT NULL,  -- Address of the current vault
+    wallet_addresses TEXT NOT NULL,  -- Comma-separated wallet addresses
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (email),  -- One current set per user
+    FOREIGN KEY (email) REFERENCES users(email)
+);
+
+CREATE TABLE sets (
+    email VARCHAR(255) NOT NULL,
+    set_name VARCHAR(100) NOT NULL,  -- Name of the set
+    vault_address VARCHAR(42) NOT NULL,  -- Address of the vault for the set
+    wallet_addresses TEXT NOT NULL,  -- Comma-separated wallet addresses for the set
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (email, set_name),  -- Each user can have multiple sets
+    FOREIGN KEY (email) REFERENCES users(email)
+);
+
+// BELOW HERE THEY ARE ALL OBSOLETE TO BE DEKETED AFTER TRANSITION
 
 DROP TABLE IF EXISTS vaults;
 CREATE TABLE vaults (
@@ -18,6 +41,7 @@ CREATE TABLE vaults (
     INDEX idx_vaults_email (email),
     INDEX idx_vaults_address (vault_address)
 );
+ALTER TABLE vaults ADD COLUMN current_set_name VARCHAR(100) DEFAULT NULL;
 
 DROP TABLE IF EXISTS wallets;
 CREATE TABLE wallets (
