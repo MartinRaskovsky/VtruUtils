@@ -209,10 +209,8 @@ sub putConfirmationCode {
     my $dbh = getDbh();
     return unless $dbh;
     
-    debugLog($MODULE, "INSERT INTO users ($email, $code)");
     my $sth = $dbh->prepare("INSERT INTO users (email, confirmation_code) VALUES (?, ?) ON DUPLICATE KEY UPDATE confirmation_code = ?");
     $sth->execute($email, $code, $code);
-    debugLog($MODULE, "Confirmation code stored in DB");
 }
 
 sub putSessionId {
@@ -222,15 +220,14 @@ sub putSessionId {
     return unless $dbh;
     
     my $sth = $dbh->prepare("UPDATE users SET session_id = ? WHERE email = ?");
-    debugLog($MODULE, "Storing session_id for $email");
     $sth->execute($session_id, $email);
-    debugLog($MODULE, "session_id stored successfully");
 }
 
 # 1 Insert the set into the sets table.
 # 2 Update the current table to reflect the new "current" set.
 sub saveVaultSet {
     my ($email, $set_name, $vault, $wallets) = @_;
+    debugLog($MODULE, "saveVaultSet($email, $set_name, $vault)");
     return unless $email && $set_name && $wallets;
 
     my $wallet_str = join(",", @$wallets);  # Comma-separated list of wallet addresses
@@ -275,7 +272,6 @@ sub getSetByName {
     # Split wallet addresses into an array, default to an empty array if there are no wallets
     my @wallets = $wallet_addresses ? split(",", $wallet_addresses) : ();
 
-    debugLog($MODULE, "getSetByName=($vault, $set_name, wallets: " . scalar(@wallets) . ")");
     return ($vault, \@wallets);  # Return the vault and wallet addresses
 }
 
