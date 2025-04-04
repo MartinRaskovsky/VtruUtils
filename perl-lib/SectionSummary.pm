@@ -14,7 +14,7 @@ sub getSectionSummary {
     return [
     { name => 'Native Coins', sections => [ 'BNB', 'ETH', 'POL', 'VTRU', 'SOL', 'TEZ' ] },
     { name => 'VTRU Bridged', sections => [ 'VTRU on BSC', 'VTRU on ETH' ] },
-    { name => 'USDC', sections => [ 'USDC on VTRU(USDC.pol)', 'USDC on ETH', 'USDC on BSC', 'USDC on POL', 'USDC on SOL' ] },
+    { name => 'USDC', sections => [ 'USDC on VTRU(USDC.pol)', 'USDC on Ethereum', 'USDC on BNB Chain', 'USDC on Polygon', 'USDC on Solana', 'USDC on Arbitrum', 'USDC on Optimism', 'USDC on Base', 'USDC on Avalanche' ] },
     { name => 'Staked', sections => [ 'VTRU Staked', 'SEVO-X Staked' ] },
     { name => 'Vitruveo Coins & Tokens', sections => [ 'VERSE', 'VIBE', 'VORTEX', 'VTRO', 'VUSD', 'wVTRU' ] },
     { name => 'Sabong', sections => [ 'SEVO', 'SEVO-X' ] },

@@ -14,6 +14,10 @@ const NET_BSC   = "BSC";
 const NET_POL   = "POL";
 const NET_SOL   = "SOL";
 const NET_TEZ   = "TEZ";
+const NET_ARB   = "ARB";
+const NET_OPT   = "OPT";
+const NET_BASE  = "BASE";
+const NET_AVAX  = "AVAX";
 
 // Section Titles
 
@@ -31,11 +35,15 @@ const SEC_VTRU_ETH    = "VTRU on ETH";
 
 // USDC
 const SEC_USDC_VTRU   = "USDC on VTRU(USDC.pol)";
-const SEC_USDC_ETH    = "USDC on ETH";
-const SEC_USDC_BSC    = "USDC on BSC";
-const SEC_USDC_POL    = "USDC on POL";
-const SEC_USDC_SOL    = "USDC on SOL";
-const SEC_USDC_TEZ    = "USDC on TEZ";
+const SEC_USDC_ETH    = "USDC on Ethereum";
+const SEC_USDC_BSC    = "USDC on BNB Chain";
+const SEC_USDC_POL    = "USDC on Polygon";
+const SEC_USDC_SOL    = "USDC on Solana";
+const SEC_USDC_TEZ    = "USDC on Tezos";
+const SEC_USDC_ARB    = "USDC on Arbitrum";
+const SEC_USDC_OPT    = "USDC on Optimism";
+const SEC_USDC_BASE   = "USDC on Base";
+const SEC_USDC_AVAX   = "USDC on Avalanche";
 
 // Staked
 const SEC_VTRU_STAKED  = "VTRU Staked";
@@ -61,13 +69,24 @@ const SEC_VITDEX      = "VITDEX";
 const sectionSummary = [
     { name: 'Native Coins',            sections: [SEC_BNB, SEC_ETH, SEC_POL, SEC_VTRU, SEC_SOL, SEC_TEZ] },
     { name: 'VTRU Bridged',            sections: [SEC_VTRU_BSC, SEC_VTRU_ETH] },
-    { name: 'USDC',                    sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_USDC_SOL] },
+    { name: 'USDC',                    sections: [
+        SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_USDC_SOL,
+        SEC_USDC_ARB, SEC_USDC_OPT, SEC_USDC_BASE, SEC_USDC_AVAX,
+        //SEC_USDC_TEZ,
+    ] },
     { name: 'Staked',                  sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
     { name: 'Vitruveo Coins & Tokens', sections: [SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_VTRO, SEC_VUSD, SEC_WVTRU] },
     { name: 'Sabong',                  sections: [SEC_SEVO, SEC_SEVOX ]},
     { name: 'Vitruveo Exchange',       sections: [SEC_V3DEX, SEC_VITDEX] },
-  ];
+];
 
+const networkLabels = {
+    'ARB': "Arbitrum",
+    'OPT': "Optimism",
+    'BASE': "Base",
+    'AVAX': "Avalanche"
+  };
+  
 // Section mapping for details popups
 const detailType = {
     [SEC_VTRU_STAKED]: "stake",
@@ -76,7 +95,7 @@ const detailType = {
     [SEC_VORTEX]: "vortex",
 };
 
-// These groupping defs are needed also in perl-lib/Defs.pm: %group_type_map
+// These grouping defs are needed also in perl-lib/Defs.pm: %group_type_map
 const hasGroups = {
     [SEC_VTRU_STAKED]: true,
     [SEC_SEVOX_STAKED]: true,
@@ -108,15 +127,23 @@ if (typeof module !== 'undefined' && module.exports) {
         SEC_USDC_VTRU,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
-        SEC_USDC_POL, 
-        SEC_USDC_SOL, 
+        SEC_USDC_POL,
+        SEC_USDC_SOL,
         SEC_USDC_TEZ,
+        SEC_USDC_ARB,
+        SEC_USDC_OPT,
+        SEC_USDC_BASE,
+        SEC_USDC_AVAX,
         NET_VTRU,
         NET_ETH,
         NET_BSC,
         NET_POL,
         NET_SOL,
         NET_TEZ,
+        NET_ARB,
+        NET_OPT,
+        NET_BASE,
+        NET_AVAX,
         detailType,
         hasGroups,
         sectionSummary
@@ -149,19 +176,26 @@ if (typeof window !== "undefined") {
         SEC_USDC_VTRU,
         SEC_USDC_ETH,
         SEC_USDC_BSC,
-        SEC_USDC_POL, 
-        SEC_USDC_SOL, 
+        SEC_USDC_POL,
+        SEC_USDC_SOL,
         SEC_USDC_TEZ,
+        SEC_USDC_ARB,
+        SEC_USDC_OPT,
+        SEC_USDC_BASE,
+        SEC_USDC_AVAX,
         NET_VTRU,
         NET_ETH,
         NET_BSC,
         NET_POL,
         NET_SOL,
         NET_TEZ,
+        NET_ARB,
+        NET_OPT,
+        NET_BASE,
+        NET_AVAX,
         detailType,
         hasGroups,
         sectionSummary
     };
-
 }
 

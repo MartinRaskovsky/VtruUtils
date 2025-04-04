@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use Exporter 'import';
 our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getExplorerURL getRenderFunction getChainMarker getNetworkChain);
-
 # Define script mapping
 my %script_map = (
     'sections' => 'getSections.js',
@@ -15,26 +14,30 @@ my %script_map = (
 
 # Define detail type mapping
 my %detail_type_map = (
-    "VTRU Staked"  => "stake",
-    "VIBE"         => "vibe",
-    "VORTEX"       => "vortex",
-    "SEVO-X Staked"=> "bsc"
+    "VTRU Staked"   => "stake",
+    "VIBE"          => "vibe",
+    "VORTEX"        => "vortex",
+    "SEVO-X Staked" => "bsc"
 );
 
 # Define grouppers type
 my %group_type_map = (
-    "VTRU Staked"  => 1,
-    "SEVO-X Staked"=> 1,
+    "VTRU Staked"   => 1,
+    "SEVO-X Staked" => 1,
 );
 
 # Define explorers mapping
 my %explorers = (
-    'BSC'  => "https://bscscan.com/address/",
-    'ETH'  => "https://etherscan.io/address/",
-    'VTRU' => "https://explorer.vitruveo.xyz/address/",
-    'POL'  => "https://polygonscan.com/address/",
-    "SOL"  => "https://explorer.solana.com/address/",
-    "TEZ"  => "https://tzkt.io/",
+    'BSC'       => "https://bscscan.com/address/",
+    'ETH'       => "https://etherscan.io/address/",
+    'VTRU'      => "https://explorer.vitruveo.xyz/address/",
+    'POL'       => "https://polygonscan.com/address/",
+    'SOL'       => "https://explorer.solana.com/address/",
+    'TEZ'       => "https://tzkt.io/",
+    'ARB'       => "https://arbiscan.io/address/",
+    'OPT'       => "https://optimistic.etherscan.io/address/",
+    'BASE'      => "https://basescan.org/address/",
+    'AVAX'      => "https://snowtrace.io/address/",
 );
 
 my @chains = (
@@ -44,22 +47,26 @@ my @chains = (
 );
 
 my %net_to_chain = (
-    'BSC'  => "EVM",
-    'ETH'  => "EVM",
-    'VTRU' => "EVM",
-    'POL'  => "EVM",
-    "SOL"  => "SOL",
-    "TEZ"  => "TEZ",   
+    'BSC'   => "EVM",
+    'ETH'   => "EVM",
+    'VTRU'  => "EVM",
+    'POL'   => "EVM",
+    'ARB'   => "EVM",
+    'OPT'   => "EVM",
+    'BASE'  => "EVM",
+    'AVAX'  => "EVM",
+    'SOL'   => "SOL",
+    'TEZ'   => "TEZ",   
 );
 
 # Define network branding color
 my %branding = (
-    'BSC'  => {
+    'BSC' => {
         color => "#F3BA2F",
         icon  => "bsc.png",
         emoji => '🟡',
     },
-    'ETH'  => {
+    'ETH' => {
         color => "#627EEA",
         icon  => "eth.png",
         emoji => '💠',
@@ -69,20 +76,40 @@ my %branding = (
         icon  => "vtru.png",
         emoji => '🟣',
     },
-    'POL'  => {
+    'POL' => {
         color => "#282A36",
         icon  => "pol.png",
         emoji => '🔗',
     },
-    'SOL'  => {
+    'SOL' => {
         color => "#9945FF",
         icon  => "sol.png",
         emoji => '🌿',
     },
-    'TEZ'  => {
+    'TEZ' => {
         color => "#2C7DF7",
         icon  => "tez.png",
         emoji => '🔷',
+    },
+    'ARB' => {
+        color => "#28A0F0",
+        icon  => "arb.png",
+        emoji => '🧊',
+    },
+    'OPT' => {
+        color => "#FF0420",
+        icon  => "opt.png",
+        emoji => '🚀',
+    },
+    'BASE' => {
+        color => "#0052FF",
+        icon  => "base.png",
+        emoji => '🌀',
+    },
+    'AVAX' => {
+        color => "#E84142",
+        icon  => "avax.png",
+        emoji => '⛰️',
     },
 );
 
