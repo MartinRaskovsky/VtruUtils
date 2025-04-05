@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { sectionSummary } = require('../shared/constants');
 
-const outputPath = path.join(__dirname, '../perl-lib/SectionSummary.pm');
+const outputPath = path.join(__dirname, '../perl-lib/SectionSummary.generated.pm');
 
 function escapePerlString(str) {
     return str.replace(/'/g, "\\'");

@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Exporter 'import';
 our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getExplorerURL getRenderFunction getChainMarker getNetworkChain);
+
+# ==== GENERATED PERL DEFS START ====
 # Define script mapping
 my %script_map = (
     'sections' => 'getSections.js',
@@ -112,6 +114,7 @@ my %branding = (
         emoji => '⛰️',
     },
 );
+# ==== GENERATED PERL DEFS END ====
 
 # Define render function mapping
 my %render_map = (
