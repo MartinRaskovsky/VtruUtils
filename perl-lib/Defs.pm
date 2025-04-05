@@ -7,58 +7,58 @@ our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getE
 # ==== GENERATED PERL DEFS START ====
 # Define script mapping
 my %script_map = (
+    'stake' => 'getDetailVtruStaked.js',
+    'bsc' => 'getDetailSevoXStaked.js',
+    'vibe' => 'getDetailVibe.js',
+    'vortex' => 'getDetailVortex.js',
     'sections' => 'getSections.js',
-    'bsc'      => 'getDetailSevoXStaked.js',
-    'vibe'     => 'getDetailVibe.js',
-    'vortex'   => 'getDetailVortex.js',
-    'stake'    => 'getDetailVtruStaked.js'
 );
 
 # Define detail type mapping
 my %detail_type_map = (
-    "VTRU Staked"   => "stake",
-    "VIBE"          => "vibe",
-    "VORTEX"        => "vortex",
-    "SEVO-X Staked" => "bsc"
+    "VTRU Staked" => "stake",
+    "SEVO-X Staked" => "bsc",
+    "VIBE" => "vibe",
+    "VORTEX" => "vortex",
 );
 
 # Define grouppers type
 my %group_type_map = (
-    "VTRU Staked"   => 1,
+    "VTRU Staked" => 1,
     "SEVO-X Staked" => 1,
 );
 
 # Define explorers mapping
 my %explorers = (
-    'BSC'       => "https://bscscan.com/address/",
-    'ETH'       => "https://etherscan.io/address/",
-    'VTRU'      => "https://explorer.vitruveo.xyz/address/",
-    'POL'       => "https://polygonscan.com/address/",
-    'SOL'       => "https://explorer.solana.com/address/",
-    'TEZ'       => "https://tzkt.io/",
-    'ARB'       => "https://arbiscan.io/address/",
-    'OPT'       => "https://optimistic.etherscan.io/address/",
-    'BASE'      => "https://basescan.org/address/",
-    'AVAX'      => "https://snowtrace.io/address/",
+    'VTRU' => "https://explorer.vitruveo.xyz/address/",
+    'ETH' => "https://etherscan.io/address/",
+    'BSC' => "https://bscscan.com/address/",
+    'POL' => "https://polygonscan.com/address/",
+    'SOL' => "https://explorer.solana.com/address/",
+    'TEZ' => "https://tzkt.io/",
+    'ARB' => "https://arbiscan.io/address/",
+    'OPT' => "https://optimistic.etherscan.io/address/",
+    'BASE' => "https://basescan.org/address/",
+    'AVAX' => "https://snowtrace.io/address/",
 );
 
 my @chains = (
-    "EVM", 
-    "SOL", 
+    "EVM",
+    "SOL",
     "TEZ"
 );
 
 my %net_to_chain = (
-    'BSC'   => "EVM",
-    'ETH'   => "EVM",
-    'VTRU'  => "EVM",
-    'POL'   => "EVM",
-    'ARB'   => "EVM",
-    'OPT'   => "EVM",
-    'BASE'  => "EVM",
-    'AVAX'  => "EVM",
-    'SOL'   => "SOL",
-    'TEZ'   => "TEZ",   
+    'VTRU' => "EVM",
+    'ETH' => "EVM",
+    'BSC' => "EVM",
+    'POL' => "EVM",
+    'ARB' => "EVM",
+    'OPT' => "EVM",
+    'BASE' => "EVM",
+    'AVAX' => "EVM",
+    'SOL' => "SOL",
+    'TEZ' => "TEZ",
 );
 
 # Define network branding color
