@@ -47,45 +47,24 @@ print <<HTML;
 <html>
     <head>
         <title>Confirm Login</title>
-        <link rel="stylesheet" href="/public/variables.css">
-        <link rel="stylesheet" href="/public/common.css">
-        <link rel="stylesheet" href="/public/box.css">
-        <link rel="stylesheet" href="/public/version.css">
-        <style>
-            .logo-container {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 10px;
-                width: 100%;
-            }
+   <link rel="stylesheet" href="/public/variables.css">
+    <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="/public/common.css">
+    <link rel="stylesheet" href="/public/box.css">
+    <link rel="stylesheet" href="/public/version.css">
+</head>
+<body class="dashboard-page" id="dashboard-page">
 
-            .vawa-logo {
-                height: 40px;
-                width: auto;
-                display: block;
-            }
-
-            .version-text {
-                color: white;
-                background-color: #4B0082;
-                padding: 4px 8px;
-                font-size: 12px;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-
-            .page-title {
-                margin-top: 50px;
-            }
-        </style>
-    </head>
-    <body>
+    <div id="main-wrapper">
         <div class="logo-container">
             <img src="/images/logo.png" alt="VaWa Logo" class="vawa-logo">
             <span class="version-text"></span>
         </div>
-    <h1 class="page-title">Vault & Wallet Details</h1>  <!-- ✅ Ensure the title is at the top -->
+        <div id="header">
+            <button id="backBtn" class="header-btn" onclick="restoreForm()">Back</button>
+            <h1>Vault & Wallet Details</h1>
+            <button id="logoutBtn" class="header-btn" onclick="logout()">Log Out</button>
+        </div>   
     <div class="box-container">  <!-- ✅ Use the common class -->
         <h2 style="color: white; text-align: center;">Enter Confirmation Code</h2>
 
@@ -134,7 +113,7 @@ print <<HTML;
         });
     </script>
      <script src="/public/scripts.js"></script> 
-
+    </div>
 </body>
 </html>
 HTML
