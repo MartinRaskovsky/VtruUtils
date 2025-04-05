@@ -1,37 +1,23 @@
 html, body {
-    align-items: center;
-    background-color: var(--accent-color-2); /* Purple background */
+    background-color: var(--accent-color-2); /* Purple */
     color: var(--text-primary);
-    display: flex;
-    flex-direction: column;
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
-    height: 100%;
-    justify-content: flex-start; /* Aligns to the top */
     margin: 0;
-    margin-top: 20px;
-    max-width: 768px;
-    min-height: 100vh; /* Ensures full height */
-    min-width: 100vw;
-    overflow-x: hidden;
     padding: 0;
-    padding-bottom: 40px;
-    text-align: center;
-    width: 100vw;
+    min-height: 100vh;
+    width: 100%;
 }
+
 
 #main-wrapper {
-    max-width: 900px; /* Prevents excessive width */
-    width: 100%; /* Ensures responsiveness */
-    margin: 0 auto; /* Ensures horizontal centering */
-}
-
-html {
-    width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: center; /* Centers the page */
-    align-items: flex-start; /* Prevents unwanted vertical centering */
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 label {
@@ -770,14 +756,6 @@ th, td {
     position: relative;
 }
 
-/* Centered Title */
-#header h1 {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 22px;
-    margin: 0;
-}
-
 /* General Button Styling - Shared by Back and Logout */
 .header-btn {
     padding: 6px 6px;
@@ -796,17 +774,26 @@ th, td {
 
 .logo-container {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 10px;
-    gap: 10px;
-    margin-right: 15px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 10px;
+    margin: 0;
 }
 
 .vawa-logo {
     height: 40px; /* Adjust height as needed */
     width: auto;
     display: block;
+}
+
+/* Centered Title */
+#header h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 22px;
+    margin: 0;
 }
 
 /* Back Button - Left Aligned */
