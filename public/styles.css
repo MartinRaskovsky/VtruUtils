@@ -1,3 +1,7 @@
+:root {
+    --app-version: "V 0.1.1";
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--text-primary);
@@ -791,11 +795,34 @@ th, td {
     background-color: var(--accent-color-1);
     cursor: pointer;
     border-radius: 5px;
-    var(--text-primary)-space: nowrap;
+    white-space: nowrap;
     width: auto;  /* Allow flexible sizing */
     min-width: unset;
     max-width: none;
     border: 1px solid #492853;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 10px;
+    margin-right: 15px;
+}
+
+.vawa-logo {
+    height: 40px; /* Adjust height as needed */
+    width: auto;
+    display: block;
+}
+
+.version-text::after {
+    content: var(--app-version);
+    color: white;
+    font-size: 12px;
+    font-weight: normal;
+    opacity: 0.8;
+    margin-left: 8px;
 }
 
 /* Back Button - Left Aligned */

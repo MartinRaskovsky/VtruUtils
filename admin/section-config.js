@@ -35,13 +35,20 @@ function isInChain(network, chainType) {
 
 const sections = [
   // Native Coins
-  { key: "VTRU", label: "VTRU", className: "TokenWallet", contractId: "VTRU", network: "VTRU", digits: 2, format: "formatRawNumber", group: "Native Coins" },
-  { key: "ETH", label: "ETH", className: "TokenWallet", contractId: "ETH", network: "ETH", digits: 2, format: "formatRawNumber", group: "Native Coins" },
+  { key: "VTRU",     label: "VTRU",            className: "TokenWallet", contractId: "VTRU", network: "VTRU", digits: 2, format: "formatRawNumber", group: "Native Coins" },
+  { key: "ETH",      label: "ETH",             className: "TokenWallet", contractId: "ETH",  network: "ETH",  digits: 2, format: "formatRawNumber", group: "Native Coins" },
+  { key: "AVAX",     label: "AVAX",            className: "TokenWallet", contractId: "AVAX", network: "AVAX", digits: 2, format: "formatRawNumber", group: "Native Coins" },
   { key: "BNB", label: "BNB", className: "TokenWallet", contractId: "BNB", network: "BSC", digits: 2, format: "formatRawNumber", group: "Native Coins" },
+  // POL is the native coin on Polygon. Formerly known as MATIC.
   { key: "POL", label: "POL", className: "TokenWallet", contractId: "POL", network: "POL", digits: 2, format: "formatRawNumber", group: "Native Coins" },
   { key: "SOL", label: "SOL", className: "TokenWalletSol", contractId: "SOL", network: "SOL", digits: 2, format: "formatSolNumber", group: "Native Coins" },
   { key: "TEZ", label: "TEZ", className: "TokenWallet", contractId: "TEZ", network: "TEZ", digits: 2, format: "formatVusdNumber", group: "Native Coins" },
 
+    // ETH Bridged
+  { key: "ETH_ARB",  label: "ETH on Arbitrum", className: "TokenWallet", contractId: "ETH",  network: "ARB",  digits: 2, format: "formatRawNumber", group: "ETH Bridged" },
+  { key: "ETH_OPT",  label: "ETH on Optimism", className: "TokenWallet", contractId: "ETH",  network: "OPT",  digits: 2, format: "formatRawNumber", group: "ETH Bridged" },
+  { key: "ETH_BASE", label: "ETH on Base",     className: "TokenWallet", contractId: "ETH",  network: "BASE", digits: 2, format: "formatRawNumber", group: "ETH Bridged" },
+  
   // VTRU Bridged
   { key: "VTRU_ETH", label: "VTRU on Ethereum", className: "CommonEvmClass", contractId: "VTRU", network: "ETH", digits: 2, format: "formatRawNumber", group: "VTRU Bridged" },
   { key: "VTRU_BSC", label: "VTRU on BNB Chain", className: "CommonEvmClass", contractId: "VTRU", network: "BSC", digits: 2, format: "formatRawNumber", group: "VTRU Bridged" },

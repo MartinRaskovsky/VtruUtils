@@ -25,10 +25,16 @@ const NET_AVAX = "AVAX";
 // Native Coins
 const SEC_VTRU = "VTRU";
 const SEC_ETH = "ETH";
+const SEC_AVAX = "AVAX";
 const SEC_BNB = "BNB";
 const SEC_POL = "POL";
 const SEC_SOL = "SOL";
 const SEC_TEZ = "TEZ";
+
+// ETH Bridged
+const SEC_ETH_ARB = "ETH on Arbitrum";
+const SEC_ETH_OPT = "ETH on Optimism";
+const SEC_ETH_BASE = "ETH on Base";
 
 // VTRU Bridged
 const SEC_VTRU_ETH = "VTRU on ETH";
@@ -67,7 +73,8 @@ const SEC_VITDEX = "VITDEX";
 
 // Section mapping for summary with subsections
 const sectionSummary = [
-  { name: "Native Coins", sections: [SEC_VTRU, SEC_ETH, SEC_BNB, SEC_POL, SEC_SOL, SEC_TEZ] },
+  { name: "Native Coins", sections: [SEC_VTRU, SEC_ETH, SEC_AVAX, SEC_BNB, SEC_POL, SEC_SOL, SEC_TEZ] },
+  { name: "ETH Bridged", sections: [SEC_ETH_ARB, SEC_ETH_OPT, SEC_ETH_BASE] },
   { name: "VTRU Bridged", sections: [SEC_VTRU_ETH, SEC_VTRU_BSC] },
   { name: "USDC", sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_USDC_SOL, SEC_USDC_ARB, SEC_USDC_OPT, SEC_USDC_BASE, SEC_USDC_AVAX] },
   { name: "Staked", sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
@@ -108,10 +115,14 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     SEC_VTRU,
     SEC_ETH,
+    SEC_AVAX,
     SEC_BNB,
     SEC_POL,
     SEC_SOL,
     SEC_TEZ,
+    SEC_ETH_ARB,
+    SEC_ETH_OPT,
+    SEC_ETH_BASE,
     SEC_VTRU_ETH,
     SEC_VTRU_BSC,
     SEC_USDC_VTRU,
@@ -155,10 +166,14 @@ if (typeof window !== "undefined") {
   window.constants = {
     SEC_VTRU,
     SEC_ETH,
+    SEC_AVAX,
     SEC_BNB,
     SEC_POL,
     SEC_SOL,
     SEC_TEZ,
+    SEC_ETH_ARB,
+    SEC_ETH_OPT,
+    SEC_ETH_BASE,
     SEC_VTRU_ETH,
     SEC_VTRU_BSC,
     SEC_USDC_VTRU,

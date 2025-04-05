@@ -46,6 +46,10 @@ END_HTML
 </head>
 <body class="rendered-page" id="rendered-page">
     <div id="main-wrapper">
+        <div class="logo-container">
+            <img src="images/logo.png" alt="VaWa Logo" class="vawa-logo">
+            <span class="version-text"></span>
+        </div>
         <div id="header">
             <button id="backBtn" class="header-btn" onclick="restoreForm()">Back</button>
             <h1>Vault & Wallet Details</h1>

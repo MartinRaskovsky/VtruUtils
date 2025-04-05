@@ -29,9 +29,23 @@ sub sendConfirmationEmail {
         color: red;
         font-weight: bold;
     }
+    .logo-container {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 0px;
+      }
+
+      .logo-container img {
+          height: 64px;
+      }
+
   </style>
 </head>
 <body>
+ <div class="logo-container">
+    <img src="https://about.martinr.com/images/logo-purple.png" alt="VaWa Logo" />
+  </div>
   <h1>VaWa App Login Code</h1>
   <p><strong>Your confirmation code:</strong></p>
   <p class="code-box">$code</p>
@@ -46,17 +60,20 @@ sub sendConfirmationEmail {
     <li>Find out exactly <i>Where are my tokens?</i> without checking multiple explorers.</li>
     <li>Discover hidden or forgotten tokens and coins.</li>
     <li>Monitor SEVO-X on BSC alongside your Vitruveo holdings.</li>
-    <li>Supports multiple networks:
-      <ul>
-        <li><b>Native Coins</b>: VTRU, ETH, BNB, POL, SOL, and TEZ.</li>
-        <li><b>VTRU Bridged</b>: VTRU on BSC and ETH.</li>
-        <li><b>USDC</b>: Tracked across VTRU, ETH, BSC, and POL networks.</li>
-        <li><b>Staked</b>: VTRU Staked and SEVO-X Staked on BSC.</li>
-        <li><b>Vitruveo Coins & Tokens</b>: VERSE, VIBE, VORTEX, VTRO, VUSD, and wVTRU.</li>
-        <li><b>Sabong</b>: SEVO and SEVO-X tokens.</li>
-        <li><b>Vitruveo Exchange</b>: V3DEX and VITDEX.</li>
-      </ul>
-    </li>
+    <ul class="about-bullets">
+        <li>Supports multiple networks:
+            <ul class="about-bullets">
+                <li><b>Native Coins</b>: VTRU, ETH, BNB, POL, AVAX, SOL, TEZ.</li>
+                <li><b>ETH Bridged</b>: ETH on Arbitrum, Optimism, Base.</li>
+                <li><b>VTRU Bridged</b>: VTRU on ETH and BSC.</li>
+                <li><b>USDC</b>: On VTRU, ETH, BSC, POL, SOL, ARB, OPT, BASE, AVAX.</li>
+                <li><b>Staked</b>: VTRU Staked, SEVO-X Staked (BSC).</li>
+                <li><b>Vitruveo Coins & Tokens</b>: VERSE, VIBE, VORTEX, VTRO, VUSD, wVTRU.</li>
+                <li><b>Sabong</b>: SEVO and SEVO-X (BSC).</li>
+                <li><b>Vitruveo Exchange</b>: V3DEX and VITDEX.</li>
+            </ul>
+        </li>
+    </ul>
   </ul>
 
   <h2>How to Use Your Login Code</h2>
