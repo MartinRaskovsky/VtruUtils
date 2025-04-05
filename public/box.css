@@ -5,6 +5,7 @@
     max-width: 400px;
     width: 90%;
     margin: auto;
+    margin-top: 20%;
     color: var(--text-primary);
     border: 2px solid var(--text-primary);
 }
