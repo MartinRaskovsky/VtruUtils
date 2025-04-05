@@ -1,0 +1,18 @@
+:root {
+    --app-version: "V 0.1.1";
+}
+
+.version-text::after {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font: inherit;
+	vertical-align: baseline;
+
+    content: var(--app-version);
+    color: white;
+    font-size: 12px;
+    font-weight: normal;
+    opacity: 0.8;
+    margin-left: 8px;
+}

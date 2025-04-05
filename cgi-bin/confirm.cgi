@@ -45,14 +45,47 @@ print $cgi->header('text/html');
 print <<HTML;
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Confirm Login</title>
-    <link rel="stylesheet" href="/public/variables.css">
-    <link rel="stylesheet" href="/public/common.css">
-     <link rel="stylesheet" href="/public/box.css">
-</head>
-<body>
-    <h1>Vault & Wallet Details</h1>  <!-- ✅ Ensure the title is at the top -->
+    <head>
+        <title>Confirm Login</title>
+        <link rel="stylesheet" href="/public/variables.css">
+        <link rel="stylesheet" href="/public/common.css">
+        <link rel="stylesheet" href="/public/box.css">
+        <link rel="stylesheet" href="/public/version.css">
+        <style>
+            .logo-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .vawa-logo {
+                height: 40px;
+                width: auto;
+                display: block;
+            }
+
+            .version-text {
+                color: white;
+                background-color: #4B0082;
+                padding: 4px 8px;
+                font-size: 12px;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+
+            .page-title {
+                margin-top: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="VaWa Logo" class="vawa-logo">
+            <span class="version-text"></span>
+        </div>
+    <h1 class="page-title">Vault & Wallet Details</h1>  <!-- ✅ Ensure the title is at the top -->
     <div class="box-container">  <!-- ✅ Use the common class -->
         <h2 style="color: white; text-align: center;">Enter Confirmation Code</h2>
 

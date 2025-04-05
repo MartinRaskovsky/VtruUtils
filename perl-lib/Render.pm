@@ -42,6 +42,7 @@ END_HTML
     <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/styles.css">
     <link rel="stylesheet" href="/public/box.css">
+    <link rel="stylesheet" href="/public/version.css">
     <script src="/public/scripts.js" defer></script>  <!-- Ensures scripts run after DOM loads -->
 </head>
 <body class="rendered-page" id="rendered-page">

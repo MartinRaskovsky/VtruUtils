@@ -40,10 +40,43 @@ eval {
         <link rel="stylesheet" href="/public/variables.css">
         <link rel="stylesheet" href="/public/common.css">
         <link rel="stylesheet" href="/public/box.css">
+        <link rel="stylesheet" href="/public/version.css">
+        <style>
+            .logo-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .vawa-logo {
+                height: 40px;
+                width: auto;
+                display: block;
+            }
+
+            .version-text {
+                color: white;
+                background-color: #4B0082;
+                padding: 4px 8px;
+                font-size: 12px;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+
+            .page-title {
+                margin-top: 50px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Vault & Wallet Details</h1>  <!-- ✅ Title properly positioned -->
-        <div class="box-container">  <!-- ✅ Use the common class -->
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="VaWa Logo" class="vawa-logo">
+            <span class="version-text"></span>
+        </div>
+        <h1 class="page-title">Vault & Wallet Details</h1>
+        <div class="box-container"> 
             <h2 style="color: white; text-align: center;">Login</h2>
             <form action="login.cgi" method="GET">
                 <label for="email">Email:</label>
