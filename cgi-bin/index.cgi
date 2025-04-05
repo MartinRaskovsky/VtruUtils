@@ -36,13 +36,14 @@ eval {
         print <<'HTML';
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
-    <link rel="stylesheet" href="/public/variables.css">
-    <link rel="stylesheet" href="/public/styles.css">
-    <link rel="stylesheet" href="/public/common.css">
-    <link rel="stylesheet" href="/public/box.css">
-    <link rel="stylesheet" href="/public/version.css">
-</head>
+        <link rel="stylesheet" href="/public/variables.css">
+        <link rel="stylesheet" href="/public/styles.css">
+        <link rel="stylesheet" href="/public/common.css">
+        <link rel="stylesheet" href="/public/box.css">
+        <link rel="stylesheet" href="/public/version.css">
+    </head>
 <body class="dashboard-page" id="dashboard-page">
 
     <div id="main-wrapper">

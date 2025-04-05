@@ -46,8 +46,9 @@ print <<HTML;
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Confirm Login</title>
-   <link rel="stylesheet" href="/public/variables.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Login</title>
+    <link rel="stylesheet" href="/public/variables.css">
     <link rel="stylesheet" href="/public/styles.css">
     <link rel="stylesheet" href="/public/common.css">
     <link rel="stylesheet" href="/public/box.css">

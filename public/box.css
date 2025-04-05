@@ -167,21 +167,6 @@ select {
     max-width: 100%;
   }*/
   
-  html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      min-width: 100vw;
-      max-width: 768px;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      /*background-color: rgb(75, 0, 130) !important;*/
-  }
-
   #main-wrapper {
       width: 95%;
       max-width: 768px;

@@ -1,17 +1,23 @@
-body {
-    font-family: 'Poppins', sans-serif;
+html, body {
+    align-items: center;
+    background-color: var(--accent-color-2); /* Purple background */
     color: var(--text-primary);
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    font-size: 14px;
-    padding-bottom: 40px;
-
     display: flex;
-    flex-direction: column; /* Stack content properly */
-    align-items: center; /* Centers horizontally */
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    height: 100%;
     justify-content: flex-start; /* Aligns to the top */
+    margin: 0;
+    margin-top: 20px;
+    max-width: 768px;
     min-height: 100vh; /* Ensures full height */
+    min-width: 100vw;
+    overflow-x: hidden;
+    padding: 0;
+    padding-bottom: 40px;
+    text-align: center;
+    width: 100vw;
 }
 
 #main-wrapper {
@@ -405,10 +411,6 @@ button, .stake-btn {
     min-width: 300px; /* Prevents it from being too small */
     max-width: 600px; /* Ensures readability */
     margin: 20px auto 80px auto; /* Adds 40px bottom margin */
-}
-
-body {
-    background-color: var(--accent-color-2); /* Purple background */
 }
 
 .form-container {
