@@ -47,7 +47,7 @@ END_HTML
 <body class="rendered-page" id="rendered-page">
     <div id="main-wrapper">
         <div class="logo-container">
-            <img src="images/logo.png" alt="VaWa Logo" class="vawa-logo">
+            <img src="/images/logo.png" alt="VaWa Logo" class="vawa-logo">
             <span class="version-text"></span>
         </div>
         <div id="header">
