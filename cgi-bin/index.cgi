@@ -50,6 +50,10 @@ eval {
                     max-width: 320px;
                     padding: 16px;
                 }
+
+                #main-wrapper {
+                    width: 91%;
+                }
             }
         </style>
     </head>

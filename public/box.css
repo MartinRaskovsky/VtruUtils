@@ -211,11 +211,14 @@ select {
 
 /* Mobile-Specific Adjustments */
 @media (max-width: 480px) {
-
     .box-container {
         width: 100%;
-        max-width: 320px; /* Smaller for mobile */
+        max-width: 320px;
         padding: 16px;
+    }
+
+    #main-wrapper {
+        width: 91%;
     }
 
     /* Ensure vaultAddress and walletAddresses input fields are always wide enough */

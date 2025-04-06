@@ -1,5 +1,5 @@
 :root {
-    --app-version: "V 0.1.4";
+    --app-version: "V 0.1.5";
 }
 
 .version-text::after {
