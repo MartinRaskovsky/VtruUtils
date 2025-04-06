@@ -44,13 +44,13 @@ eval {
         <link rel="stylesheet" href="/public/box.css">
         <link rel="stylesheet" href="/public/version.css">
         <style>
-        @media (max-width: 480px) {
-            .box-container {
-                width: 100%;
-                max-width: 320px; /* Smaller for mobile */
-                padding: 16px;
+            \@media (max-width: 480px) {
+                .box-container {
+                    width: 100%;
+                    max-width: 320px;
+                    padding: 16px;
+                }
             }
-        }
         </style>
     </head>
 <body class="dashboard-page" id="dashboard-page">

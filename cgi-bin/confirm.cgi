@@ -54,10 +54,10 @@ print <<HTML;
     <link rel="stylesheet" href="/public/box.css">
     <link rel="stylesheet" href="/public/version.css">
     <style>
-        @media (max-width: 480px) {
+        \@media (max-width: 480px) {
             .box-container {
                 width: 100%;
-                max-width: 320px; /* Smaller for mobile */
+                max-width: 320px;
                 padding: 16px;
             }
         }
