@@ -3,8 +3,8 @@
 const { ethers } = require("ethers");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 
-const RPC_AVAX = "https://rpc.mevblocker.io";
-const provider = new ethers.JsonRpcProvider(RPC_AVAX);
+const RPC_ETH = "https://rpc.mevblocker.io";
+const provider = new ethers.JsonRpcProvider(RPC_eth);
 
 // USDT official address on Ethereum
 const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
@@ -18,7 +18,7 @@ const ABI = [
 
 (async () => {
   try {
-    console.log('RPC_AVAX      =', RPC_AVAX);
+    console.log('RPC-eth      =', RPC_ETH);
     console.log('USDT_ADDRESS =', USDT_ADDRESS);
     console.log('WALLET       =', WALLET);
     

@@ -3,12 +3,12 @@
 const { ethers } = require("ethers");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 
-const RPC_AVAX = "https://rpc.mevblocker.io";
-const provider = new ethers.JsonRpcProvider(RPC_AVAX);
+const RPC_POL = "https://polygon-rpc.com";
+const provider = new ethers.JsonRpcProvider(RPC_POL);
 
 // USDT official address on Ethereum
-const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-const WALLET = "0x61e29F5cCEfba15fe1dF9bf962363E02879fbD62";
+const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
+const WALLET = "0x762851D0c170D5C36fe42F64a4023BD5a0Cdb8d9";
 
 const ABI = [
   "function balanceOf(address) view returns (uint256)",
@@ -18,7 +18,7 @@ const ABI = [
 
 (async () => {
   try {
-    console.log('RPC_AVAX      =', RPC_AVAX);
+    console.log('RPC_POL      =', RPC_POL);
     console.log('USDT_ADDRESS =', USDT_ADDRESS);
     console.log('WALLET       =', WALLET);
     
@@ -30,7 +30,7 @@ const ABI = [
     ]);
 
     const formatted = ethers.formatUnits(balance, decimals);
-    console.log(`✅ ${symbol} balance of ${WALLET} on Ethereum: ${formatVusdNumber(balance)} (raw: ${balance}`);
+    console.log(`✅ ${symbol} balance of ${WALLET} on Polygon: ${formatVusdNumber(balance)} (raw: ${balance}`);
   } catch (err) {
     console.error("❌ Fetch failed:", err.reason || err.message);
   }

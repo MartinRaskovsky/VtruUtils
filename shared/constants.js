@@ -51,6 +51,13 @@ const SEC_USDC_OPT = "USDC on Optimism";
 const SEC_USDC_BASE = "USDC on Base";
 const SEC_USDC_AVAX = "USDC on Avalanche";
 
+// USDT
+const SEC_USDT_ETH = "USDT on Ethereum";
+const SEC_USDT_POL = "USDT on Polygon";
+const SEC_USDT_ARB = "USDT on Arbitrum";
+const SEC_USDT_OPT = "USDT on Optimism";
+const SEC_USDT_AVAX = "USDT on Avalanche";
+
 // Staked
 const SEC_VTRU_STAKED = "VTRU Staked";
 const SEC_SEVOX_STAKED = "SEVO-X Staked";
@@ -77,6 +84,7 @@ const sectionSummary = [
   { name: "ETH Bridged", sections: [SEC_ETH_ARB, SEC_ETH_OPT, SEC_ETH_BASE] },
   { name: "VTRU Bridged", sections: [SEC_VTRU_ETH, SEC_VTRU_BSC] },
   { name: "USDC", sections: [SEC_USDC_VTRU, SEC_USDC_ETH, SEC_USDC_BSC, SEC_USDC_POL, SEC_USDC_SOL, SEC_USDC_ARB, SEC_USDC_OPT, SEC_USDC_BASE, SEC_USDC_AVAX] },
+  { name: "USDT", sections: [SEC_USDT_ETH, SEC_USDT_POL, SEC_USDT_ARB, SEC_USDT_OPT, SEC_USDT_AVAX] },
   { name: "Staked", sections: [SEC_VTRU_STAKED, SEC_SEVOX_STAKED] },
   { name: "Vitruveo Coins & Tokens", sections: [SEC_VERSE, SEC_VIBE, SEC_VORTEX, SEC_VTRO, SEC_VUSD, SEC_WVTRU] },
   { name: "Sabong", sections: [SEC_SEVO, SEC_SEVOX] },
@@ -134,6 +142,11 @@ if (typeof module !== 'undefined' && module.exports) {
     SEC_USDC_OPT,
     SEC_USDC_BASE,
     SEC_USDC_AVAX,
+    SEC_USDT_ETH,
+    SEC_USDT_POL,
+    SEC_USDT_ARB,
+    SEC_USDT_OPT,
+    SEC_USDT_AVAX,
     SEC_VTRU_STAKED,
     SEC_SEVOX_STAKED,
     SEC_VERSE,
@@ -185,6 +198,11 @@ if (typeof window !== "undefined") {
     SEC_USDC_OPT,
     SEC_USDC_BASE,
     SEC_USDC_AVAX,
+    SEC_USDT_ETH,
+    SEC_USDT_POL,
+    SEC_USDT_ARB,
+    SEC_USDT_OPT,
+    SEC_USDT_AVAX,
     SEC_VTRU_STAKED,
     SEC_SEVOX_STAKED,
     SEC_VERSE,

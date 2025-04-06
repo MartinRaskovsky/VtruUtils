@@ -64,6 +64,14 @@ const sections = [
   { key: "USDC_BASE", label: "USDC on Base", className: "TokenUsdcBase", contractId: "USDC", network: "BASE", digits: 2, format: "formatVusdNumber", group: "USDC" },
   { key: "USDC_AVAX", label: "USDC on Avalanche", className: "TokenUsdcClass", contractId: "USDC", network: "AVAX", digits: 2, format: "formatVusdNumber", group: "USDC" },
 
+    // USDT
+    { key: "USDT_ETH",   label: "USDT on Ethereum",  className: "TokenUsdt", contractId: "USDT", network: "ETH",   digits: 2, format: "formatVusdNumber", group: "USDT" },
+    { key: "USDT_POL",   label: "USDT on Polygon",   className: "TokenUsdt", contractId: "USDT", network: "POL",   digits: 2, format: "formatVusdNumber", group: "USDT" },
+    { key: "USDT_ARB",   label: "USDT on Arbitrum",  className: "TokenUsdt", contractId: "USDT", network: "ARB",   digits: 2, format: "formatVusdNumber", group: "USDT" },
+    { key: "USDT_OPT",   label: "USDT on Optimism",  className: "TokenUsdt", contractId: "USDT", network: "OPT",   digits: 2, format: "formatVusdNumber", group: "USDT" },
+    // not active as per 6-Spr-2025: { key: "USDT_BASE",  label: "USDT on Base",      className: "TokenUsdtBase", contractId: "USDT", network: "BASE",  digits: 2, format: "formatVusdNumber", group: "USDT" },
+    { key: "USDT_AVAX",  label: "USDT on Avalanche", className: "TokenUsdt", contractId: "USDT", network: "AVAX",  digits: 2, format: "formatVusdNumber", group: "USDT" },
+
   // Staked
   { key: "VTRU_STAKED", label: "VTRU Staked", className: "TokenStakedVtru", contractId: "CoreStake", network: "VTRU", digits: 2, format: "formatRawNumber", group: "Staked" },
   { key: "SEVOX_STAKED", label: "SEVO-X Staked", className: "TokenStakedSevoX", contractId: "SEVOX", network: "BSC", digits: 2, format: "formatRawNumber", group: "Staked" },

@@ -6,12 +6,9 @@ const RPC_BASE = "https://base.publicnode.com";
 const provider = new ethers.JsonRpcProvider(RPC_BASE);
 
 // ✅ Circle-issued Base USDC address (checksummed properly)
-//const USDC_ADDRESS = ethers.getAddress("0xd9aaec86b65d86f6a9b61b2af5dda7fc9c89e5b7");
 const USDC_ADDRESS = ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
 
 // 🧪 Use a wallet with known USDC (non-zero)
-// const WALLET = ethers.getAddress("0xa7c0a2b85c0ed5f9dcf9b098c0f20b59b62f360f"); // yours
-//const WALLET = ethers.getAddress("0x5d7b76d3c5bdfd43a96149aa1477c6b14d62e9e7"); // test whale wallet
 const WALLET = ethers.getAddress("0x4200000000000000000000000000000000000006");
 
 const ABI = [

@@ -3,12 +3,12 @@
 const { ethers } = require("ethers");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 
-const RPC_AVAX = "https://rpc.mevblocker.io";
-const provider = new ethers.JsonRpcProvider(RPC_AVAX);
+const RPC_OPT = "https://mainnet.optimism.io";
+const provider = new ethers.JsonRpcProvider(RPC_OPT);
 
-// USDT official address on Ethereum
-const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-const WALLET = "0x61e29F5cCEfba15fe1dF9bf962363E02879fbD62";
+const USDT_ADDRESS = ethers.getAddress("0x94b008aA00579c1307B0EF2c499aD98a8ce58e58");
+//const WALLET = ethers.getAddress("0xB5216CB558Cb018583bED009EE25cA73Eb27bB1d");
+const WALLET = ethers.getAddress("0xd07d220d7e43eca35973760f8951c79deebe0dcc");
 
 const ABI = [
   "function balanceOf(address) view returns (uint256)",
@@ -18,7 +18,7 @@ const ABI = [
 
 (async () => {
   try {
-    console.log('RPC_AVAX      =', RPC_AVAX);
+    console.log('RPC_OPT      =', RPC_OPT);
     console.log('USDT_ADDRESS =', USDT_ADDRESS);
     console.log('WALLET       =', WALLET);
     
@@ -29,8 +29,18 @@ const ABI = [
       usdt.symbol()
     ]);
 
+    if (!balance) {
+      console.log(`⚠️ USDT balance returned empty for ${WALLET} (interpreted as 0)`);
+      return;
+    }
+
+    if (balance === "0x") {
+      console.log(`⚠️ USDT balance returned 0x for ${WALLET} (interpreted as 0)`);
+      return;
+    }
+
     const formatted = ethers.formatUnits(balance, decimals);
-    console.log(`✅ ${symbol} balance of ${WALLET} on Ethereum: ${formatVusdNumber(balance)} (raw: ${balance}`);
+    console.log(`✅ ${symbol} balance of ${WALLET}: ${formatVusdNumber(balance)} (raw: ${balance}`);
   } catch (err) {
     console.error("❌ Fetch failed:", err.reason || err.message);
   }

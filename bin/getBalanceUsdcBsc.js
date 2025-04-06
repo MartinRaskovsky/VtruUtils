@@ -10,7 +10,7 @@
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
 const TokenUsdc = require("../lib/tokenCommonEvm");//tokenUsdc
-const { formatRawNumber } = require("../lib/vtruUtils");
+const { formatVusdNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
 const { SEC_USDC_BSC } = require('../shared/constants');
 
@@ -51,14 +51,14 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
         merged.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
-                formattedData.push({ wallet, balance: formatRawNumber(balance) });
+                formattedData.push({ wallet, balance: formatVusdNumber(balance) });
                 totalBalance += balance;
             }
         });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatRawNumber(totalBalance),
+            balance: formatVusdNumber(totalBalance),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);

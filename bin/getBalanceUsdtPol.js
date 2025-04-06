@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Retrieves USDC balances for given wallet addresses.
+ * Retrieves USDT balances for given wallet addresses.
  *
  * Author: Dr. Martín Raskovsky
  * Date: February 2025
@@ -9,19 +9,19 @@
 
 const Web3 = require("../lib/libWeb3");
 const VtruVault = require("../lib/vtruVault");
-const TokenUsdc = require("../lib/tokenUsdcSol");
+const TokenUsdt = require("../lib/tokenUsdt");
 const { formatVusdNumber } = require("../lib/vtruUtils");
 const { toConsole } = require("../lib/libPrettyfier");
-const { SEC_USDC_SOL } = require('../shared/constants');
+const { SEC_USDT_POL } = require('../shared/constants');
 
-const TITLE = SEC_USDC_SOL;
+const TITLE = SEC_USDT_POL;
 const KEYS = ['wallet', 'balance'];
 
 /**
  * Displays usage instructions.
  */
 function showUsage() {
-    console.log("\nUsage: getBalanceUsdcSol.js [options] <wallet1> <wallet2> ... <walletN>\n");
+    console.log("\nUsage: getBalanceUsdtPol.js [options] <wallet1> <wallet2> ... <walletN>\n");
     console.log("Options:");
     console.log("  -v <vaultAddress>   Specify a vault address to retrieve associated wallets.");
     console.log("  -f                  Format output as an aligned table.");
@@ -34,16 +34,15 @@ function showUsage() {
  *
  * @param {string|null} vaultAddress - Vault address, if specified.
  * @param {Array<string>} wallets - List of wallet addresses.
- * @param {boolean} formatOutput - Whether to format output as a table.
+ * @param {boolean} formatOutput - Whpoler to format output as a table.
  */
 async function runBalances(vaultAddress, wallets, formatOutput) {
     try {
-        const vtru = new Web3(Web3.VTRU);
-        const sol = new Web3(Web3.SOL);
-        const token = new TokenUsdc(sol);
+        const net = new Web3(Web3.POL);
+        const token = new TokenUsdt(net);
 
         // Retrieve associated wallets if vault address is provided
-        const { merged } = await VtruVault.mergeWallets(vtru, vaultAddress, wallets);
+        const { merged } = await VtruVault.mergeWallets(net, vaultAddress, wallets);
         const balances = await token.getBalances(merged);
         let totalBalance = 0n;
         const formattedData = [];
@@ -51,19 +50,19 @@ async function runBalances(vaultAddress, wallets, formatOutput) {
         merged.forEach((wallet, index) => {
             const balance = balances[index];
             if (balance && balance !== 0n) {
-                formattedData.push({ wallet, balance: formatVusdNumber(balance) });
+                formattedData.push({ wallet, balance: formatVusdNumber(balance,6) });
                 totalBalance += balance;
             }
         });
 
         formattedData.push({
             wallet: "Total",
-            balance: formatVusdNumber(totalBalance),
+            balance: formatVusdNumber(totalBalance,6),
         });
 
         toConsole(formattedData, TITLE, KEYS, formatOutput);
     } catch (error) {
-        console.error("❌ Error retrieving USDC balances:", error.message);
+        console.error("❌ Error retrieving USDT held balances:", error.message);
     }
 }
 

@@ -1,23 +1,29 @@
 {
   "contracts": {
     "Ethereum": {
-      "USDC": "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+      "USDC": "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "USDT": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
     },
     "Polygon": {
-      "USDC": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
+      "USDC": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "USDT": "0xC2132D05D31c914a87C6611C10748AaCbE4Ec6E7"
     },
     "Arbitrum": {
-      "USDC": "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8"
+      "USDC": "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+      "USDT": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
     },
     "Optimism": {
       "USDC": "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
-      "USDCe": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607"
+      "USDCe": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+      "USDT": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58"
     },
     "Base": {
-      "USDC": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+      "USDC": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "USDT": "0x66a2a913e447d6b4bf33efbec43aaef87890fbbc"
     },
     "Avalanche": {
-      "USDC": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+      "USDC": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      "USDT": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118"
     },
     "BSC": {
       "USDC": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
@@ -25,6 +31,32 @@
   },
   "abi": {
     "USDC": [
+      {
+        "constant": true,
+        "inputs": [{ "name": "account", "type": "address" }],
+        "name": "balanceOf",
+        "outputs": [{ "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{ "name": "", "type": "uint8" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{ "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ],
+    "USDT": [
       {
         "constant": true,
         "inputs": [{ "name": "account", "type": "address" }],

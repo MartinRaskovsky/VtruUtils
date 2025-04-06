@@ -1,6 +1,7 @@
 {
     "mainnet": {
-        "USDC": "KT1PrRMmpmbWmPb9XJ9BHVp4HxbfSWd9HBwM"
+        "USDC": "KT1PrRMmpmbWmPb9XJ9BHVp4HxbfSWd9HBwM",
+        "USDT": "KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9"
     },
     "abi": {
             "USDC": [

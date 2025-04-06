@@ -41,4 +41,11 @@ clean:
 	rm -f ../lib/libSections.generated.js
 	rm -f ../perl-lib/Defs.generated.pm
 	rm -f ../lib/libWeb3.generated.js
+	rm -f ../perl-lib/SectionSummary.generated.pm
+	rm -f ../lib/TokenFactory.js.bak
+	rm -f ../lib/libSections.js.bak
+	rm -f ../lib/libWeb3.js.bak
+	rm -f ../perl-lib/Defs.pm.bak
+	rm -f ../perl-lib/SectionSummary.pm.bak
+	rm -f ../shared/constants.js.bak
 
