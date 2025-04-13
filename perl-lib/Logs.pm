@@ -159,9 +159,9 @@ sub getDifference {
     return $diff_display;
 }
 
-sub computeDifferences {
-    my ($current, $previous) = @_;
-    debugLog($MODULE, "computeDifferences()");
+sub computeChainDifferences {
+    my ($chain, $current, $previous) = @_;
+    debugLog($MODULE, "computeChainDifferences($chain)");
     for my $section (@{$current->{sectionKeys}}) {
         next unless exists $previous->{$section};
 
@@ -184,6 +184,14 @@ sub computeDifferences {
         my $previous_val = $previous->{$total_key};
         $current->{$diff_totals}[$index] = getDifference($current_val, $previous_val);
     }
+}
+
+sub computeDifferences {
+    my ($current, $previous) = @_;
+    debugLog($MODULE, "computeDifferences()");
+    computeChainDifferences('evm', $current->{evm}, $previous->{evm});
+    computeChainDifferences('sol', $current->{sol}, $previous->{sol});
+    computeChainDifferences('tez', $current->{tez}, $previous->{tez});
 }
 
 1;
