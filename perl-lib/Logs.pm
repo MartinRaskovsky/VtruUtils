@@ -135,6 +135,9 @@ sub getDifference {
     my ($current_val, $previous_val) = @_;
     if (!defined $previous_val || !defined $current_val || ($current_val eq $previous_val)) { return ""; }
     
+    if ($current_val  eq "0 (unavailable)") { return ""; }
+    if ($previous_val eq "0 (unavailable)") { return ""; }
+    
     $current_val =~ s/,//g;
     $previous_val =~ s/,//g;
     my $diff = $current_val - $previous_val;
