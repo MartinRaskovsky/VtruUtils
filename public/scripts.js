@@ -1,13 +1,13 @@
 function restoreForm() {
-    window.location.href="index.cgi";
+    window.location.href="/cgi-bin/index.cgi";
 }
 
 function logout() {
     document.cookie = 'session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;';
     
-    fetch("logout.cgi", { method: 'GET', credentials: 'include' })
+    fetch("/cgi-bin/logout.cgi", { method: 'GET', credentials: 'include' })
         .then(() => {
-            window.location.href = "index.html?nocache=" + Date.now();  // ✅ Force full reload
+            window.location.href = "/public/index.html?nocache=" + Date.now();  // ✅ Force full reload
         });
 }
 

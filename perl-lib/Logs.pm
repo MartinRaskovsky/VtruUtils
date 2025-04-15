@@ -27,46 +27,43 @@ sub getSignature {
 
     my $signature = '';
 
-    # Process email (remove '@' and invalid filename characters)
+    # Step 1: Process email (remove '@' and invalid filename characters)
     if (defined $email && $email ne '') {
         my $pattern = $email;
-        $pattern =~ s/@//g;   # Remove '@'
-        $pattern =~ s/[^a-zA-Z0-9_.-]//g;  # Remove invalid filename characters
+        $pattern =~ s/@//g;
+        $pattern =~ s/[^a-zA-Z0-9_.-]//g;
         $signature .= $pattern;
     }
 
-    # Append Vault if defined
-    if (defined $vault && $vault ne '') {
-        debugLog($MODULE, "using vault: $vault");
-        $vault =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
-        $signature .= "_$vault";
-    }
+    # Step 2: Build unified address list
+    my @addresses;
+    push @addresses, $vault if defined $vault && $vault ne '';
+    push @addresses, @$wallets if defined $wallets && ref($wallets) eq 'ARRAY';
 
-    # If no vault is available, use wallets
-    elsif (defined $wallets && ref($wallets) eq 'ARRAY' && @$wallets > 0) {
-        my $N = scalar(@$wallets);
+    # Step 3: Sort addresses
+    @addresses = sort map {
+        my $clean = $_;
+        $clean =~ s/^0x//;
+        $clean =~ s/[^a-zA-Z0-9]//g;
+        $clean;
+    } @addresses;
 
-        # Determine segment length based on the number of wallets
-        my $segment_length = ($N == 1) ? 10 : ($N <= 3) ? 6 : ($N <= 5) ? 4 : 3;
-        
-        debugLog($MODULE, "Using $N wallets, segment length: $segment_length");
+    # Step 4: Determine segment length
+    my $N = scalar(@addresses);
+    my $segment_length = ($N == 1) ? 10 : ($N <= 3) ? 6 : ($N <= 5) ? 4 : 3;
 
-        foreach my $wallet (@$wallets) {
-            my $copy = $wallet;
-            $copy =~ s/^0x//;  # Remove '0x' prefix
-            $copy =~ s/[^a-zA-Z0-9]//g;  # Remove non-alphanumeric characters
-
-            if (length($copy) >= $segment_length * 2) {
-                my $short_wallet = substr($copy, 0, $segment_length) . "_" . substr($copy, -$segment_length);
-                $signature .= "_$short_wallet";
-            } else {
-                $signature .= "_$copy";  # If wallet is too short, use as is
-            }
+    # Step 5: Append each address in short form
+    foreach my $addr (@addresses) {
+        if (length($addr) >= $segment_length * 2) {
+            my $short = substr($addr, 0, $segment_length) . "_" . substr($addr, -$segment_length);
+            $signature .= "_$short";
+        } else {
+            $signature .= "_$addr";
         }
     }
 
-    # Ensure signature length remains within Linux filename limits (255 characters)
-    $signature = substr($signature, 0, 200);  # Leave space for timestamp & extension
+    # Step 6: Truncate to fit Linux filename limits
+    $signature = substr($signature, 0, 200);
 
     debugLog($MODULE, "Final signature: $signature");
     return $signature;
@@ -82,18 +79,7 @@ sub getISOTimeStamp {
 
     return sprintf("%04d-%02d-%02dT%02d-%02d-%02d-%03dZ", $year, $mon, $mday, $hour, $min, $full_sec, $msec);
 }
-
-
-sub Canonical_JSONUnused {
-    my ($data) = @_;
-    return JSON->new->canonical(1)->utf8->encode($data);
-}       
-    
-sub sortedJSON {
-    my ($data) = @_;
-    return encode_json(innerSort($data)); 
-}       
-    
+  
 sub innerSort {
     my ($item) = @_;
     
@@ -125,23 +111,23 @@ sub findLatestLog {
 }
 
 sub writeCurrentLog {
-    my ($signature,$new_data,$old_data) = @_;
+    my ($signature, $new_data, $old_data) = @_;
     debugLog($MODULE, "writeCurrentLog($signature)");
 
-    my $new_json = Canonical_JSONUnused($new_data);  # Sorts and encodes new JSON
-        
+    my $json_writer = JSON->new->canonical(1)->pretty(1)->utf8;
+
+    my $new_json = $json_writer->encode(innerSort($new_data));  # Sorted and pretty
+
     if ($old_data) {
-        my $old_json = Canonical_JSONUnused($old_data);  # Sorts and encodes old JSON
-    
-        # Skip writing if identical
+        my $old_json = $json_writer->encode(innerSort($old_data));
         return if $new_json eq $old_json;
     }
 
     my $timestamp = getISOTimeStamp();
     my $file_path = "$log_dir/${signature}_${timestamp}.json";
-    
+
     open my $fh, '>', $file_path or return;
-    print $fh encode_json($new_data);
+    print $fh $new_json;
     close $fh;
 }
 
@@ -162,17 +148,29 @@ sub getDifference {
 sub computeChainDifferences {
     my ($chain, $current, $previous) = @_;
     debugLog($MODULE, "computeChainDifferences($chain)");
+
+    # Step 1: Build wallet → index map for previous
+    my %prev_wallet_index;
+    my @prev_wallets = @{$previous->{wallets} || []};
+    for my $i (0 .. $#prev_wallets) {
+        $prev_wallet_index{ lc $prev_wallets[$i] } = $i;
+    }
+
     for my $section (@{$current->{sectionKeys}}) {
         next unless exists $previous->{$section};
-
-        # Define parallel section name for differences
         my $diff_section = "diff_$section";
 
         for my $i (0 .. $#{$current->{$section}}) {
+            my $wallet = lc $current->{wallets}[$i];
             my $current_val = $current->{$section}[$i];
-            my $previous_val = $previous->{$section}[$i];
+            my $previous_val = "";
 
-            # Store balance difference in parallel structure
+            # Lookup matching wallet index in previous data
+            if (exists $prev_wallet_index{$wallet}) {
+                my $prev_index = $prev_wallet_index{$wallet};
+                $previous_val = $previous->{$section}[$prev_index];
+            }
+
             $current->{$diff_section}[$i] = getDifference($current_val, $previous_val);
         }
     }

@@ -23,22 +23,34 @@
             <button id="logoutBtn" class="header-btn" onclick="logout()">Log Out</button>
         </div>        
         <div id="content">
-            <form id="detailsForm">
-                <div class="form-container">
+            <!-- 🔹 Optional loading message area outside the form -->
+            <!--div id="loadingMessage" class="loading-message" style="display: none;"></div-->
+
+            <form id="detailsForm" action="/cgi-bin/driver.cgi" method="POST">
+            <div class="form-container">
 <!--main-input-BEGIN-->
-                    <div id="currentSetName" style="font-weight: bold; margin-bottom: 10px;"></div>
-                    <label for="vaultAddress">Vault:</label>
-                    <input type="text" id="vaultAddress" placeholder="Enter Vault Address" oninput="window.validateForm()">
-                    <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-                    <textarea id="walletAddresses" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="window.validateForm()"></textarea>
-                    <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
-                        <button type="button" id="loadSetBtn">Load</button>
-                        <button type="button" id="saveSetsBtn" $state>Save</button>
-                    </div>
-                     <button type="submit" id="getDetailsBtn" $state>Get Details</button>                
-<!--main-input-END-->
+                <div id="currentSetName" style="font-weight: bold; margin-bottom: 10px;"></div>
+
+                <label for="vaultAddress">Vault:</label>
+                <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="window.validateForm()">
+
+                <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
+                <textarea id="walletAddresses" name="wallets" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="window.validateForm()"></textarea>
+
+                <!-- 🔒 Hidden input for set name -->
+                <input type="hidden" name="set_name" id="setNameHidden">
+
+                <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                <button type="button" id="loadSetBtn">Load</button>
+                <button type="button" id="saveSetsBtn" $state>Save</button>
                 </div>
+
+                <button type="submit" id="getDetailsBtn" $state>Get Details</button>
+<!--main-input-END-->
+            </div>
             </form>
+
+              
         </div>
     </div>
 
@@ -142,32 +154,27 @@
             saveBtn.disabled = button.disabled;  // Ensure Save button mirrors Get Details button state
         }
 
-        document.getElementById('detailsForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const vaultAddress = document.getElementById('vaultAddress')?.value?.trim();
-            const walletAddresses = document.getElementById('walletAddresses')?.value?.trim();
+        document.getElementById('detailsForm').addEventListener('submit', function () {
             const currentSetName = document.getElementById('currentSetName')?.innerText?.trim();
-            const contentDiv = document.getElementById('content');
-            const backBtn = document.getElementById('backBtn');
             const getDetailsBtn = document.getElementById('getDetailsBtn');
-            const params = new URLSearchParams();
 
-            if (vaultAddress) params.append('vault', vaultAddress);
-            if (walletAddresses) params.append('wallets', walletAddresses);
-            if (currentSetName) params.append('set_name', currentSetName);
+            // ✅ Copy set name into hidden input
+            document.getElementById('setNameHidden').value = currentSetName || "";
 
-            // **🔹 Show "Loading..." and disable the button**
+            // ✅ Show loading and dim the form
             getDetailsBtn.disabled = true;
             getDetailsBtn.innerText = "Loading...";
             getDetailsBtn.classList.add("loading");
 
-            // **🔹 Optionally, show a loading message in content**
-            contentDiv.innerHTML = `<p class="loading-message">Fetching details... Please wait.</p>`;
+            /*const loadingDiv = document.getElementById('loadingMessage');
+            if (loadingDiv) {
+                loadingDiv.innerHTML = `Fetching details... Please wait.`;
+                loadingDiv.style.display = "block";
+            }*/
 
-            // **🔹 Redirect to driver.cgi**
-            window.location.href = `driver.cgi?${params.toString()}`;
-        });
+            // ✅ Dim the form visually
+            document.getElementById('detailsForm').classList.add("form-disabled");
+            });
 
         function openModal(type, grouping, vault, wallets) {
 

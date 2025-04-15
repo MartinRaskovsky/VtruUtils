@@ -36,4 +36,15 @@ updateKeepLoggedIn($email, $keep_logged_in);
 sendConfirmationEmail($email, $code);
 
 # ✅ Redirect to the confirmation page
-print "<meta http-equiv='refresh' content='0; url=confirm.cgi?email=$email'>";
+#print "<meta http-equiv='refresh' content='0; url=confirm.cgi?email=$email'>";
+print <<HTML;
+<html>
+  <body onload="document.forms[0].submit();">
+    <form method="POST" action="confirm.cgi">
+      <input type="hidden" name="email" value="$email">
+    </form>
+    <p>Redirecting to confirmation...</p>
+  </body>
+</html>
+HTML
+

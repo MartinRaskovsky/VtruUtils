@@ -89,7 +89,7 @@ if ($error_message) {
 }
 
 print <<HTML;
-        <form action="confirm.cgi" method="GET">
+        <form action="/cgi-bin/confirm.cgi" method="POST">
             <input type="hidden" name="email" value="$email">
             
             <label for="code">Code:</label>
@@ -100,7 +100,7 @@ print <<HTML;
             </button>
         </form>
 
-        <a href="index.cgi" class="cancel-link">Cancel</a>
+        <a href="/cgi-bin/index.cgi" class="cancel-link">Cancel</a>
     </div>
 
     <script>

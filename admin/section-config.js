@@ -61,7 +61,7 @@ const sections = [
   { key: "USDC_SOL", label: "USDC on Solana", className: "TokenUsdcSol", contractId: "USDC", network: "SOL", digits: 2, format: "formatVusdNumber", group: "USDC" },
   { key: "USDC_ARB", label: "USDC on Arbitrum", className: "TokenUsdcClass", contractId: "USDC", network: "ARB", digits: 2, format: "formatVusdNumber", group: "USDC" },
   { key: "USDC_OPT", label: "USDC on Optimism", className: "TokenUsdcClass", contractId: "USDC", network: "OPT", digits: 2, format: "formatVusdNumber", group: "USDC" },
-  { key: "USDC_BASE", label: "USDC on Base", className: "TokenUsdcBase", contractId: "USDC", network: "BASE", digits: 2, format: "formatVusdNumber", group: "USDC" },
+  { key: "USDC_BASE", label: "USDC on Base", className: "TokenUsdcBase", contractId: "USDC", network: "BASE", digits: 2, format: "formatVusdNegNumber", group: "USDC" },
   { key: "USDC_AVAX", label: "USDC on Avalanche", className: "TokenUsdcClass", contractId: "USDC", network: "AVAX", digits: 2, format: "formatVusdNumber", group: "USDC" },
 
     // USDT

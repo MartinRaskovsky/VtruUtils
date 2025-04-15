@@ -21,15 +21,22 @@ sub getWalletsHtml {
     debugLog($MODULE, "getWalletsHtml(state=$state; vault=$vault)");
     my $html =<<END_HTML;
         <div id="currentSetName" style="font-weight: bold; margin-bottom: 10px;">$set_name</div>
+    
         <label for="vaultAddress">Vault:</label>
-        <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="validateForm()" value="$vault">
+        <input type="text" id="vaultAddress" name="vault" placeholder="Enter Vault Address" oninput="window.validateForm()" value="$vault">
+    
         <label for="walletAddresses">Wallets (extra wallets not in Vault):</label>
-        <textarea id="walletAddresses" name="wallets" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="validateForm()">$wallets</textarea>
+        <textarea id="walletAddresses" name="wallets" rows="5" cols="50" placeholder="Enter Wallet Addresses, one per line" oninput="window.validateForm()">$wallets</textarea>
+    
+        <!-- 🔒 Hidden field for the set name -->
+        <input type="hidden" name="set_name" id="setNameHidden">
+    
         <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
-            <button type="button" id="loadSetBtn">Load</button>
-            <button type="button" id="saveSetsBtn" $state>Save</button>
+        <button type="button" id="loadSetBtn">Load</button>
+        <button type="button" id="saveSetsBtn" $state>Save</button>
         </div>
-         <button type="submit" id="getDetailsBtn" $state>Get Details</button>
+    
+        <button type="submit" id="getDetailsBtn" $state>Get Details</button>
 END_HTML
     #debugLog($MODULE, "getWalletsHtml=$html");
     return $html;

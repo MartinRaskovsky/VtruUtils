@@ -71,7 +71,7 @@ eval {
         </div>   
         <div class="box-container"> 
             <h2 style="color: white; text-align: center;">Login</h2>
-            <form action="login.cgi" method="GET">
+            <form action="/cgi-bin/login.cgi" method="POST">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
