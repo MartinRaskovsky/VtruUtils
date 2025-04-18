@@ -3,8 +3,8 @@
 /**
  * getBalanceVtruEthFactory.js
  * 
- * Tests the TokenFactory mechanism for loading TokenCommonEvm instances.
- * Compares with direct usage to validate address and multicall behavior.
+ * Tests the TokenFactory mechanism.
+ * Compares with direct usage to validate address .
  * 
  * Author: Dr. Martín Raskovsky
  * Date: March 2025

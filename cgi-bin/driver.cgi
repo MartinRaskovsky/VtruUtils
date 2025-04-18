@@ -11,7 +11,7 @@ use Logs qw(getSignature findLatestLog writeCurrentLog computeDifferences);
 use Render qw(renderPage);
 use Execute qw(run_script);
 use Utils qw(debugLog logError trimSpaces processWallets );
-use DBUtils qw(saveVaultSet);
+use DBUtils qw(saveVaultSet loadWalletNameCache getWalletName);
 use LoginManagment qw(getSessionEmail);
 
 my $MODULE = "driver.cgi";
@@ -97,6 +97,10 @@ if ($type eq 'sections') {
     if ($email) {
         saveVaultSet($email, $set_name, $vault, $wallets);
     }
+
+    loadWalletNameCache();
+    my %wallet_name_map = map { $_ => getWalletName($_) } @$wallets;
+    $result->{wallet_names} = \%wallet_name_map;
 
     my $signature = getSignature($email, $vault, $wallets);
     my $previous_log = findLatestLog($signature);

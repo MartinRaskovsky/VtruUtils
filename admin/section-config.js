@@ -97,7 +97,8 @@ const detailType = {
   VTRU_STAKED: "stake",
   SEVOX_STAKED: "bsc",
   VIBE: "vibe",
-  VORTEX: "vortex"
+  VORTEX: "vortex",
+  SEVO: "sevo"
 };
 
 const hasGroups = {

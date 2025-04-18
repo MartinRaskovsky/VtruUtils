@@ -13,7 +13,8 @@ our @EXPORT_OK = qw(
     getEmailFromCode getEmailFromSession putConfirmationCode putSessionId 
     getWallets putVaultAndWallets deleteVaultAndWallets
     getKeepLoggedIn updateKeepLoggedIn
-    saveVaultSet getSetByName deleteVaultSet listVaultSets
+    saveVaultSet getSetByName deleteVaultSet listVaultSets saveCurrentSet
+    loadWalletNameCache getWalletName saveWalletNames
 );
 
 my $MODULE = "DBUtils";
@@ -223,30 +224,54 @@ sub putSessionId {
     $sth->execute($session_id, $email);
 }
 
-# 1 Insert the set into the sets table.
-# 2 Update the current table to reflect the new "current" set.
+# -------------------------------------------------------------------
+# Save a named vault & wallet set into the `sets` table 
+# AND update the `current` table.
+# -------------------------------------------------------------------
 sub saveVaultSet {
     my ($email, $set_name, $vault, $wallets) = @_;
     debugLog($MODULE, "saveVaultSet($email, $set_name, $vault)");
     return unless $email && $set_name && $wallets;
 
-    my $wallet_str = join(",", @$wallets);  # Comma-separated list of wallet addresses
+    my $wallet_str = join(",", @$wallets);
     my $dbh = getDbh();
     return unless $dbh;
 
-    # 1️⃣ Save the set to the `sets` table (this saves all sets, including current ones)
-    my $sth_set = $dbh->prepare("INSERT INTO sets (email, set_name, vault_address, wallet_addresses)
-                                VALUES (?, ?, ?, ?)
-                                ON DUPLICATE KEY UPDATE vault_address = VALUES(vault_address), wallet_addresses = VALUES(wallet_addresses)");
+    # Save into sets table
+    my $sth_set = $dbh->prepare("
+        INSERT INTO sets (email, set_name, vault_address, wallet_addresses)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            vault_address = VALUES(vault_address), 
+            wallet_addresses = VALUES(wallet_addresses)
+    ");
     $sth_set->execute($email, $set_name, $vault, $wallet_str);
     $sth_set->finish;
+    $dbh->disconnect;
 
-    # 2️⃣ Update the `current` table to set the new set as the current set
-    my $sth_current = $dbh->prepare("REPLACE INTO current (email, set_name, vault_address, wallet_addresses)
-                                     VALUES (?, ?, ?, ?)");
+    # Also update the current working set
+    saveCurrentSet($email, $set_name, $vault, $wallets);
+}
+
+# -------------------------------------------------------------------
+# Update the `current` table to reflect the latest working set.
+# -------------------------------------------------------------------
+sub saveCurrentSet {
+    my ($email, $set_name, $vault, $wallets) = @_;
+    debugLog($MODULE, "saveCurrentSet($email, $set_name, $vault)");
+    return unless $email && $wallets;
+
+    my $wallet_str = join(",", @$wallets);
+
+    my $dbh = getDbh();
+    return unless $dbh;
+
+    my $sth_current = $dbh->prepare("
+        REPLACE INTO current (email, set_name, vault_address, wallet_addresses)
+        VALUES (?, ?, ?, ?)
+    ");
     $sth_current->execute($email, $set_name, $vault, $wallet_str);
     $sth_current->finish;
-
     $dbh->disconnect;
 }
 
@@ -337,6 +362,83 @@ sub getAllSets {
 
     debugLog($MODULE, "getAllSets=(@sets)");
     return @sets;  # Return an array of sets
+}
+
+##### NAMES #####
+
+# Cache (loaded on demand and cleared on Save)
+my %wallet_name_cache;
+my $cached = 0;
+
+sub loadWalletNameCache {
+    debugLog($MODULE, "loadWalletNameCache()");
+    %wallet_name_cache = ();  # Clear existing cache
+    my $dbh = getDbh() or return;
+
+    my $sth = $dbh->prepare("SELECT wallet_address, name FROM names");
+    $sth->execute();
+
+    while (my ($wallet, $name) = $sth->fetchrow_array()) {
+        $wallet_name_cache{$wallet} = $name;
+    }
+
+    $cached = 1;
+
+    $sth->finish;
+    $dbh->disconnect;
+    debugLog($MODULE, "loadWalletNameCache=" . scalar(keys %wallet_name_cache) . " entries");
+}
+
+my $cache_dumped = 0;
+
+sub getWalletName {
+    my ($wallet) = @_;
+    return "" unless defined $wallet;
+
+    my $key = lc($wallet);
+
+    if (!$cached) { loadWalletNameCache(); }; 
+    #if (!$cache_dumped) {
+    #    debugLog($MODULE, "💡 Wallet name cache dump:\n" . join("\n", map { "$_ => $wallet_name_cache{$_}" } keys %wallet_name_cache));
+    #    $cache_dumped = 1;
+    #}
+
+    my $name = $wallet_name_cache{$key};
+    #debugLog($MODULE, "🔍 Lookup: $wallet (normalized: $key) → " . ($name // '[no match]'));
+    return $name // "";
+}
+
+sub saveWalletNames {
+    debugLog($MODULE, "saveWalletNames()");
+    my (%new_map) = @_;  # key = wallet, value = name (may be "")
+
+    my $dbh = getDbh() or return;
+
+    eval {
+        my $sth_insert = $dbh->prepare("REPLACE INTO names (wallet_address, name) VALUES (?, ?)");
+        my $sth_delete = $dbh->prepare("DELETE FROM names WHERE wallet_address = ?");
+
+        foreach my $wallet (keys %new_map) {
+            my $name = $new_map{$wallet};
+            if ($name eq '') {
+                $sth_delete->execute($wallet);
+            } else {
+                $sth_insert->execute($wallet, $name);
+            }
+        }
+
+        $sth_insert->finish;
+        $sth_delete->finish;
+        $dbh->disconnect;
+
+        # Update cache after success
+        loadWalletNameCache();
+    };
+
+    if ($@) {
+        logError("DB Error in saveWalletNames: $@");
+        $dbh->rollback();
+    }
 }
 
 1;

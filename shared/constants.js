@@ -111,6 +111,7 @@ const detailType = {
   [SEC_SEVOX_STAKED]: "bsc",
   [SEC_VIBE]: "vibe",
   [SEC_VORTEX]: "vortex",
+  [SEC_SEVO]: "sevo",
 };
 
 // These grouping defs are needed also in perl-lib/Defs.pm: %group_type_map

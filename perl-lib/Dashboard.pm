@@ -32,6 +32,7 @@ sub getWalletsHtml {
         <input type="hidden" name="set_name" id="setNameHidden">
     
         <div class="button-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+        <button type="button" id="nameWalletsBtn" $state>Names</button>
         <button type="button" id="loadSetBtn">Load</button>
         <button type="button" id="saveSetsBtn" $state>Save</button>
         </div>

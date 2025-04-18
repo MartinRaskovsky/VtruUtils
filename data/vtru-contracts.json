@@ -101,6 +101,47 @@
         "payable": false,
         "stateMutability": "view",
         "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          }
+        ],
+        "name": "claimInfo",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "withBtc",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "withoutBtc",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "gain",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "priorClaimed",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ClaimInfo",
+            "name": "",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
       }
     ],
     "VTRO": [

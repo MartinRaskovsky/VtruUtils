@@ -2,7 +2,7 @@ package Defs;
 use strict;
 use warnings;
 use Exporter 'import';
-our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getExplorerURL getRenderFunction getChainMarker getNetworkChain);
+our @EXPORT_OK = qw(getScriptForType getDetailType isChain getIsGrouperType getExplorer getRenderFunction getChainMarker getNetworkChain);
 
 # ==== GENERATED PERL DEFS START ====
 # Define script mapping
@@ -11,6 +11,7 @@ my %script_map = (
     'bsc' => 'getDetailSevoXStaked.js',
     'vibe' => 'getDetailVibe.js',
     'vortex' => 'getDetailVortex.js',
+    'sevo' => 'getDetailSevo.js',
     'sections' => 'getSections.js',
 );
 
@@ -20,6 +21,7 @@ my %detail_type_map = (
     "SEVO-X Staked" => "bsc",
     "VIBE" => "vibe",
     "VORTEX" => "vortex",
+    "SEVO" => "sevo",
 );
 
 # Define grouppers type
@@ -122,7 +124,8 @@ my %render_map = (
     'stake'    => \&Render::renderVtruStaked,
     'bsc'      => \&Render::renderBscStaked,
     'vibe'     => \&Render::renderVibeDetails,
-    'vortex'   => \&Render::renderVortexDetails
+    'vortex'   => \&Render::renderVortexDetails,
+    'sevo'     => \&Render::renderSevoDetails, 
 );
 
 # Retrieve script for type
@@ -155,14 +158,9 @@ sub getNetworkChain {
     return exists $net_to_chain{$net} ? $net_to_chain{$net} : "EVM";
 }
 
-# Retrieve explorer URL
-sub getExplorerURL {
-    my ($network, $address, $label) = @_;
-    if (!defined $network) { return ''; }
-    $label ||= $address;
-    return exists $explorers{$network} 
-        ? "<a target=\"_blank\" href='$explorers{$network}$address'>$label</a>"
-        : "";
+sub getExplorer {
+    my ($net) = @_;
+    return exists $explorers{$net} ? $explorers{$net} : "";
 }
 
 # Retrieve render function for type

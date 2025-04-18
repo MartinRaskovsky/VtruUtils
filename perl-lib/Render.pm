@@ -4,14 +4,20 @@ use warnings;
 use JSON;
 
 use lib '.';
-use Defs qw ( getDetailType getIsGrouperType isChain getExplorerURL getChainMarker getNetworkChain);
-use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress);
+use Defs qw ( getDetailType getIsGrouperType isChain getChainMarker getNetworkChain);
+use Utils qw( debugLog logError getLabel decorateUnclaimed truncateAddress getExplorerURL);
+use DBUtils qw( getWalletName );
 use SectionSummary qw(getSectionSummary);
 
 use Exporter 'import';
 our @EXPORT_OK = qw(renderPage renderSections );
 
 my $MODULE = "Render";
+
+sub isZero {
+    my ($n) = @_;
+    return $n eq "0.00" || $n eq "0";
+}
 
 sub getBrand {
     my ($key) = @_;
@@ -115,7 +121,7 @@ END_HTML
 
 sub generateBalanceRow {
     my ($address, $diff, $balance) = @_;
-    if ($balance eq "0.00" || $balance eq "0") { return ""; }
+    if (isZero($balance)) { return ""; }
     if ($diff eq "") { $diff = "&nbsp;" }
     my $html = <<END_HTML;
         <tr class='section-row'>
@@ -275,8 +281,8 @@ sub generateWalletRows {
         my $balance = $data->{$section_key}[$i] || "0.00";
         my $diff_section = "diff_$section_key"; 
         my $diff_display = $data->{$diff_section}[$i] // '';
-        my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet));
-        $address = (lc($vault) eq lc($wallet)) ? "<strong>$address</strong>" : $address;
+        my $address = getExplorerURL($networkKey, $wallet, truncateAddress($wallet), getWalletName($wallet));
+        #$address = (lc($vault) eq lc($wallet)) ? "<strong>$address</strong>" : $address;
         $rows .= generateBalanceRow($address, $diff_display, $balance);
     }
 
@@ -403,7 +409,7 @@ sub countSubsectionRows {
         # Count only non-zero balance rows
         if (exists $data->{$section_key}) {
             foreach my $balance (@{$data->{$section_key}}) {
-                next if $balance eq "0.00" || $balance eq "0";
+                next if isZero($balance);
                 $row_count++;
             }
         } else {
@@ -555,7 +561,8 @@ sub renderVtruStaked {
 END_HTML
 
     foreach my $row (@$rows) {
-        my ($label) = getLabel('VTRU', $grouping, $row->{wallet});
+        my $wallet = $row->{wallet};
+        my ($label) = getLabel('VTRU', $grouping, $wallet, getWalletName($wallet));
         $html .= "<tr>";
         $html .= "<td>$label</td>";
         $html .= "<td class='decimal-align'>$row->{amount}</td>";
@@ -585,12 +592,12 @@ END_HTML
 
     foreach my $row (@$rows) {
         my $balance   = $row->{balance} // "0.00";
-        next if $balance eq "0.00" || $balance eq "0";
+        next if isZero($balance);
         my $wallet    = $row->{wallet} // "";
         my $noTokens  = $row->{noTokens} // "0.00";
         my $claimed   = $row->{claimed} // "0.00";
         my $unclaimed = $row->{unclaimed} // "0.00";
-        my ($label)   = getLabel('VTRU', $grouping, $wallet);
+        my ($label)   = getLabel('VTRU', $grouping, $wallet, getWalletName($wallet));
 
         $html .= "<tr>";
         $html .= "<td class='wallet-cell'>$label</td>";
@@ -618,7 +625,8 @@ sub renderBscStaked {
 END_HTML
 
     foreach my $row (@$rows) {
-        my ($label) = getLabel('BSC', $grouping, $row->{wallet});
+        my $wallet = $row->{wallet};
+        my ($label) = getLabel('BSC', $grouping, $wallet, getWalletName($wallet));
         $html .= "<tr>";
         $html .= "<td>$label</td>";
         $html .= "<td>$row->{date}</td>";
@@ -643,7 +651,8 @@ sub renderVortexDetails {
 END_HTML
 
     foreach my $row (@$rows) {
-        my ($label) = getLabel('VTRU', $grouping, $row->{wallet});
+        my $wallet = $row->{wallet};
+        my ($label) = getLabel('VTRU', $grouping, $wallet, getWalletName($wallet));
         $html .= "<tr>";
         $html .= "<td class='wallet-cell'>$label</td>";
         $html .= "<td class='decimal-align'>$row->{kind}</td>";
@@ -654,6 +663,49 @@ END_HTML
     $html .= "</tbody></table></div>";
     return $html;
 }
+
+sub renderSevoDetails {
+    my ($grouping, $rows) = @_;
+    my $type = "sevo";
+    my $close = closeModal($type);
+
+    my $html =<<END_HTML;
+    $close
+    <h2>SEVO Claim Info</h2>
+    <div class='scrollable'><table class='stake-table'>
+    <thead><tr>
+        <th>Wallet</th>
+        <th>Claim w/ BTC</th>
+        <th>Claim w/o BTC</th>
+        <th>Gain</th>
+        <th>Previously Claimed</th>
+    </tr></thead><tbody>
+END_HTML
+
+    foreach my $row (@$rows) {
+        my $wallet    = $row->{wallet} // '';
+        my $withBtc   = $row->{withBtc} // '0.00';
+        my $withoutBtc = $row->{withoutBtc} // '0.00';
+        my $gain      = $row->{gain} // '0.00';
+        my $prior     = $row->{priorClaimed} // '0.00';
+        next if isZero($withBtc) && isZero($withoutBtc) && isZero($gain) && isZero($prior);
+
+        my ($label) = getLabel('VTRU', $grouping, $wallet, getWalletName($wallet));
+
+        $html .= "<tr>";
+        $html .= "<td class='wallet-cell'>$label</td>";
+        $html .= "<td class='decimal-align'>$withBtc</td>";
+        $html .= "<td class='decimal-align'>$withoutBtc</td>";
+        $html .= "<td class='decimal-align'>$gain</td>";
+        $html .= "<td class='decimal-align'>$prior</td>";
+        $html .= "</tr>";
+    }
+
+    $html .= "</tbody></table></div>";
+
+    return $html;
+}
+
 
 
 1;

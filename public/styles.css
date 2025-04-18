@@ -278,9 +278,10 @@ button {
     margin-top: 15px;
 }
 
+#nameWalletsBtn,
 #saveSetsBtn,
 #loadSetBtn {
-    min-width: 50px;
+    min-width: 73px;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -337,8 +338,6 @@ button, .stake-btn {
 #LoadSetsModal.active {
     display: flex !important;
 }
-
-
 
 /* ✅ Radio Buttons - Uniform Alignment */
 .radio-label {
@@ -554,6 +553,7 @@ input:focus, textarea:focus {
     visibility: visible !important;
     opacity: 1 !important;
     background: var(--alt-bg-2);
+    width: 75%;
 }
 
 .modal-content table thead th {
@@ -875,6 +875,7 @@ input#email, input#code {
 
     /* Grey out the disabled button */
     #getDetailsBtn:disabled,
+    #nameWalletsBtn:disabled,
     #saveSetsBtn:disabled,
     #loadSetBtn:disabled  {
         background-color: #cccccc; /* Light grey */

@@ -116,33 +116,42 @@ function markVaultNameAsEdited() {
 document.getElementById('vaultAddress').addEventListener('input', markVaultNameAsEdited);
 document.getElementById('walletAddresses').addEventListener('input', markVaultNameAsEdited);
 
-function saveSets() {
+function saveSet() {
     const name = document.getElementById('saveSetName').value.trim();
     const vault = document.getElementById('vaultAddress').value.trim();
-    const wallets = document.getElementById('walletAddresses').value.trim();
-
-    if (!name || (!vault && !wallets)) return;
-
-    const params = new URLSearchParams({ name, vault, wallets });
-
-    fetch('savesets.cgi?' + params.toString())
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                closeLoadSetsModal();
-
-                // ✅ Enable the Load button quietly if it was disabled
-                const getBtn = document.getElementById('loadSetBtn');
-                if (getBtn) getBtn.removeAttribute('disabled');
-                
-                resetInitialValues(vault,  wallets);
-                updateCurrentSetName(name);
-            } else {
-                alert(data.message || 'Failed to save set.');
-            }
-        })
-        .catch(() => alert('Error saving set.'));
-}
+    const wallets = document.getElementById('walletAddresses').value.trim()
+      .split(/\s+/)
+      .map(x => x.trim())
+      .filter(Boolean);
+  
+    if (!name || (wallets.length === 0 && !vault)) return;
+  
+    fetch('/cgi-bin/namesdb.cgi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'set',
+        name,
+        vault,
+        wallets
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success !== false) {
+        closeLoadSetsModal();
+  
+        const getBtn = document.getElementById('loadSetBtn');
+        if (getBtn) getBtn.removeAttribute('disabled');
+  
+        resetInitialValues(vault, wallets.join(' '));
+        updateCurrentSetName(name);
+      } else {
+        alert(data.message || 'Failed to save set.');
+      }
+    })
+    .catch(() => alert('Error saving set.'));
+  }  
 
 function showDeleteConfirmation() {
     const selected = document.getElementById('savedSetSelect').value;
@@ -186,6 +195,7 @@ function confirmDeleteSet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const nameWalletsBtn = document.getElementById('nameWalletsBtn');
     const saveBtn = document.getElementById('saveSetsBtn');
     const getBtn = document.getElementById('loadSetBtn');
     const modal = document.getElementById('saveSetsModal');
@@ -199,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const detailsBtn = document.getElementById('getDetailsBtn');
         if (detailsBtn) {
             saveBtn.disabled = detailsBtn.disabled;
+            if (nameWalletsBtn) {
+                nameWalletsBtn.disabled = detailsBtn.disabled;
+            }
         }
     }
 
@@ -227,6 +240,24 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmDeleteBtn.addEventListener('click', confirmDeleteSet);
     }
 });
+
+document.getElementById("nameWalletsBtn").addEventListener("click", () => {
+// Assuming you have the vault and wallets data as strings
+const vault = document.getElementById('vaultAddress').value.trim();
+const wallets = document.getElementById('walletAddresses').value.trim();
+const setName = document.getElementById('currentSetName')?.innerText?.trim() || "current";
+
+// Create an object with the data
+const data = { vault, wallets, setName };
+
+// Store the data as a JSON string in window.name
+window.name = JSON.stringify(data);
+
+// Open the namewallets.html page
+window.location.href = '/public/namewallets.html';
+
+});
+
 
 
 

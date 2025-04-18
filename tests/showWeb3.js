@@ -58,34 +58,12 @@ async function testWalletBalances(network) {
     console.log(`Wallet balance for ${wallet} on ${network.toUpperCase()}: ${balance} WEI; scaled ${scaled}`);
 }
 
-async function testStakedContract(network) {
-    console.log(`\nTesting staked contract balance retrieval on ${network.toUpperCase()}...`);
-    const web3 = await Web3.create(network);  // Use the factory method
-    const tokenStakedVtru = new tokenStakedSevoX(web3);
-    const inWallet = testWallets[network];
-    
-    if (!inWallet || inWallet === "0x0000000000000000000000000000000000000000") {
-        console.error(`❌ No valid wallet address configured for ${network.toUpperCase()}`);
-        return;
-    }
-    
-    const data = await tokenStakedVtru.getStakedDetail(inWallet);
-    const {wallet, stamp, locked} = data[0];
-    const amount = formatNumber(scaleDown(locked));
-    const date = await formatStamp(web3, stamp);
-    console.log(`Locked balance for ${wallet} on ${network.toUpperCase()}: ${amount}`);
-    console.log(`Staked date    for ${wallet} on ${network.toUpperCase()}: ${date}`);
-    
-}
-
 async function runTests() {
     await testNetworkConnection(Web3.VTRU);
     await testWalletBalances(Web3.VTRU);
     
     await testNetworkConnection(Web3.BSC);
     await testWalletBalances(Web3.BSC);
-
-    await testStakedContract(Web3.BSC);
 
     await testNetworkConnection(Web3.POL);
     await testWalletBalances(Web3.POL);

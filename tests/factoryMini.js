@@ -7,11 +7,9 @@
  * Usage: factoryMini.js -c <chain> -t <token> [-v for viem]
  */
 
-const { resolveViemChain } = require("../lib/viemChains");
 const Web3 = require("../lib/libWeb3");
 const TokenFactory = require("../lib/TokenFactory");
 const { ethers } = require("ethers");
-const { createPublicClient, http } = require("viem");
 
 require("dotenv").config();
 
@@ -36,7 +34,7 @@ function getWeb3(chain) {
   }
 }
 
-async function test(chain, token, useViem = false) {
+async function test(chain, token) {
   const wallet = wallets[token] || wallets[chain];
   if (!wallet) {
     console.error("❌ No wallet found for token:", token);
@@ -58,30 +56,11 @@ async function test(chain, token, useViem = false) {
   const contract = factoryEntry.contract;
   const address = contract.getAddress();
   const abi = contract.getAbi();
-  console.log(`🧪 Testing ${token} on ${chain} using ${useViem ? "viem" : "ethers"}`);
+  console.log(`🧪 Testing ${token} on ${chain} using "ethers"}`);
   console.log(`📬 Contract: ${address}`);
   console.log(`👛 Wallet:   ${wallet}`);
 
   try {
-    if (useViem) {
-      const viemInfo = contract.getViemContract();
-      const client = viemInfo.client;
-      let balance;
-      console.log("isNativeToken:", contract.isNativeToken && contract.isNativeToken());
-
-      if (contract.isNativeToken && contract.isNativeToken()) {
-        balance = await client.getBalance({ address: wallet });
-        console.log(`📦 Native Balance: ${balance} (via viem)`);
-      } else {
-        balance = await client.readContract({
-          address: viemInfo.address,
-          abi: viemInfo.abi,
-          functionName: "balanceOf",
-          args: [wallet],
-        });
-        console.log(`📦 Token Balance: ${balance} (via viem)`);
-      }
-    } else {
       const provider = web3.getProvider();
       if (contract.isNativeToken && contract.isNativeToken()) {
         const balance = await provider.getBalance(wallet);
@@ -91,7 +70,6 @@ async function test(chain, token, useViem = false) {
         const balance = await instance.balanceOf(wallet);
         console.log(`📦 Token Balance: ${balance} (via ethers)`);
       }
-    }
   } catch (err) {
     console.error("❌ Error during balance fetch:", err.message);
   }
@@ -101,7 +79,6 @@ function main() {
   const args = process.argv.slice(2);
   let chain = "VTRU";
   let token = "VTRU";
-  let useViem = false;
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -111,15 +88,12 @@ function main() {
       case "-t":
         token = args[++i];
         break;
-      case "-v":
-        useViem = true;
-        break;
       default:
         usage();
     }
   }
 
-  test(chain, token, useViem);
+  test(chain, token);
 }
 
 main();

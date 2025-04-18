@@ -6,9 +6,11 @@ use JSON;
 
 use lib "../perl-lib";
 use Conf;
-use Defs qw (getExplorerURL );
+use Defs qw (getExplorer );
 
-our @EXPORT_OK = qw(logError debugLog trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed );
+our @EXPORT_OK = qw(logError debugLog trimSpaces getLabel truncateAddress printErrorResponse processWallets decorateUnclaimed 
+                    printJSONError printJSONResult 
+                    getExplorerURL);
 
 my $MODULE = "Utils";
 
@@ -37,14 +39,26 @@ sub decorateUnclaimed {
     return "<span class='unclaimed'>$value</span>";
 }
 
+sub getExplorerURL {
+    my ($network, $address, $abbrev, $name) = @_;
+    if (!defined $network) { return ''; }
+    $abbrev ||= $address;
+    my $label = ((defined $name) && ($name ne ''))? $name : $abbrev;
+    $label = "<span title=\"$address\">$label</span>";
+    my $explorer = getExplorer($network);
+    return ($explorer ne "") 
+        ? "<a target=\"_blank\" href='$explorer$address'>$label</a>"
+        : "";
+}
+
 sub getLabel {
-    my ($network, $grouping, $data) = @_;
+    my ($network, $grouping, $data, $name) = @_;
     if (!defined $data) {
         debugLog($MODULE, "Undefined data for $network $grouping");
     }
     return $data if $grouping ne 'none';
     return $data if $grouping eq 'none' && $data eq 'Total';
-    return getExplorerURL($network, $data, truncateAddress($data));
+    return getExplorerURL($network, $data, truncateAddress($data), $name);
 }
 
 sub truncateAddress {
@@ -63,6 +77,21 @@ sub processWallets {
     my ($wallets) = @_;
     return split /\s+/, $wallets;
 }
+
+sub printJSONError {
+    my ($message) = @_;
+    print "Content-Type: application/json\n\n";
+    print encode_json({ error => $message });
+    exit;
+}
+
+sub printJSONResult {
+    my ($data) = @_;
+    print "Content-Type: application/json\n\n";
+    print encode_json($data);
+    exit;
+}
+
 
 1;
 

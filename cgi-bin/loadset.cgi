@@ -6,7 +6,7 @@ use CGI;
 use JSON;
 use lib '../perl-lib';
 
-use DBUtils qw(getEmailFromSession getSetByName);
+use DBUtils qw(getEmailFromSession getSetByName saveCurrentSet);
 use Utils qw(debugLog logError);
 use CGI::Carp qw(fatalsToBrowser);
 
@@ -46,6 +46,8 @@ eval {
         print encode_json({ success => \0, message => "Set not found" });
         return;
     }
+
+    saveCurrentSet($email, $name, $vault, $wallets_ref);
 
     print encode_json({
         success => \1,
