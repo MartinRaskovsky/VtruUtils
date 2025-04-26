@@ -17,22 +17,20 @@ label {
 }
 
 /* Style input fields */
-select[type="saveSetName"], 
-input[type="saveSetName"], 
 input[type="email"], 
-input[type="text"], 
+input[type="text"]:not(.wallet-name), 
 input[type="tel"], 
 input[type="number"] {
     width: 90%;
-    padding: 12px;
     box-sizing: border-box;
-    margin: 8px 0 16px;
     border-radius: 6px;
     border: none;
     font-size: 16px;
     background: var(--overlay-light-2) !important;
     color: var(--text-primary) !important;
     caret-color: var(--text-primary);
+    margin: 8px 0 16px;
+    /*adding: 12px;*/
     height: 48px;
 }
 

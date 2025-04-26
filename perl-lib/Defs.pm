@@ -36,12 +36,12 @@ my %explorers = (
     'ETH' => "https://etherscan.io/address/",
     'BSC' => "https://bscscan.com/address/",
     'POL' => "https://polygonscan.com/address/",
-    'SOL' => "https://explorer.solana.com/address/",
-    'TEZ' => "https://tzkt.io/",
     'ARB' => "https://arbiscan.io/address/",
     'OPT' => "https://optimistic.etherscan.io/address/",
     'BASE' => "https://basescan.org/address/",
     'AVAX' => "https://snowtrace.io/address/",
+    'SOL' => "https://explorer.solana.com/address/",
+    'TEZ' => "https://tzkt.io/",
 );
 
 my @chains = (

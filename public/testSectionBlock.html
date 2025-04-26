@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SectionBlock Test</title>
+  <script type="module">
+    import React from 'https://cdn.skypack.dev/react';
+    import { createRoot } from 'https://cdn.skypack.dev/react-dom/client';
+
+    function SectionBlock({ label, sectionKey, entries, total, totalDiff, networkKey, vault }) {
+      return (
+        <table style="border-collapse: collapse; width: 80%; margin: 20px auto;">
+          <tbody>
+            <tr style="background: #eee;">
+              <td colSpan="2"><strong>{label}</strong></td>
+              <td style={{ textAlign: 'right' }}>{networkKey.toUpperCase()}</td>
+            </tr>
+            {entries.map((entry, idx) => {
+              if (entry.value === '0' || entry.value === '0.00') return null;
+              return (
+                <tr key={idx}>
+                  <td style="padding: 8px;">{entry.address}</td>
+                  <td style="padding: 8px; text-align: center;" dangerouslySetInnerHTML={{ __html: entry.diff || '&nbsp;' }} />
+                  <td style="padding: 8px; text-align: right;">{entry.value}</td>
+                </tr>
+              );
+            })}
+            <tr style="background: #eee;">
+              <td><strong>Total</strong></td>
+              <td style="text-align: center;" dangerouslySetInnerHTML={{ __html: totalDiff || '&nbsp;' }} />
+              <td style="text-align: right;"><strong>{total}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      );
+    }
+
+    const dummyEntries = [
+      { address: '0xABC123', value: '100.00', diff: '<span style="color:green">(+10.00)</span>' },
+      { address: '0xDEF456', value: '50.00', diff: '<span style="color:red">(-5.00)</span>' },
+      { address: '0xGHI789', value: '0.00' }, // Should not render
+    ];
+
+    const dummyProps = {
+      label: 'Dummy Section',
+      sectionKey: 'dummy_section',
+      entries: dummyEntries,
+      total: '150.00',
+      totalDiff: '<span style="color:green">(+5.00)</span>',
+      networkKey: 'eth',
+      vault: '0xVaultAddress',
+    };
+
+    const container = document.getElementById('root');
+    const root = createRoot(container);
+    root.render(<SectionBlock {...dummyProps} />);
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
+

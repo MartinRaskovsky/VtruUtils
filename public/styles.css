@@ -53,6 +53,28 @@ textarea#walletAddresses {
     min-height: 100px; /* Ensures sufficient space for multiple wallets */
 }
 
+.wallet-address {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    color: white;
+    min-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}  
+
+.wallet-name {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--overlay-light-1);
+    color: white;
+    box-sizing: border-box;
+}
+  
 /* Style for the "Loading..." button state */
 button.loading {
     background-color: #555; /* Darker color to indicate loading */
@@ -176,13 +198,11 @@ tr:not(.spacer-row) + .spacer-row {
     background-color: inherit !important; /* Ensure it follows the row's color */
 }
 
-
-
 pre {
     color: var(--border-light);
     padding: 10px;
     border-radius: 5px;
-    var(--text-primary)-space: pre-wrap; /* Preserve formatting */
+    /*var(--text-primary)-space: pre-wrap; /* Preserve formatting */
     overflow-x: auto; /* Enable horizontal scrolling */
     text-align: left; /* Ensure left-aligned JSON */
     font-family: "Courier New", Courier, monospace; /* Standard JSON font */
@@ -266,6 +286,11 @@ pre {
     pointer-events: none;
     filter: blur(0.3px);
     transition: opacity 0.2s ease;
+}
+
+.button-disabled {
+    opacity: 0.4;
+    pointer-events: none;
 }
   
 .stake-btn-container {

@@ -1,0 +1,31 @@
+Protocol for Working with Dr. Martín Raskovsky
+Date: April 2025
+
+Overview:
+This protocol ensures consistency, accuracy, and version control during collaboration with Dr. Martín Raskovsky on codebase updates. It applies across all components and modules.
+
+Key Practices:
+
+1. Source of Truth:
+   - The user (Dr. Raskovsky) is the definitive source of the latest code.
+   - Always request the current version before making any changes, unless just shared.
+
+2. Edit Format:
+   - Provide full-file rewrites unless explicitly told to do otherwise.
+   - All rewritten files must be copy-paste friendly for Visual Studio Code.
+
+3. Context Awareness:
+   - Do not assume past file states are still valid unless confirmed by the user.
+   - Do not retain state across sessions unless explicitly instructed.
+
+4. File Saving:
+   - Do not auto-save or persist any files unless explicitly requested.
+   - If a persistent reminder is needed, a downloadable file will be provided.
+
+5. Universal Application:
+   - This protocol is to be applied to all components (React, Perl, JS, etc.).
+   - Always clarify assumptions and double-check file versions before edits.
+
+Usage:
+Upload this file at the start of a session to reinstate collaboration rules. Ensure these are followed exactly.
+

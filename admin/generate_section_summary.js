@@ -1,28 +1,45 @@
 #!/usr/bin/env node
 
-// generate_section_summary_pm.js
-// Converts sectionSummary.js into SectionSummary.pm for use in Perl
+/**
+ * generate_section_summary.js
+ *
+ * Generates section summary configuration files from shared constants.
+ * Produces:
+ *   - Perl: SectionSummary.generated.pm
+ *   - JS:   sectionSummaryConfig.js for Next.js
+ *   - JSON: section-metadata.generated.json for shared metadata
+ *
+ * Author: Dr. Martín Raskovsky
+ * Date: April 2025
+ */
 
 const fs = require('fs');
 const path = require('path');
-const { sectionSummary } = require('../shared/constants');
+const {
+  sectionSummary,
+  detailType,
+  hasGroups,
+  networkLabels
+} = require('../shared/constants');
 
-const outputPath = path.join(__dirname, '../perl-lib/SectionSummary.generated.pm');
+// ==== Generate Perl ====
+
+const perlPath = path.join(__dirname, '../perl-lib/SectionSummary.generated.pm');
 
 function escapePerlString(str) {
-    return str.replace(/'/g, "\\'");
+  return str.replace(/'/g, "\\'");
 }
 
 function toPerlArray(arr) {
-    return "[ " + arr.map(s => `'${escapePerlString(s)}'`).join(", ") + " ]";
+  return "[ " + arr.map(s => `'${escapePerlString(s)}'`).join(", ") + " ]";
 }
 
 function toPerlHashArray(arr) {
-    return "[\n" + arr.map(section => {
-        const name = escapePerlString(section.name);
-        const sections = toPerlArray(section.sections);
-        return `    { name => '${name}', sections => ${sections} }`;
-    }).join(",\n") + "\n]";
+  return "[\n" + arr.map(section => {
+    const name = escapePerlString(section.name);
+    const sections = toPerlArray(section.sections);
+    return `    { name => '${name}', sections => ${sections} }`;
+  }).join(",\n") + "\n]";
 }
 
 const perlContent = `package SectionSummary;
@@ -44,6 +61,36 @@ sub getSectionSummary {
 1;
 `;
 
-fs.writeFileSync(outputPath, perlContent);
-console.log(`✅ SectionSummary.pm generated at: ${outputPath}`);
+fs.writeFileSync(perlPath, perlContent);
+console.log(`✅ SectionSummary.pm generated at: ${perlPath}`);
+
+
+// ==== Generate JavaScript ====
+
+const jsPath = path.join(__dirname, '../next/config/sectionSummaryConfig.generated.js');
+
+const jsContent = `// AUTO-GENERATED from constants.js — DO NOT EDIT
+
+const sectionSummaryConfig = ${JSON.stringify(sectionSummary, null, 2)};
+
+export default sectionSummaryConfig;
+`;
+
+fs.writeFileSync(jsPath, jsContent);
+console.log(`✅ sectionSummaryConfig.js written at: ${jsPath}`);
+
+
+// ==== Generate Shared JSON Metadata ====
+
+const jsonPath = path.join(__dirname, '../shared/section-metadata.generated.json');
+
+const jsonContent = {
+  groups: sectionSummary,
+  detailType,
+  hasGroups,
+  networkLabels
+};
+
+fs.writeFileSync(jsonPath, JSON.stringify(jsonContent, null, 2));
+console.log(`✅ section-metadata.generated.json written at: ${jsonPath}`);
 

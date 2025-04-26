@@ -1,0 +1,104 @@
+/**
+ * Author: Dr. Martín Raskovsky
+ * Date: April 2025
+ *
+ * Developer Notes & Invariant Model
+ *
+ * This document outlines the key design principles and invariants
+ * for the VaWa dashboard system, covering data consistency rules,
+ * UI button state logic, and expected module header formats.
+ *
+ * This file is intended to be saved locally and reuploaded as needed
+ * to restore project context during future development sessions.
+ */
+
+====================
+Dashboard State Model
+====================
+
+A **Set** consists of:
+- `vault`: *Optional* string
+- `wallets`: *Optional* list of strings
+- `name`: *Optional* string
+
+❗ Constraint:
+  → A set must NOT be empty:
+    `!(vault === '' && wallets.length === 0)`
+
+=======================
+Global Invariants
+=======================
+
+1. A valid set must contain at least one vault or wallet.
+
+2. The "current set" in the DB must always reflect the data shown
+   in the dashboard. This is ensured by writing to `current` whenever:
+   - a set is loaded
+   - a set is saved
+   - Get Details is invoked
+   - navigation occurs (e.g., Back, Log Out)
+
+3. Saving a set updates both:
+   - the named `sets` table
+   - the `current` table
+
+4. After Get Details:
+   - Vault and Wallets are replaced by the canonical results
+   - The `current` table is updated to match
+
+5. Dashboard exits ONLY occur via allowed buttons:
+   - Back
+   - Log Out
+   - Names
+   - Load
+   - Save
+   - Get Details
+
+6. Buttons reflect logical conditions:
+   - Back → only if there is a previous page
+   - Log Out → only if logged in
+   - Names, Save, Get Details → only if vault or wallet(s) are present
+
+7. Edited state shown visually:
+   - If vault or wallets differ from loaded/saved values,
+     the Set name becomes `Set Name (edited)`
+
+8. No DB writes are triggered by keystroke events:
+   - Writes happen only at strategic moments (button presses)
+
+=======================
+Header Format Standard
+=======================
+
+All modules (JSX or JS) should begin with a standard header:
+
+/**
+ * Author: Dr. Martín Raskovsky
+ * Date: [Month Year]
+ *
+ * <ModuleName>
+ *
+ * <Purpose: What the file does>
+ * <Relationship: To other modules and data flow>
+ */
+
+=======================
+Debug Logging
+=======================
+
+On the server side (e.g., `lib/db.js`), always include:
+
+- `debugLog(MODULE, ...)` at the entry and exit of each method.
+- Use consistent MODULE identifiers per file.
+
+=======================
+Next Steps
+=======================
+
+Once this spec is saved and uploaded:
+→ Request current version of:
+  - lib/db.js
+  - components/DashboardInputForm.jsx
+  - components/DashboardPanel.jsx
+
+We will verify them one-by-one against this spec.

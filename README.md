@@ -1,258 +1,172 @@
+
 # VtruUtils
 
-**Author:** Dr. Martín Raskovsky  
-**Date:** February 2025  
+Author: Dr. Martín Raskovsky  
+Date: February 2025  
 
-## Project Description
-
+Project Description
+-------------------
 This project is designed for Vitruveo blockchain-related operations, providing reusable classes, environment-based configuration management, and program scripts for execution. It is meant for developers looking to simplify tasks like Vault and Wallet content listing.
 
-### Real-World Applications
+Real-World Applications
+------------------------
+- bin/getVaultDetails.js: Retrieves the balance of Vault coins and the balances of different coins in the wallets associated with a Vault.
+- bin/getVaultsDetails.js: Retrieves balances for multiple Vaults holding more than a specified number of coins.
+- bin/getVaultUsage.sh: Executes getVaultsDetails.js and converts the JSON output into a convenient .csv file using jsonDetails2Csv.js.
 
-- **`bin/getVaultDetails.js`**: Retrieves the balance of Vault coins and the balances of different coins in the wallets associated with a Vault.
-- **`bin/getVaultsDetails.js`**: Retrieves balances for multiple Vaults holding more than a specified number of coins.
-- **`bin/getVaultUsage.sh`**: Executes `getVaultsDetails.js` and converts the JSON output into a convenient `.csv` file using `jsonDetails2Csv.js`.
+Important Note: All programs in the src/bin directory must be executed while located inside that directory.
 
-**Important Note**: All programs in the `src/bin` directory must be executed while located in that directory.
+Directory Structure
+--------------------
+admin/         Admin/maintenance scripts (e.g., code generation for constants).
+bin/           Command-line scripts for vault operations, JSON output, etc.
+cgi-bin/       Perl CGI scripts for Apache (legacy vault dashboard and login).
+data/          Static configuration files (.env, vault samples).
+db/            MySQL database schema and Perl DB connection utilities.
+dev/           Temporary development scratch files and experiments.
+doc/           Internal documentation and project notes.
+lib/           JavaScript shared libraries for Node.js backend tools.
+logs/          Debugging and runtime error logs (especially for CGI backend).
+next/          Next.js/React frontend application (live dashboard and API endpoints).
+node_modules/  Node.js modules for backend CLI tools (src/package.json).
+perl-lib/      Shared Perl library modules (.pm files).
+public/        Static public web assets (images, stylesheets).
+server-obsolete/ Old Express-based Node.js server (deprecated).
+shared/        Shared constants and metadata between server and frontend.
+tests/         Automated test scripts and validation utilities.
 
-## Directory Structure
+Node.js Environments
+---------------------
+- src/ has its own package.json for CLI tools and CGI helpers.
+- src/next/ has its own package.json for the Next.js frontend app.
 
-```
-src/
-├── bin/         # Executable scripts
-├── data/        # Configuration files (e.g., .env)
-├── lib/         # Reusable JavaScript classes
-├── public/      # Client-side code (HTML, JS, CSS)
-├── server/      # Express-based API server
-├── cgi-bin/     # Apache Perl server side
-├── shared/      # Shared modules (e.g., constants.js)
-├── tests/       # Automated test scripts
-└── README.md    # Project documentation
-```
+Important:
+- Run npm install inside src/ for backend dependencies.
+- Run npm install inside src/next/ for frontend dependencies.
 
-### Explanation of Components
+These are intentionally kept separate.
 
-- **`src/bin`**: Contains command-line scripts that produce JSON output or optionally formatted output with `-f`. These scripts **do not require the web server** and are fully functional on their own.
-- **`src/server` & `src/public`**: Implement a **local web server** that provides an HTML interface to interact with the scripts. It is **not required** for running command-line scripts but offers a convenient way to display results in a browser.
-- **`src/shared`**: Provides shared constants and modules that can be used across **server, client, and scripts**, ensuring a **single source of truth**.
-
-## Setup Instructions
-
-### Requirements
-- Node.js (v22.4.0)
+Setup Instructions
+--------------------
+Requirements:
+- Node.js v22.4.0
 - npm or yarn
-- Required packages:
-  - express
-  - ethers
-  - cors
-  - dotenv
-  - fs-extra
-  - body-parser
+- express, ethers, cors, dotenv, fs-extra, body-parser
 
-### Installation
+Installation:
 
-1. Ensure Node.js is installed. You can download it from [Node.js Official Website](https://nodejs.org/).
-
+1. Ensure Node.js is installed.
 2. Clone the repository:
-   ```bash
    git clone <repository-url>
    cd <repository-name>
-   ```
 
-3. Install dependencies:
-   ```bash
+3. Install backend/server dependencies:
+   cd src
    npm install
-   # Or, if using yarn:
-   yarn install
-   ```
 
-4. Install additional dependencies:
-   ```bash
-   npm install date-fns dotenv
-   ```
+4. Install frontend dependencies:
+   cd src/next
+   npm install
 
-5. Configure the `.env` file:
-   - Navigate to `src/data/`.
-   - Create a `.env` file and set the required environment variables:
-     ```plaintext
-     WALLETS=wallet1,wallet2,wallet3  # A comma-separated list of wallet identifiers
-     VAULT_ADDRESS=0xYourVaultAddress  # The address of the vault contract
-     CONFIG_JSON_FILE_PATH=../data/vtru-contracts.json  # Relative path to the configuration JSON file
-     ```
-   - Alternatively, refer to the provided `.env.example` file for guidance.
+5. Configure environment variables:
+   - Navigate to src/data/
+   - Create a .env file based on .env.example.
 
-## Running Tests
+Usage
+------
+Running Scripts:
 
-Tests are located in the `src/tests` directory and can be executed using the `testAll.sh` script:
+cd src/bin
+node yourScript.js
 
-### Running Tests at Installation Time
+Example: demo.js usage:
+- Defines wallet addresses.
+- Fetches balances across selected networks.
+- Prints results formatted with currency symbols.
 
-After installing dependencies, you can run the test suite with:
-```bash
-sh src/tests/testAll.sh
-```
+Running the Web Server:
 
-### Running Tests at Any Time
+cd src/server
+node server.js
 
-To manually run the tests at any time, use:
-```bash
-cd src/tests && sh testAll.sh
-```
+Then open http://localhost:3000 in your browser.
 
-## Usage
+Adding New Environment Variables:
 
-### Running Scripts
+Update src/data/.env and access in your code:
+const Config = require('../lib/libConfig');
+const config = new Config();
+console.log(config.get("VAULT_ADDRESS"));
 
-Execute scripts located in `src/bin`:
-```bash
-node src/bin/yourScript.js
-```
-
-### Example Usage: `demo.js`
-
-The `demo.js` script illustrates the fundamental operation of the library by fetching wallet balances across multiple blockchain networks. Below, we break down its core functionality.
-
-#### Key Components
-
-- **Web3 Library (`libWeb3`)**: Provides blockchain connectivity and abstraction for different networks.
-- **Network Library (`libNetwork`)**: Manages multiple blockchain instances simultaneously.
-- **Token Wallet (`tokenWallet`)**: A class to handle token balances for specified wallet addresses.
-- **Utility Functions (`vtruUtils`)**: Includes functions for formatting and scaling numbers.
-
-#### Example Execution
-
-##### 1. Define Wallet Addresses
-
-The script defines a list of wallet addresses for which balances will be retrieved. In practice, these would be replaced by actual wallet addresses:
-
-```javascript
-const wallets = [
-    'WALLET_ADDRESS_1', 
-    'WALLET_ADDRESS_2'
-];
-```
-
-##### 2. Fetch Wallet Balances
-
-The function `getWalletBalance` retrieves the balances for the given wallets on a specified network:
-
-```javascript
-async function getWalletBalance(web3) {
-    const id = web3.getId();
-    const tokenWallet = new TokenWallet(web3);
-    const balances = await tokenWallet.getBalances(wallets);
-    balances.map((balance, index) => {
-      console.log(`${wallets[index]}: ${Web3.currency[id]} ${formatRawNumber(balance,3)}`);
-    });
-}
-```
-
-- Uses the `TokenWallet` class to fetch balances.
-- Formats and prints the balance using `formatRawNumber(balance,3)`.
-- Retrieves the currency symbol dynamically based on the network.
-
-##### 3. Multi-Network and Single-Network Support
-
-The script initializes blockchain networks in two ways:
-
-- **Multiple Networks at Once**:
-
-```javascript
-const network = await new Network([Web3.VTRU, Web3.BSC]);
-const vtru = network.get(Web3.VTRU);
-const bsc = network.get(Web3.BSC);
-```
-
-- **Single Network Initialization**:
-
-```javascript
-const eth = Web3.create(Web3.ETH);
-```
-
-- This method is used when interacting with only one blockchain.
-
-##### 4. Execute Tests
-
-Finally, the script fetches balances for all wallets on all selected networks:
-
-```javascript
-await getWalletBalance(vtru);
-await getWalletBalance(bsc);
-await getWalletBalance(eth);
-```
-
-#### Sample Output
-
-Running `demo.js` produces the following output:
-
-```
-WALLET_ADDRESS_1: VTRU 41.115
-WALLET_ADDRESS_2: VTRU 1.651
-WALLET_ADDRESS_1: BNB 0.000
-WALLET_ADDRESS_2: BNB 0.011
-WALLET_ADDRESS_1: ETH 0.010
-WALLET_ADDRESS_2: ETH 0.031
-```
-
-- Balances are displayed per wallet address.
-- The correct currency is assigned based on the network.
-- The script demonstrates seamless interaction with multiple blockchains.
-
-#### Conclusion
-
-This example illustrates how the library abstracts blockchain interactions, allowing developers to query multiple networks without worrying about low-level implementation details. The modular approach ensures scalability, making it easy to extend support for additional networks in the future.
-
-It is important to note that this is only a basic example and the library provides a much broader range of capabilities beyond those demonstrated here.
-
-
-### Running the Web Server
-
-The web interface is **optional** but can be started locally with:
-
-```bash
-node src/server/server.js
-```
-
-Then, open `http://localhost:3000` in a browser.
-
-### Adding New Environment Variables
-
-1. Update the `src/data/.env` file with the new variables.
-2. Use the `Config` class to access them in your code:
-   ```javascript
-   const Config = require('../lib/libConfig');
-   const config = new Config();
-   console.log(config.get("VAULT_ADDRESS"));
-   ```
-
-## Contributing
-
-We welcome contributions to this project! Follow these steps to get started:
-
-1. Fork this repository.
-2. Create a new branch for your feature or bugfix:
-   ```bash
-   git checkout -b my-feature-branch
-   ```
+Contributing
+-------------
+1. Fork the repository.
+2. Create a branch:
+   git checkout -b feature/my-feature
 3. Commit your changes:
-   ```bash
-   git commit -m "Add a new feature"
-   ```
-4. Push your branch and create a pull request:
-   ```bash
-   git push origin my-feature-branch
-   ```
+   git commit -m "feat: add my feature"
+4. Push and open a pull request:
+   git push origin feature/my-feature
 
-For significant changes, please open an issue to discuss them first. Follow the project's coding style and include tests for new functionality where applicable.
+License
+--------
+MIT License
 
-## License
+Badges
+-------
+[Node.js 22+]  
+[MIT License]
 
-[MIT License](LICENSE)
+--------------------------------------------
 
----
+# VaWa Frontend Application (src/next/)
 
-### Badges
+Author: Dr. Martín Raskovsky  
+Date: April 2025  
 
-![Node.js](https://img.shields.io/badge/Node.js-v14%2B-green) ![License](https://img.shields.io/badge/License-MIT-blue)
+Project Overview
+------------------
+This folder contains the Next.js 14 / React frontend and associated server-side logic for the VaWa project.
 
-This README provides a clear guide to setting up, using, and contributing to the project. If you encounter any issues, please open an issue in the repository.
+It replaces the earlier Perl/CGI web interface.
+
+Directory Structure
+---------------------
+abi/            Blockchain smart contract ABIs.
+app/            Main Next.js App Router (pages, server and client components).
+components/     Reusable React components (tables, modals, sections).
+config/         Static configuration (section mappings, groupings).
+generated/      Auto-generated JavaScript files (e.g., ABIs, constants).
+lib/            Client-side libraries, helper functions, and custom hooks.
+node_modules/   Frontend dependencies (Next.js, React, etc.).
+styles/         CSS and styling assets.
+
+Node.js Environment
+--------------------
+- Separate package.json inside src/next/.
+- Install frontend dependencies:
+    cd src/next
+    npm install
+- Start the development server:
+    npm run dev
+
+(Default port: 3000)
+
+Key Features
+-------------
+- Full React/Next.js vault and wallet dashboard.
+- Modal-based transaction initiation (planned).
+- Multi-chain balance diffs (EVM, Solana, Tezos).
+- Future bridging and cross-chain operations.
+
+Purpose
+--------
+- Vault analytics.
+- Transaction management.
+- User profile and login integration.
+- Extensible token and chain support.
+
+License
+--------
+MIT License
+
